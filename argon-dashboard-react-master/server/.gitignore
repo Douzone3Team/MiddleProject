@@ -1,0 +1,10 @@
+/build
+/node_modules
+package-lock.json
+/client/build
+.eslintcache
+node_modules
+.env
+/client/node_modules
+/client/scripts
+/client/config

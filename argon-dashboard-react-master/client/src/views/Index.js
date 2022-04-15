@@ -167,13 +167,13 @@ const Index = (props) => {
             </Card>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col className="mb-5 mb-xl-0" xl="8">
             <video autoPlay playsInline src=""></video>
           </Col>
           <Col xl="4">
           </Col>
-        </Row>
+        </Row> */}
         <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
