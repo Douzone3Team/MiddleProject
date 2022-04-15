@@ -5,6 +5,8 @@ function CreateRoom() {
   const [ show, setShow ] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [roomTitle, setRoomTitle] = useState();
+
   
   return (
     <>  
@@ -19,7 +21,7 @@ function CreateRoom() {
           <Form>
             <Form.Group className="mb-3" controlId="">
               <Form.Label>방 제목</Form.Label>
-              <Form.Control type="text" placeholder="Douzone 3팀의 방" autoFocus />
+              <Form.Control type="text" placeholder="Douzone 3팀의 방" onChange={ (e) => { setRoomTitle(e.target.value); } } roomTitle={roomTitle} />
             </Form.Group>
           </Form>
         </Modal.Body>
