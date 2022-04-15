@@ -31,6 +31,7 @@ import {
 } from "variables/charts.js";
 
 import Header from "components/Headers/Header.js";
+import CreateRoom from "components/CreateRoom.js";
 
 
 const Index = (props) => {
@@ -183,14 +184,15 @@ const Index = (props) => {
                     <h3 className="mb-0">Page visits</h3>
                   </div>
                   <div className="col text-right">
-                    <Button
+                    {/* <Button
                       color="primary"
                       href="#pablo"
                       onClick={(e) => e.preventDefault()}
                       size="sm"
                     >
                       See all
-                    </Button>
+                    </Button> */}
+                    <CreateRoom/>
                   </div>
                 </Row>
               </CardHeader>
