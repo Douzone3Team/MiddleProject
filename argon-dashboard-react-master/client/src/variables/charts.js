@@ -264,7 +264,7 @@ function chartOptions() {
     },
   });
 
-  // xAxes
+  // xAxes 
   Chart.scaleService.updateScaleDefaults("category", {
     gridLines: {
       drawBorder: false,
