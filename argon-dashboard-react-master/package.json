@@ -5,6 +5,6 @@
     "server" : "cd server && npm install && node server.js",
     "start": "npm run client && npm run server",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  }
  
 }
