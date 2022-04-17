@@ -6,6 +6,7 @@ import Register from "views/examples/Register.js";
 import Login from "views/examples/Login.js";
 import Tables from "views/examples/Tables.js";
 import Icons from "views/examples/Icons.js";
+import Room from "views/Room.js";
 
 var routes = [
   {
@@ -56,6 +57,13 @@ var routes = [
     icon: "ni ni-circle-08 text-pink",
     component: Register,
     layout: "/auth",
+  },
+  {
+    path: "/room",
+    name: "Room",
+    icon: "ni ni-button-play",
+    component: Room,
+    layout: "/admin",
   },
 ];
 export default routes;
