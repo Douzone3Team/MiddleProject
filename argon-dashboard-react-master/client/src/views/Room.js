@@ -21,8 +21,7 @@ import {
   Col,
   CardTitle,
 } from "reactstrap";
-
-// core components
+ 
 import {
   chartOptions,
   parseOptions,
@@ -30,14 +29,24 @@ import {
   chartExample2,
 } from "variables/charts.js";
 
-import Header from "components/Headers/Header.js";
-import CreateRoom from "components/CreateRoom.js";
+import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
+import Header from "components/Headers/Header.js"; 
+
 
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
   const [participant, setParticipant] = useState(['참여자1', '참여자2', '참여자3', '참여자4'])
+  const [message, setMessage] = useState('');
+  let [cam, changeCam] = useState(true);
+  let [mic, changeMic] = useState(true);
+
+  function chatting() {
+    let newMessage = [...message];
+    message.unshift(message);
+    setMessage(newMessage);
+  }
 
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
@@ -49,10 +58,10 @@ const Index = (props) => {
     setChartExample1Data("data" + index);
   };
 
+
   return (
     <>
-      <Header /> 
-      {/* Page content */}
+      <Header />  
       <Container className="mt--7" fluid>
         <Row>
           {
@@ -67,25 +76,15 @@ const Index = (props) => {
                             <CardTitle
                               tag="h5"
                               className="text-uppercase text-muted mb-0"
-                            >{a}</CardTitle>
-                            {/* <span className="h2 font-weight-bold mb-0">
-                              350,897
-                            </span> */}
+                            >{a}</CardTitle> 
                           </div>
-                          <Col className="col-auto">
-                            {/* <div className="icon icon-shape bg-danger text-white rounded-circle shadow"> */}
-                              {/* <i className="fas fa-chart-bar" /> */}
-                            {/* </div> */}
+                          <Col className="col-auto"> 
                           </Col>
                         </Row>
-                        <p className="mt-3 mb-0 text-muted text-sm">
-                          {/* <span className="text-success mr-2">
-                            <i className="fa fa-arrow-up" /> 3.48%
-                          </span>{" "} */}
-                          {/* <span className="text-nowrap">Since last month</span> */}
+                        <p className="mt-3 mb-0 text-muted text-sm"> 
                         </p>
                       </CardBody>
-                    </Card>
+                    </Card> <br />
                   </Col>
                 </>
               )
@@ -103,79 +102,60 @@ const Index = (props) => {
                   <div className="col text-right"> 
                     {/* <CreateRoom/> */}
                   </div>
+                  <Col className="col-auto">
+                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeCam(!cam)} }>
+                      {
+                        cam === true
+                        ? <BsCameraVideoFill />
+                        : <BsCameraVideoOffFill />
+                      }
+                    </div>&nbsp;
+                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeMic(!mic)} }>
+                    {
+                      mic === true
+                      ? <BsFillMicFill />
+                      : <BsFillMicMuteFill />
+                    }
+                    </div>
+                  </Col>
                 </Row>
-              </CardHeader>
-              {/* <Table className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">/argon/</th>
-                    <td>4,569</td>
-                    <td>340</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/index.html</th>
-                    <td>3,985</td>
-                    <td>319</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/charts.html</th>
-                    <td>3,513</td>
-                    <td>294</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-warning mr-3" />{" "}
-                      36,49%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/tables.html</th>
-                    <td>2,050</td>
-                    <td>147</td>
-                    <td>
-                      <i className="fas fa-arrow-up text-success mr-3" /> 50,87%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">/argon/profile.html</th>
-                    <td>1,795</td>
-                    <td>190</td>
-                    <td>
-                      <i className="fas fa-arrow-down text-danger mr-3" />{" "}
-                      46,53%
-                    </td>
-                  </tr>
-                </tbody>
-              </Table> */}
-            </Card>
+              </CardHeader> 
+            </Card> 
+            <br />
+            <div>
+              <Button className="mr-4" color="default" size="sm">
+                마이크 선택
+              </Button>
+              <Button className="mr-4" color="default" size="sm">
+                카메라 선택
+              </Button> 
+            </div> 
           </Col> 
           <Col className="mb-5 mb-xl-0" xl="4">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <Row className="align-items-center">
                   <div className="col">
-                    {/* <h3 className="mb-0">Page visits</h3> */}
+                    받은 메세지
                   </div>
-                  <div className="col text-right"> 
-                    {/* <CreateRoom/> */}
+                </Row>
+                <Row className="align-items-center"> 
+                  <div className="col text-right">  
+                    보낸 메세지 { message }
                   </div>
                 </Row>
               </CardHeader>
+              <CardHeader className="border-0">
+                <Row className="align-items-center">
+                  <div className="col text-right"> 
+                    <hr />
+                    <input onChange={ (e) => { setMessage(e.target.value) }} style={{width: '80%', border: 'none'}} /> 
+                    <Button color="primary" onClick={ chatting } size="sm">SEND</Button>
+                  </div>
+                </Row> 
+              </CardHeader>
             </Card>
-          </Col>
+          </Col> 
         </Row>
       </Container>
     </>
