@@ -73,6 +73,7 @@
     "file-loader": "6.1.1",
     "fs-extra": "^9.0.1",
     "html-webpack-plugin": "4.5.0",
+    "http-proxy-middleware": "^2.0.4",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.0",
     "jest-circus": "26.6.0",
@@ -127,6 +128,5 @@
     "eslint-plugin-flowtype": "5.8.0",
     "jquery": "3.6.0",
     "typescript": "4.3.5"
-  },
-  "proxy": "http://localhost:4000"
+  }
 }
