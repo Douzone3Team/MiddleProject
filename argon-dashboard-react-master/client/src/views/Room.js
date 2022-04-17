@@ -58,14 +58,13 @@ const Index = (props) => {
     setChartExample1Data("data" + index);
   };
 
-
   return (
     <>
       <Header />  
       <Container className="mt--7" fluid>
         <Row>
           {
-            participant.map(function(a, i) {
+            participant.map(function(data, i) {
               return(
                 <>
                   <Col lg="6" xl="3">
@@ -73,10 +72,7 @@ const Index = (props) => {
                       <CardBody>
                         <Row>
                           <div className="col">
-                            <CardTitle
-                              tag="h5"
-                              className="text-uppercase text-muted mb-0"
-                            >{a}</CardTitle> 
+                            <CardTitle tag="h5" className="text-uppercase text-muted mb-0">{ data }</CardTitle> 
                           </div>
                           <Col className="col-auto"> 
                           </Col>
@@ -94,55 +90,35 @@ const Index = (props) => {
         <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center">
-                  <div className="col">
-                    {/* <h3 className="mb-0">Page visits</h3> */}
+              <CardHeader className="border-0" style={{height: '350px'}}>
+                <Row className="align-items-center"> 
+                  <div className="col text-right">  
+                    <Col className="col-auto">
+                      <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeCam(!cam)} }>
+                        { cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill /> }
+                      </div>&nbsp;
+                      <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeMic(!mic)} }>
+                      { mic === true ? <BsFillMicFill /> : <BsFillMicMuteFill /> }
+                      </div>
+                    </Col>
                   </div>
-                  <div className="col text-right"> 
-                    {/* <CreateRoom/> */}
-                  </div>
-                  <Col className="col-auto">
-                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeCam(!cam)} }>
-                      {
-                        cam === true
-                        ? <BsCameraVideoFill />
-                        : <BsCameraVideoOffFill />
-                      }
-                    </div>&nbsp;
-                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeMic(!mic)} }>
-                    {
-                      mic === true
-                      ? <BsFillMicFill />
-                      : <BsFillMicMuteFill />
-                    }
-                    </div>
-                  </Col>
                 </Row>
               </CardHeader> 
             </Card> 
             <br />
             <div>
-              <Button className="mr-4" color="default" size="sm">
-                마이크 선택
-              </Button>
-              <Button className="mr-4" color="default" size="sm">
-                카메라 선택
-              </Button> 
+              <Button className="mr-4" color="default" size="sm">카메라 선택</Button> 
+              <Button className="mr-4" color="default" size="sm">마이크 선택</Button>
             </div> 
           </Col> 
           <Col className="mb-5 mb-xl-0" xl="4">
             <Card className="shadow">
-              <CardHeader className="border-0">
+              <CardHeader className="border-0" style={{height: '218px'}}>
                 <Row className="align-items-center">
-                  <div className="col">
-                    받은 메세지
-                  </div>
+                  <div className="col">받은 메세지</div>
                 </Row>
                 <Row className="align-items-center"> 
-                  <div className="col text-right">  
-                    보낸 메세지 { message }
-                  </div>
+                  <div className="col text-right">보낸 메세지 { message } </div>
                 </Row>
               </CardHeader>
               <CardHeader className="border-0">
