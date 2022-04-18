@@ -1,4 +1,7 @@
-
+import axios from 'axios';
+import { useState } from "react";
+import 'url-search-params-polyfill';
+// import jwt from "jsonwebtoken";
 import {
   Button,
   Card,
@@ -15,6 +18,38 @@ import {
 } from "reactstrap";
 
 const Login = () => {
+  const [id, setId] = useState('');
+  const [pass,setPass] = useState('');
+  
+  const handleInputId = (e) => {
+    setId(e.target.value);    
+  }
+
+  const handleInputPw = (e) => {
+    setPass(e.target.value);    
+  }
+
+  const handleLogin = () => {
+    console.log("isClicked");
+
+      const url = '/api/login';
+      try {
+        const data = {
+          id : {id},
+          pass : {pass},
+        }
+        console.log(id + " " + pass);
+        axios.post(url,data).then((Response) =>{
+
+        }).catch((ex) => {
+          console.log(ex);
+        })
+        
+      }catch (error) {
+        console.log(error);
+      }
+  }
+
   return (
     <>
       <Col lg="5" md="7">
@@ -76,6 +111,9 @@ const Login = () => {
                     placeholder="Email"
                     type="email"
                     autoComplete="new-email"
+                    value ={id}
+                    onChange = {handleInputId}
+                                       
                   />
                 </InputGroup>
               </FormGroup>
@@ -90,6 +128,8 @@ const Login = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    value ={pass}
+                    onChange = {handleInputPw}
                   />
                 </InputGroup>
               </FormGroup>
@@ -107,7 +147,7 @@ const Login = () => {
                 </label>
               </div>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button">
+                <Button onClick = {handleLogin} className="my-4" color="primary" type="button">
                   Sign in
                 </Button>
               </div>
