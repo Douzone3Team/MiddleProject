@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Video } from "reactstrap";
 
 const Video = (props) => {
     const ref = useRef();
