@@ -22,8 +22,13 @@ app.get('/*', function (req, res) {
 // // }
 
 io.on('connection', (socket) => {
+    console.log('user connected success');
 
-});
+    socket.io('message', ({name, message}) => {
+        console.log('name: '+ name + 'message: '+ message);
+        io.emit('message',({name, message}))
+    })
+})
 
 
 http.listen(PORT, () => {
