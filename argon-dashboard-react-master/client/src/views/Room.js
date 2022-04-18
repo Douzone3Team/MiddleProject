@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 // node.js library that concatenates classes (strings)
 import classnames from "classnames";
@@ -10,22 +11,22 @@ import { Line, Bar } from "react-chartjs-2";
 import io from 'socket.io-client';
 import TextField from "@material-ui/core/TextField";
 
+
 // reactstrap components
 import {
   Button,
   Card,
   CardHeader,
-  CardBody,
-  NavItem,
-  NavLink,
-  Nav,
-  Progress,
-  Table,
+  CardBody, 
   Container,
   Row,
   Col,
-  CardTitle,
+  CardTitle, 
 } from "reactstrap";
+
+
+import { Dropdown } from 'react-bootstrap' 
+ 
 
 import {
   chartOptions,
@@ -33,6 +34,7 @@ import {
   chartExample1,
   chartExample2,
 } from "variables/charts.js";
+
 
 import {
   BsCameraVideoFill,
@@ -42,9 +44,13 @@ import {
 } from "react-icons/bs";
 import Header from "components/Headers/Header.js";
 
+import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
+
+
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
+
   const [participant, setParticipant] = useState([
     "참여자1",
     "참여자2",
@@ -54,8 +60,13 @@ const Index = (props) => {
   const [message, setMessage] = useState("");
   const [state, setState] = useState({ message: '', name: ''});
   const [chat, setChat] = useState([]);
-  let [cam, changeCam] = useState(true);
-  let [mic, changeMic] = useState(true);
+  const [participant, setParticipant] = useState(['참여자1', '참여자2', '참여자3', '참여자4'])
+  const [message, setMessage] = useState('');
+  const [cam, changeCam] = useState(true);
+  const [mic, changeMic] = useState(true);
+  const [setCam, selectCam] = useState(['mode1_cam', 'mode2_cam', 'mode3_cam']);
+  const [setMic, selectMic] = useState(['mode1_mic', 'mode2_mic', 'mode3_mic']);
+
 
   //socket 9000번 연결
   const socket = io.connect("http://localhost:4000");
@@ -114,32 +125,29 @@ const Index = (props) => {
       <Header />
       <Container className="mt--7" fluid>
         <Row>
-          {participant.map(function (data, i) {
-            return (
-              <>
-                <Col lg="6" xl="3">
+          {
+            participant.map((data, i) => {
+              return( 
+                <Col lg="6" xl="3" key={ data }>
                   <Card className="card-stats mb-4 mb-xl-0">
-                    <CardBody>
-                      <Row>
-                        <div className="col">
-                          <CardTitle
-                            tag="h5"
-                            className="text-uppercase text-muted mb-0"
-                          >
-                            {data}
-                          </CardTitle>
+                    <CardBody >
+                      <Row >
+                        <div className="col" >
+                          <CardTitle tag="h5" className="text-uppercase text-muted mb-0" >{ data }</CardTitle> 
                         </div>
-                        <Col className="col-auto"></Col>
+                        <Col className="col-auto"> 
+                        </Col>
                       </Row>
-                      <p className="mt-3 mb-0 text-muted text-sm"></p>
+                      <p className="mt-3 mb-0 text-muted text-sm"> 
+                      </p>
                     </CardBody>
-                  </Card>{" "}
-                  <br />
-                </Col>
-              </>
-            );
-          })}
-        </Row>
+                  </Card> <br />
+                </Col> 
+              )
+            })
+          } 
+        </Row> 
+
         <Row className="mt-5">
           <Col className="mb-5 mb-xl-0" xl="8">
             <Card className="shadow">
@@ -147,30 +155,12 @@ const Index = (props) => {
                 <Row className="align-items-center">
                   <div className="col text-right">
                     <Col className="col-auto">
-                      <div
-                        className="icon icon-shape bg-danger text-white rounded-circle shadow"
-                        onClick={() => {
-                          changeCam(!cam);
-                        }}
-                      >
-                        {cam === true ? (
-                          <BsCameraVideoFill />
-                        ) : (
-                          <BsCameraVideoOffFill />
-                        )}
-                      </div>
-                      &nbsp;
-                      <div
-                        className="icon icon-shape bg-danger text-white rounded-circle shadow"
-                        onClick={() => {
-                          changeMic(!mic);
-                        }}
-                      >
-                        {mic === true ? (
-                          <BsFillMicFill />
-                        ) : (
-                          <BsFillMicMuteFill />
-                        )}
+
+                      <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeCam(!cam)} }>
+                        { cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill /> }
+                      </div>&nbsp;
+                      <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={ () => { changeMic(!mic)} }>
+                        { mic === true ? <BsFillMicFill /> : <BsFillMicMuteFill /> }
                       </div>
                     </Col>
                   </div>
@@ -178,15 +168,22 @@ const Index = (props) => {
               </CardHeader>
             </Card>
             <br />
-            <div>
-              <Button className="mr-4" color="default" size="sm">
-                카메라 선택
-              </Button>
-              <Button className="mr-4" color="default" size="sm">
-                마이크 선택
-              </Button>
-            </div>
-          </Col>
+
+            <div> 
+              <Dropdown>
+                <Dropdown.Toggle className="mr-4" size="sm">카메라 선택</Dropdown.Toggle> 
+                <Dropdown.Menu>
+                  { setCam.map( (data, i) => { return ( <Dropdown.Item>{ data }</Dropdown.Item> ) })}
+                </Dropdown.Menu>
+              </Dropdown>
+              <Dropdown>
+                <Dropdown.Toggle size="sm">마이크 선택</Dropdown.Toggle>
+                <Dropdown.Menu>
+                  { setMic.map( (data, i) => { return ( <Dropdown.Item>{ data }</Dropdown.Item> ) })}
+                </Dropdown.Menu> 
+              </Dropdown>
+            </div> 
+          </Col> 
           <Col className="mb-5 mb-xl-0" xl="4">
             <Card className="shadow">
               <CardHeader className="border-0" style={{ height: "218px" }}>
