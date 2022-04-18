@@ -106,7 +106,11 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     });
 
 
-});
+    socket.io('message', ({name, message}) => {
+        console.log('name: '+ name + 'message: '+ message);
+        io.emit('message',({name, message}))
+    })
+})
 
 
 http.listen(PORT, () => {
