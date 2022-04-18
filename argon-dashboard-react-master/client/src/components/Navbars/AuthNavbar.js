@@ -25,11 +25,11 @@ const AdminNavbar = () => {
         <Container className="px-4">
           <NavbarBrand to="/" tag={Link}>
             <img
-              alt="..."
+              alt="home"
               src={
                 require("../../assets/img/brand/argon-react-white.png").default
               }
-            />
+            /> 3Team
           </NavbarBrand>
           <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
@@ -64,11 +64,19 @@ const AdminNavbar = () => {
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink
-                  className="nav-link-icon"
-                  to="/auth/register"
-                  tag={Link}
-                >
+                <NavLink className="nav-link-icon" to="/admin/tables" tag={Link}>
+                  <i className="ni ni-planet" />
+                  <span className="nav-link-inner--text">Tables</span>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/admin/room" tag={Link}>
+                  <i className="ni ni-planet" />
+                  <span className="nav-link-inner--text">Room</span>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/auth/register" tag={Link} >
                   <i className="ni ni-circle-08" />
                   <span className="nav-link-inner--text">Register</span>
                 </NavLink>

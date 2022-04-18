@@ -11,7 +11,7 @@ const io = require('socket.io')(http, {
 });
 const PORT = 4000;
 const path = require('path');
-const cors = require('cors');
+// const cors = require('cors');
 const bodyParser = require("body-parser");
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
 
