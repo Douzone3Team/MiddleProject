@@ -11,7 +11,6 @@ const io = require('socket.io')(http, {
 });
 const PORT = 4000;
 const path = require('path');
-// const cors = require('cors');
 const bodyParser = require("body-parser");
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
 
@@ -71,12 +70,13 @@ const mysqlDB = mysql.createConnection({   //express mysql conect
 io.on('connection', (socket) => { //소켓이 연결됐을때
     console.log(`New User connected: ${socket.id}`);
     socket.on('message',({name,message}) => { 
+        console.log('message: '+message+'name: '+name );
         io.emit('message',({name, message}))
     })
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        console.log('User disconnected!');
+        // console.log('User disconnected!');
     });
 
     //
@@ -116,12 +116,6 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
             }
         });
     });
-
-
-    socket.io('message', ({name, message}) => {
-        console.log('name: '+ name + 'message: '+ message);
-        io.emit('message',({name, message}))
-    })
 })
 
 
