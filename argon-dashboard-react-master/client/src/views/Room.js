@@ -1,321 +1,329 @@
-// import { useEffect, useState, useRef } from "react";
-// import Peer from 'simple-peer';
-// import styled from 'styled-components';
-// // node.js library that concatenates classes (strings)
-// import classnames from "classnames";
-// import Video from "./examples/Video";
-// import socket from "client_socket";
+import { useEffect, useState, useRef } from "react";
+import AuthNavbar from "../components/Navbars/AuthNavbar";
+import AdminFooter from "components/Footers/AdminFooter.js";
+import Peer from 'simple-peer';
+import styled from 'styled-components';
+// node.js library that concatenates classes (strings)
+import classnames from "classnames";
+import Video from "./examples/Video";
+import socket from "client_socket";
 
 
-// // reactstrap components
-// import {
-//   Button,
-//   Card,
-//   CardHeader,
-//   CardBody,
-//   Container,
-//   Row,
-//   Col,
-//   CardTitle,
-// } from "reactstrap";
-
-
-
-// import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
-// import Header from "components/Headers/Header.js";
+// reactstrap components
+import {
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    Container,
+    Row,
+    Col,
+    CardTitle,
+} from "reactstrap";
 
 
 
-// const Room = (props) => {
-//   const currentUser = sessionStorage.getItem('user');
+import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
+import Header from "components/Headers/Header.js";
 
-//   const [peers, setPeers] = useState([]);
-//   const [userVideoAudio, setUserVideoAudio] = useState({
-//     localUser: { video: true, audio: true },
-//   });
-//   const [videoDevices, setVideoDevices] = useState([]);
-//   const peersRef = useRef([]);
-//   const userVideoRef = useRef();
-//   const userStream = useRef();
-//   const roomId = props.match.params.roomId;
 
-//   function createPeer(userId, caller, stream) {
-//     const peer = new Peer({
-//       initiator: true,
-//       trickle: false,
-//       stream,
-//     });
 
-//     peer.on('signal', (signal) => {
-//       socket.emit('BE-call-user', {
-//         userToCall: userId,
-//         from: caller,
-//         signal,
-//       });
-//     });
-//     peer.on('disconnect', () => {
-//       peer.destroy();
-//     });
+const Room = (props) => {
+    const currentUser = sessionStorage.getItem('user');
 
-//     return peer;
-//   }
+    const [peers, setPeers] = useState([]);
+    const [userVideoAudio, setUserVideoAudio] = useState({
+        localUser: { video: true, audio: true },
+    });
+    const [videoDevices, setVideoDevices] = useState([]);
+    const peersRef = useRef([]);
+    const userVideoRef = useRef();
+    const userStream = useRef();
+    const roomId = props.match.params.roomId;
 
-//   function addPeer(incomingSignal, callerId, stream) {
-//     const peer = new Peer({
-//       initiator: false,
-//       trickle: false,
-//       stream,
-//     });
+    function createPeer(userId, caller, stream) {
+        const peer = new Peer({
+            initiator: true,
+            trickle: false,
+            stream,
+        });
 
-//     peer.on('signal', (signal) => {
-//       socket.emit('BE-accept-call', { signal, to: callerId });
-//     });
+        peer.on('signal', (signal) => {
+            socket.emit('BE-call-user', {
+                userToCall: userId,
+                from: caller,
+                signal,
+            });
+        });
+        peer.on('disconnect', () => {
+            peer.destroy();
+        });
 
-//     peer.on('disconnect', () => {
-//       peer.destroy();
-//     });
+        return peer;
+    }
 
-//     peer.signal(incomingSignal);
+    function addPeer(incomingSignal, callerId, stream) {
+        const peer = new Peer({
+            initiator: false,
+            trickle: false,
+            stream,
+        });
 
-//     return peer;
-//   }
+        peer.on('signal', (signal) => {
+            socket.emit('BE-accept-call', { signal, to: callerId });
+        });
 
-//   function findPeer(id) {
-//     return peersRef.current.find((p) => p.peerID === id);
-//   }
-//   function createUserVideo(peer, index, arr) {
-//     return (
-//       <VideoBox
-//         className={`width-peer${peers.length > 8 ? '' : peers.length}`}
-//         // onClick={expandScreen}
-//         key={index}
-//       >
-//         {writeUserName(peer.userName)}
+        peer.on('disconnect', () => {
+            peer.destroy();
+        });
 
-//         <Video key={index} peer={peer} number={arr.length} />
-//       </VideoBox>
-//     );
-//   }
+        peer.signal(incomingSignal);
 
-//   function writeUserName(userName, index) {
-//     if (userVideoAudio.hasOwnProperty(userName)) {
-//       if (!userVideoAudio[userName].video) {
-//         return <div key={userName}>{userName}</div>;
-//       }
-//     }
-//   }
+        return peer;
+    }
 
-//   /* const [participant, setParticipant] = useState(['참여자1', '참여자2', '참여자3', '참여자4'])
-//   const [message, setMessage] = useState('');
-//   let [cam, changeCam] = useState(true);
-//   let [mic, changeMic] = useState(true);
+    function findPeer(id) {
+        return peersRef.current.find((p) => p.peerID === id);
+    }
+    function createUserVideo(peer, index, arr) {
+        return (
+            <VideoBox
+                className={`width-peer${peers.length > 8 ? '' : peers.length}`}
+                // onClick={expandScreen}
+                key={index}
+            >
+                {writeUserName(peer.userName)}
 
-//   function chatting() {
-//     let newMessage = [...message];
-//     message.unshift(message);
-//     setMessage(newMessage);
-//   } */
+                <Video key={index} peer={peer} number={arr.length} />
+            </VideoBox>
+        );
+    }
 
-//   useEffect(() => {
-//     navigator.mediaDevices.enumerateDevices().then((devices) => {
-//       const filtered = devices.filter((device) => device.kind === 'videoinput');
-//       setVideoDevices(filtered);
-//     });
+    function writeUserName(userName, index) {
+        if (userVideoAudio.hasOwnProperty(userName)) {
+            if (!userVideoAudio[userName].video) {
+                return <div key={userName}>{userName}</div>;
+            }
+        }
+    }
 
-//     // Connect Camera & Mic
-//     navigator.mediaDevices
-//       .getUserMedia({ video: true, audio: true })
-//       .then((stream) => {
-//         userVideoRef.current.srcObject = stream;
-//         userStream.current = stream;
+    /* const [participant, setParticipant] = useState(['참여자1', '참여자2', '참여자3', '참여자4'])
+    const [message, setMessage] = useState('');
+    let [cam, changeCam] = useState(true);
+    let [mic, changeMic] = useState(true);
+  
+    function chatting() {
+      let newMessage = [...message];
+      message.unshift(message);
+      setMessage(newMessage);
+    } */
 
-//         socket.emit('BE-join-room', { roomId, userName: currentUser });
-//         socket.on('FE-user-join', (users) => {
-//           // all users
-//           const peers = [];
-//           users.forEach(({ userId, info }) => {
-//             let { userName, video, audio } = info;
+    useEffect(() => {
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
+            const filtered = devices.filter((device) => device.kind === 'videoinput');
+            setVideoDevices(filtered);
+        });
 
-//             if (userName !== currentUser) {
-//               const peer = createPeer(userId, socket.id, stream);
+        // Connect Camera & Mic
+        navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true })
+            .then((stream) => {
+                userVideoRef.current.srcObject = stream;
+                userStream.current = stream;
 
-//               peer.userName = userName;
-//               peer.peerID = userId;
+                socket.emit('BE-join-room', { roomId, userName: currentUser });
+                socket.on('FE-user-join', (users) => {
+                    // all users
+                    const peers = [];
+                    users.forEach(({ userId, info }) => {
+                        let { userName, video, audio } = info;
 
-//               peersRef.current.push({
-//                 peerID: userId,
-//                 peer,
-//                 userName,
-//               });
-//               peers.push(peer);
+                        if (userName !== currentUser) {
+                            const peer = createPeer(userId, socket.id, stream);
 
-//               setUserVideoAudio((preList) => {
-//                 return {
-//                   ...preList,
-//                   [peer.userName]: { video, audio },
-//                 };
-//               });
-//             }
-//           });
+                            peer.userName = userName;
+                            peer.peerID = userId;
 
-//           setPeers(peers);
-//         });
+                            peersRef.current.push({
+                                peerID: userId,
+                                peer,
+                                userName,
+                            });
+                            peers.push(peer);
 
-//         socket.on('FE-receive-call', ({ signal, from, info }) => {
-//           let { userName, video, audio } = info;
-//           const peerIdx = findPeer(from);
+                            setUserVideoAudio((preList) => {
+                                return {
+                                    ...preList,
+                                    [peer.userName]: { video, audio },
+                                };
+                            });
+                        }
+                    });
 
-//           if (!peerIdx) {
-//             const peer = addPeer(signal, from, stream);
+                    setPeers(peers);
+                });
 
-//             peer.userName = userName;
+                socket.on('FE-receive-call', ({ signal, from, info }) => {
+                    let { userName, video, audio } = info;
+                    const peerIdx = findPeer(from);
 
-//             peersRef.current.push({
-//               peerID: from,
-//               peer,
-//               userName: userName,
-//             });
-//             setPeers((users) => {
-//               return [...users, peer];
-//             });
-//             setUserVideoAudio((preList) => {
-//               return {
-//                 ...preList,
-//                 [peer.userName]: { video, audio },
-//               };
-//             });
-//           }
-//         });
+                    if (!peerIdx) {
+                        const peer = addPeer(signal, from, stream);
 
-//         socket.on('FE-call-accepted', ({ signal, answerId }) => {
-//           const peerIdx = findPeer(answerId);
-//           peerIdx.peer.signal(signal);
-//         });
+                        peer.userName = userName;
 
-//         socket.on('FE-user-leave', ({ userId, userName }) => {
-//           const peerIdx = findPeer(userId);
-//           peerIdx.peer.destroy();
-//           setPeers((users) => {
-//             users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
-//             return [...users];
-//           });
-//           peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
-//         });
-//       });
-//   })
+                        peersRef.current.push({
+                            peerID: from,
+                            peer,
+                            userName: userName,
+                        });
+                        setPeers((users) => {
+                            return [...users, peer];
+                        });
+                        setUserVideoAudio((preList) => {
+                            return {
+                                ...preList,
+                                [peer.userName]: { video, audio },
+                            };
+                        });
+                    }
+                });
 
-//   return (
-//     <>
-//       <Header />
-//       <Container className="mt--7" fluid>
-//         {/* <Row>
-//           {
-//             participant.map(function (data, i) {
-//               return (
-//                 <>
-//                   <Col lg="6" xl="3">
-//                     <Card className="card-stats mb-4 mb-xl-0">
-//                       <CardBody>
-//                         <Row>
-//                           <div className="col">
-//                             <CardTitle tag="h5" className="text-uppercase text-muted mb-0">{data}</CardTitle>
-//                           </div>
-//                           <Col className="col-auto">
-//                           </Col>
-//                         </Row>
-//                         <p className="mt-3 mb-0 text-muted text-sm">
-//                         </p>
-//                       </CardBody>
-//                     </Card> <br />
-//                   </Col>
-//                 </>
-//               )
-//             })
-//           }
-//         </Row> */}
-//         <Row className="mt-5">
-//           <Col className="mb-5 mb-xl-0" xl="8">
-//             <Card className="shadow">
-//               <CardHeader className="border-0" style={{ height: '350px' }}>
-//               </CardHeader>
-//               <div>
-//                 <div className="col text-right">
-//                   {/* <Col className="col-auto">
-//                     <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeCam(!cam) }}>
-//                       {cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill />}
-//                     </div>&nbsp;
-//                     <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeMic(!mic) }}>
-//                       {mic === true ? <BsFillMicFill /> : <BsFillMicMuteFill />}
-//                     </div>
-//                   </Col> */}
-//                 </div>
-//                 <VideoBox className={`width-peer${peers.length > 8 ? '' : peers.length}`}>
-//                   {userVideoAudio['localUser'].video ? null : (
-//                     <div>{currentUser}</div>
-//                   )}
-//                   <MyVideo
-//                     ref={userVideoRef}
-//                     muted
-//                     autoPlay
-//                     playsInline
-//                   ></MyVideo>
-//                 </VideoBox>
-//                 {peers &&
-//                   peers.map((peer, index, arr) => createUserVideo(peer, index, arr))}
-//               </div>
-//             </Card>
-//             <br />
-//             <div>
-//               <Button className="mr-4" color="default" size="sm">카메라 선택</Button>
-//               <Button className="mr-4" color="default" size="sm">마이크 선택</Button>
-//             </div>
-//           </Col>
-//           <Col className="mb-5 mb-xl-0" xl="4">
-//             {/* <Card className="shadow">
-//               <CardHeader className="border-0" style={{ height: '218px' }}>
-//                 <Row className="align-items-center">
-//                   <div className="col">받은 메세지</div>
-//                 </Row>
-//                 <Row className="align-items-center">
-//                   <div className="col text-right">보낸 메세지 {message} </div>
-//                 </Row>
-//               </CardHeader>
-//               <CardHeader className="border-0">
-//                 <Row className="align-items-center">
-//                   <div className="col text-right">
-//                     <hr />
-//                     <input onChange={(e) => { setMessage(e.target.value) }} style={{ width: '80%', border: 'none' }} />
-//                     <Button color="primary" onClick={chatting} size="sm">SEND</Button>
-//                   </div>
-//                 </Row>
-//               </CardHeader>
-//             </Card> */}
-//           </Col>
-//         </Row>
-//       </Container>
-//     </>
-//   );
-// };
+                socket.on('FE-call-accepted', ({ signal, answerId }) => {
+                    const peerIdx = findPeer(answerId);
+                    peerIdx.peer.signal(signal);
+                });
 
-// const MyVideo = styled.video``;
+                socket.on('FE-user-leave', ({ userId, userName }) => {
+                    const peerIdx = findPeer(userId);
+                    peerIdx.peer.destroy();
+                    setPeers((users) => {
+                        users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
+                        return [...users];
+                    });
+                    peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
+                });
+            });
+    })
 
-// const VideoBox = styled.div`
-//   position: relative;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   > video {
-//     top: 0;
-//     left: 0;
-//     width: 100%;
-//     height: 100%;
-//   }
+    return (
+        <>
+            <div className="main-content">
+                <AuthNavbar />
+                <Header />
+                <Container className="mt--7" fluid>
+                    {/* <Row>
+          {
+            participant.map(function (data, i) {
+              return (
+                <>
+                  <Col lg="6" xl="3">
+                    <Card className="card-stats mb-4 mb-xl-0">
+                      <CardBody>
+                        <Row>
+                          <div className="col">
+                            <CardTitle tag="h5" className="text-uppercase text-muted mb-0">{data}</CardTitle>
+                          </div>
+                          <Col className="col-auto">
+                          </Col>
+                        </Row>
+                        <p className="mt-3 mb-0 text-muted text-sm">
+                        </p>
+                      </CardBody>
+                    </Card> <br />
+                  </Col>
+                </>
+              )
+            })
+          }
+        </Row> */}
+                    <Row className="mt-5">
+                        <Col className="mb-5 mb-xl-0" xl="8">
+                            <Card className="shadow">
+                                <CardHeader className="border-0" style={{ height: '350px' }}>
+                                </CardHeader>
+                                <div>
+                                    <div className="col text-right">
+                                        {/* <Col className="col-auto">
+                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeCam(!cam) }}>
+                      {cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill />}
+                    </div>&nbsp;
+                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeMic(!mic) }}>
+                      {mic === true ? <BsFillMicFill /> : <BsFillMicMuteFill />}
+                    </div>
+                  </Col> */}
+                                    </div>
+                                    <VideoBox className={`width-peer${peers.length > 8 ? '' : peers.length}`}>
+                                        {userVideoAudio['localUser'].video ? null : (
+                                            <div>{currentUser}</div>
+                                        )}
+                                        <MyVideo
+                                            ref={userVideoRef}
+                                            muted
+                                            autoPlay
+                                            playsInline
+                                        ></MyVideo>
+                                    </VideoBox>
+                                    {peers &&
+                                        peers.map((peer, index, arr) => createUserVideo(peer, index, arr))}
+                                </div>
+                            </Card>
+                            <br />
+                            <div>
+                                <Button className="mr-4" color="default" size="sm">카메라 선택</Button>
+                                <Button className="mr-4" color="default" size="sm">마이크 선택</Button>
+                            </div>
+                        </Col>
+                        <Col className="mb-5 mb-xl-0" xl="4">
+                            {/* <Card className="shadow">
+              <CardHeader className="border-0" style={{ height: '218px' }}>
+                <Row className="align-items-center">
+                  <div className="col">받은 메세지</div>
+                </Row>
+                <Row className="align-items-center">
+                  <div className="col text-right">보낸 메세지 {message} </div>
+                </Row>
+              </CardHeader>
+              <CardHeader className="border-0">
+                <Row className="align-items-center">
+                  <div className="col text-right">
+                    <hr />
+                    <input onChange={(e) => { setMessage(e.target.value) }} style={{ width: '80%', border: 'none' }} />
+                    <Button color="primary" onClick={chatting} size="sm">SEND</Button>
+                  </div>
+                </Row>
+              </CardHeader>
+            </Card> */}
+                        </Col>
+                    </Row>
+                </Container>
+                <Container fluid>
+                    <AdminFooter />
+                </Container>
+            </div>
+        </>
+    );
+};
 
-//   :hover {
-//     > i {
-//       display: block;
-//     }
-//   }
-// `;
+const MyVideo = styled.video``;
 
-// export default Room;
+const VideoBox = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  > video {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  :hover {
+    > i {
+      display: block;
+    }
+  }
+`;
+
+export default Room;
