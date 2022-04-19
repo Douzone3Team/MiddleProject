@@ -27,7 +27,6 @@ app.get('/*', function (req, res) {
 // // }
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
-    console.log(socket);
     console.log(`New User connected: ${socket.id}`);
 
     //연결해제
