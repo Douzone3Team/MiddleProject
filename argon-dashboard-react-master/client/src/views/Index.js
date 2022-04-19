@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 // node.js library that concatenates classes (strings)
 
-import socket from "../client_socket"
+import socket from "../client_socket";
 
 // reactstrap components
 import {
@@ -17,51 +17,61 @@ import {
 } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
-import { Link } from "react-router-dom";
-// import CreateRoom from "components/CreateRoom.js";
+import { v1 as uuid } from "uuid";
+
 
 
 const Index = (props) => {
   const roomRef = useRef();
-  const [roomName, setRoomName] = useState("");
+  const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
   const userRef = useRef();
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState('');
+  const userUuid = uuid();
+  let roomName = '';
+  let userName = '';
 
-  //RoomName 변경
-  const CreateRoom = (event) => setRoomName(event.target.value);
+  //roomInput 변경
+  const onCreateRoom = (event) => {
+    event.preventDefault();
+    setRoomInput(event.target.value);
+  }
 
-  //변경된 RoomName을 배열에 저장
-  const onSubmit = (event) => {
-    // const roomName = roomRef.current.value;
-
+  //변경된 roomInput을 배열에 저장
+  const onRoomList = (event) => {
     //새로고침 방지
     event.preventDefault();
-    // if (!roomName) {
-    //   setErr(true);
-    //   setErrMsg('Room Name');
-    // } else {
-    //   socket.emit('BE-check-user', { roomId: roomName });
-    // }
-    setRoomNames((currentArray) => [...currentArray, roomName]);//배열에 roomName 추가
-    setRoomName(" "); //input창 초기화 -> 작동안함
+    setRoomNames((currentArray) => [...currentArray, roomInput]);//배열에 roomName 추가
+    setRoomInput(" "); //input창 초기화
   }
 
   useEffect(() => {
-    socket.on('FE-error-user-exist', ({ error }) => {
-      if (!error) { //에러가 없으면
-        const roomName = roomRef.current.value;
+    socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 
-        props.history.push(`/room/${roomName}`); // roomName으로 push
+      if (!error) { //에러가 없으면
+        sessionStorage.setItem('user', userName);
+        props.history.push(`/index/${roomId}`); // roomName으로 push
+      } else {
+        setErr(error);
+        setErrMsg('User name already exist');
       }
     });
   }, [props.history]);
 
-  function clickJoin() {
-    const Rooms = roomRef.current.value;;
 
-  }
+  function clickJoin(item) {
+    roomRef.current.value = item;
+    roomName = item;
+    userName = userUuid;
+
+    if (!roomName || !userName) {
+      setErr(true);
+      setErrMsg('Enter Room Name or User Name');
+    } else {
+      socket.emit('BE-check-user', { roomId: roomName, userName });
+    }
+  };
 
 
   return (
@@ -79,13 +89,14 @@ const Index = (props) => {
                   </Col>
                   <Col className="" >
                     {/* roomName Input */}
-                    <Form onSubmit={onSubmit}>
-                      <Input className="text-right" size="" type="text" id="roomName"
-                        ref={roomRef} placeholder="방 이름" onChange={CreateRoom} />
+                    <Form id="form1" onSubmit={onRoomList} >
+                      <Input className="text-right" value={roomInput} type="text" id="roomName"
+                        ref={roomRef} placeholder="방 이름" onChange={onCreateRoom} />
                       <Button
                         color="primary"
-                        value={roomName}
                         size="sm"
+                        type="submit"
+                        form="form1"
                       >방 생성</Button>
                     </Form>
                   </Col>
@@ -97,17 +108,17 @@ const Index = (props) => {
                   <tr>
                     <th >방 이름</th>
                     <th scope="col"> </th>
-                    <th scope="col"> </th>
                     <th scope="col">참여인원</th>
+                    <th scope="col"> </th>
                   </tr>
                 </thead>
                 <tbody>
                   {roomNames.map((item, index) => ( //map함수 이용, 저장된 roomName으로 테이블 row 생성
                     <tr key={index}>
                       <th >{item}</th>
-                      <td scope="col"> </td>
-                      <td scope="col"> </td>
-                      <td scope="col"><Button color="primary" size="sm"><Link to={`/room/${roomName}`}>참여</Link></Button></td>
+                      <td> </td>
+                      <td> </td>
+                      <td><Button onClick={() => clickJoin(item)} color="primary" size="sm">참여</Button></td>
                     </tr>
                   ))}
                 </tbody>

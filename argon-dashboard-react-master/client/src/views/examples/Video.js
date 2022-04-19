@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Video } from "reactstrap";
+
 
 const Video = (props) => {
     const ref = useRef();
@@ -14,11 +14,12 @@ const Video = (props) => {
     }, [peer]);
 
     return (
-        <Video
-            playsInline
-            autoPlay
-            ref={ref}
-        />
+        <>
+            <div playsInline autoPlay ref={ref}>
+            </div>
+        </>
+
+
     );
 };
 
