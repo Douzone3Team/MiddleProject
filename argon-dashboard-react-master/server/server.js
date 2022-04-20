@@ -1,6 +1,8 @@
 const express = require('express');
+const mysql = require('mysql');
 const app = express();
 const http = require('http').createServer(app);
+const cors = require('cors');
 const io = require('socket.io')(http, {
     cors: {
         origin: "*",
@@ -9,12 +11,45 @@ const io = require('socket.io')(http, {
 });
 const PORT = 4000;
 const path = require('path');
+const bodyParser = require("body-parser");
+// require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
+
 
 let socketList = {};
 //개발
+app.use(cors());
 app.use(express.static(path.join(__dirname, '../client/public')));
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '../client/public/index.html'));
+});
+
+app.use(bodyParser.urlencoded({ extended:false}))
+app.use(bodyParser.json());
+
+
+app.post('/api/login',(req,res) => {
+    const data = req.body;   
+    const getId = data.id.id;
+    const getPass = data.pass.pass;
+    console.log(data);
+    console.log(getId + " " + getPass);
+    
+    const sql = "SELECT * FROM user";
+    mysqlDB.query(sql,function(err, results) {
+        if(err) console.log(err);
+        else res.send(results);
+        console.log(results);
+    });
+
+    
+});
+
+const mysqlDB = mysql.createConnection({   //express mysql conect
+    host:'kosa2.iptime.org', 
+    user:'rok', 
+    password:'1234', 
+    port:50324, 
+    database:'chat_db' 
 });
 
 // //배포
@@ -24,15 +59,20 @@ app.get('/*', function (req, res) {
 // app.get('/*', function (req, res) {
 //     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 // });
-// // }
+// }
+// console.log(io._parser.);
+
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
     console.log(`New User connected: ${socket.id}`);
-
+    socket.on('message',({name,message}) => { 
+        console.log('message: '+message+'name: '+name );
+        io.emit('message',({name, message}))
+    })
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        console.log('User disconnected!');
+        // console.log('User disconnected!');
     });
 
     //
@@ -75,6 +115,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     });
 
+
     socket.on('BE-call-user', ({ userToCall, from, signal }) => {
         io.to(userToCall).emit('FE-receive-call', {
             signal,
@@ -112,9 +153,10 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
             .to(roomId)
             .emit('FE-toggle-camera', { userId: socket.id, switchTarget });
     });
-
-
 });
+
+
+
 
 
 http.listen(PORT, () => {

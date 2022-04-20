@@ -17,6 +17,7 @@ import {
   DropdownToggle,
   Media,
 } from "reactstrap";
+import { FaUserFriends } from "react-icons/fa"; 
 
 const AdminNavbar = () => {
   return (
@@ -25,11 +26,11 @@ const AdminNavbar = () => {
         <Container className="px-4">
           <NavbarBrand to="/" tag={Link}>
             <img
-              alt="..."
+              alt="home"
               src={
                 require("../../assets/img/brand/argon-react-white.png").default
               }
-            />
+            /> 3Team
           </NavbarBrand>
           <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
@@ -64,11 +65,19 @@ const AdminNavbar = () => {
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink
-                  className="nav-link-icon"
-                  to="/auth/register"
-                  tag={Link}
-                >
+                <NavLink className="nav-link-icon" to="/admin/tables" tag={Link}>
+                  <i className="ni ni-planet" />
+                  <span className="nav-link-inner--text">Tables</span>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/admin/room" tag={Link}>
+                  <i className="ni ni-planet" />
+                  <span className="nav-link-inner--text">Room</span>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/auth/register" tag={Link} >
                   <i className="ni ni-circle-08" />
                   <span className="nav-link-inner--text">Register</span>
                 </NavLink>
@@ -118,17 +127,19 @@ const AdminNavbar = () => {
                       <span>My profile</span>
                     </DropdownItem>
                     <DropdownItem to="/admin/user-profile" tag={Link}>
+                      {/* <i className="ni ni-calendar-grid-58" />
+                      <i className="ni ni-calendar-grid-58" /> */}
+                      <FaUserFriends />
+                      <span>Friends</span>
+                    </DropdownItem>
+                    <DropdownItem to="/admin/user-profile" tag={Link}>
                       <i className="ni ni-settings-gear-65" />
                       <span>Settings</span>
                     </DropdownItem>
-                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                      <i className="ni ni-calendar-grid-58" />
-                      <span>Activity</span>
-                    </DropdownItem>
-                    <DropdownItem to="/admin/user-profile" tag={Link}>
+                    {/* <DropdownItem to="/admin/user-profile" tag={Link}>
                       <i className="ni ni-support-16" />
                       <span>Support</span>
-                    </DropdownItem>
+                    </DropdownItem> */}
                     <DropdownItem divider />
                     <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
                       <i className="ni ni-user-run" />
