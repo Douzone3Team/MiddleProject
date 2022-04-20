@@ -54,6 +54,7 @@
 *,
 *::before,
 *::after {
+  height:100%;
   box-sizing: border-box; }
 
 html {
@@ -1438,6 +1439,7 @@ pre {
 
 @media (max-width: 767.98px) {
   .table-responsive-md {
+    min-height:400px;
     display: block;
     width: 100%;
     overflow-x: auto;
@@ -1447,6 +1449,7 @@ pre {
 
 @media (max-width: 991.98px) {
   .table-responsive-lg {
+    min-height:400px;
     display: block;
     width: 100%;
     overflow-x: auto;
@@ -1456,6 +1459,7 @@ pre {
 
 @media (max-width: 1199.98px) {
   .table-responsive-xl {
+    min-height:400px;
     display: block;
     width: 100%;
     overflow-x: auto;
@@ -1464,6 +1468,7 @@ pre {
       border: 0; } }
 
 .table-responsive {
+  min-height:400px;
   display: block;
   width: 100%;
   overflow-x: auto;
@@ -12098,8 +12103,9 @@ a.btn-icon-only {
     .close:hover span:not(.sr-only), .close:focus span:not(.sr-only) {
       background-color: transparent; }
 
-.main-content {
-  position: relative; }
+  .main-content{
+    position:relative;
+  }
   .main-content .navbar-top {
     position: absolute;
     left: 0;

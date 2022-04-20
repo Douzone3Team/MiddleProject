@@ -26,15 +26,19 @@ app.get('/*', function (req, res) {
 app.use(bodyParser.urlencoded({ extended:false}))
 app.use(bodyParser.json());
 
-
+//로그인 기능
 app.post('/api/login',(req,res) => {
+    //요청해서 서버로 받아온 데이터
     const data = req.body;   
     const getId = data.id.id;
     const getPass = data.pass.pass;
     console.log(data);
     console.log(getId + " " + getPass);
     
-    const sql = "SELECT * FROM user";
+    //쿼리 작성
+    const sql = `SELECT * FROM user WHERE u_id = ${getId}`;
+
+    //Mysql로 쿼리 동작
     mysqlDB.query(sql,function(err, results) {
         if(err) console.log(err);
         else res.send(results);
@@ -43,6 +47,33 @@ app.post('/api/login',(req,res) => {
 
     
 });
+
+//회원가입 기능
+app.post('/api/register', (req,res) => {
+    const data = req.body; const getName = data.name.name; 
+    const getId = data.id.id; const getPass = data.pass.pass;
+    const sql =`INSERT INTO user(u_id, u_pass, u_name) VALUES('${getId}', '${getPass}', '${getName}')`;
+    console.log(sql);
+    mysqlDB.query(sql,function(err, results) {
+        if(err) console.log("이미 등록된 아이디입니다.");
+        else res.send(true);
+    })
+})
+
+
+//방 생성 기능
+app.post('/api/createRoom',(req,res) => {
+    const data = req.body.roomName; //clients에서 받아온 데이터
+    const sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'aaaa' )` //방생성 쿼리
+    
+    mysqlDB.query(sql,function(err, results) { //db에 생성할 방 INSERT
+        if(err) console.log(err);
+        else console.log("추가완료");
+    });
+                                 
+    sql = 'SELECT u_id, r_name FROM '
+    mysqlDB.query()
+})
 
 const mysqlDB = mysql.createConnection({   //express mysql conect
     host:'kosa2.iptime.org', 
@@ -95,7 +126,9 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
 
 
 
-    // //Join Room
+
+
+    //Join Room
     // socket.on('BE-join-room', ({ roomId, userName }) => {
     //     // Socket Join RoomName
     //     socket.join(roomId);
