@@ -96,17 +96,19 @@ const mysqlDB = mysql.createConnection({   //express mysql conect
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
     console.log(`New User connected: ${socket.id}`);
-    socket.on('message',({name,message}) => { 
-        console.log('message: '+message+'name: '+name );
-        io.emit('message',({name, message}))
-    })
+
+    // 채팅연결 - git
+    socket.on('BE-send-message', ({msg, sender}) => {
+        io.sockets.emit('FE-receive-message', { msg, sender});
+    });
+
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        // console.log('User disconnected!');
+        console.log('User disconnected!');
     });
 
-    //
+    // //
     socket.on('BE-check-user', ({ roomId, userName }) => {
         let error = false;
         console.log(roomId);
@@ -121,6 +123,8 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         //     console.log(2);
         // });
     });
+
+
 
 
 
