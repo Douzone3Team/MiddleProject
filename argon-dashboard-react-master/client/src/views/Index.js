@@ -40,7 +40,7 @@ const Index = (props) => {
         console.log(roomInput);
         axios.post(url,datas).then((Response) =>{
           
-          console.log(Response);
+          // console.log(Response);
         }).catch((ex) => {
           console.log(ex);
         })

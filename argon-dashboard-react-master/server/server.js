@@ -14,6 +14,13 @@ const path = require('path');
 const bodyParser = require("body-parser");
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
 
+const mysqlDB = mysql.createConnection({   //express mysql conect
+    host:'kosa2.iptime.org', 
+    user:'rok', 
+    password:'1234', 
+    port:50324, 
+    database:'chat_db' 
+});
 
 let socketList = {};
 //개발
@@ -72,16 +79,10 @@ app.post('/api/createRoom',(req,res) => {
     });
                                  
     sql = 'SELECT u_id, r_name FROM '
-    mysqlDB.query()
+    // mysqlDB.query()
 })
 
-const mysqlDB = mysql.createConnection({   //express mysql conect
-    host:'kosa2.iptime.org', 
-    user:'rok', 
-    password:'1234', 
-    port:50324, 
-    database:'chat_db' 
-});
+
 
 // //배포
 // // if (process.env.NODE_ENV === 'production') {
