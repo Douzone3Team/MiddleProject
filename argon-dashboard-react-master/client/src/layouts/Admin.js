@@ -26,7 +26,7 @@ const Admin = (props) => {
       if (prop.layout === "/admin") {
         return (
           <Route
-            path={prop.layout + prop.path}
+            path={prop.path}
             component={prop.component}
             key={key}
           />
@@ -65,7 +65,7 @@ const Admin = (props) => {
 
         <Switch>
           {getRoutes(routes)}
-          <Redirect from="*" to="/admin/index" />
+          
         </Switch>
         <Container fluid>
           <AdminFooter />
