@@ -6,22 +6,10 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import socket from "../client_socket";
 
 // reactstrap components
-import {
-  Button,
-  Card,
-  CardHeader,
-  Input,
-  Table,
-  Container,
-  Row,
-  Col,
-  Form,
-} from "reactstrap";
+import { Button, Card, CardHeader,  Table, Container, Row, Col } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
-import { v1 as uuid } from "uuid";
-
-
+import { v1 as uuid } from "uuid"; 
 
 const Index = (props) => {
   const roomRef = useRef();
@@ -43,9 +31,16 @@ const Index = (props) => {
   //변경된 roomInput을 배열에 저장
   const onRoomList = (event) => {
     //새로고침 방지
-    event.preventDefault();
-    setRoomNames((currentArray) => [...currentArray, roomInput]);//배열에 roomName 추가
-    setRoomInput(" "); //input창 초기화
+    event.preventDefault(); 
+    
+    //방 제목을 입력하지 않을 경우 alert창
+    if(roomInput.length <= 1) {
+      alert("방 제목을 입력해주세요.")
+      return false
+    } else {
+      setRoomNames((currentArray) => [...currentArray, roomInput]); //배열에 roomName 추가
+      setRoomInput(" "); //input창 초기화 
+    }
   }
 
   useEffect(() => {
@@ -77,34 +72,45 @@ const Index = (props) => {
 
 
   return (
-    <>
       <div className="main-content">
+      {/* <div className="main-content"> */}
         <AuthNavbar />
         <Header />
         {/* Page content */}
-        <Container className="mt--7" fluid>
+        <Container className="mt--7" fluid style={{minHeight:'383px'}}>
           <Row className="mt-5">
             <Col className="mb-5 mb-xl-0" >
               <Card className="shadow">
                 <CardHeader className="border-0">
                   <Row className="align-items-center" >
-                    <Col className="col-sm-5">
+                    {/* <Col className="col-sm-5"> */}
+                    <Col className="">
                       <h3 className="mb-0">방 목록</h3>
+                    </Col> 
+                    <Col>
+                    <form id="form1" onSubmit={onRoomList}> 
+                      <Card> 
+                        <CardHeader className="border-0">
+                          <Row className="align-items-center">
+                            <div className="col text-right">
+                              <input className="text-left" value={roomInput} type="text" id="roomName"
+                                ref={roomRef} placeholder="방 이름" autoFocus onChange={onCreateRoom} style={{ width: "80%", border: "none" }}
+                              />
+                              <Button color="primary" size="sm" type="submit" form="form1" >방 생성</Button>
+                            </div>
+                          </Row>
+                        </CardHeader>
+                      </Card>
+                    </form> 
                     </Col>
-                    <Col className="" >
+                    {/* <Col className="" >  */}
                       {/* roomName Input */}
-                      <Form id="form1" onSubmit={onRoomList} >
-                        <Input className="text-right" value={roomInput} type="text" id="roomName"
-                          ref={roomRef} placeholder="방 이름" onChange={onCreateRoom} />
-                        <Button
-                          color="primary"
-                          size="sm"
-                          type="submit"
-                          form="form1"
-                        >방 생성</Button>
-                      </Form>
-                    </Col>
-
+                      {/* <Form id="form1" onSubmit={onRoomList} >
+                        <Input className="text-left" value={roomInput} type="text" id="roomName"
+                          ref={roomRef} placeholder="방 이름" onChange={onCreateRoom} md={3} />
+                        <Button color="primary" size="sm" type="submit" form="form1" >방 생성</Button>
+                      </Form> */}
+                    {/* </Col> */}
                   </Row>
                 </CardHeader>
                 <Table hover className="align-items-center table-flush" responsive>
@@ -131,11 +137,10 @@ const Index = (props) => {
             </Col>
           </Row>
         </Container>
-        <Container fluid>
+        <Container fluid  >
           <AdminFooter />
         </Container>
       </div>
-    </>
   );
 };
 
