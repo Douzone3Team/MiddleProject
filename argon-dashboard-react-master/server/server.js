@@ -215,11 +215,14 @@ app.post('/api/createRoom',(req,res) => {
 
 
 
-//     //Join Room
-//     // socket.on('BE-join-room', ({ roomId, userName }) => {
-//     //     // Socket Join RoomName
-//     //     socket.join(roomId);
-//     //     socketList[socket.id] = { userName, video: true, audio: true };
+
+
+    //Join Room
+    // socket.on('BE-join-room', ({ roomId, userName }) => {
+    //     // Socket Join RoomName
+    //     socket.join(roomId);
+    //     socketList[socket.id] = { userName, video: true, audio: true };
+
 
 //     //     // Set User List
 //     //     io.sockets.in(roomId).clients((err, clients) => {

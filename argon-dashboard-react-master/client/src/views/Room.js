@@ -9,16 +9,7 @@ import Video from "./examples/Video";
 import socket from "client_socket";
 import { setCookie, getCookie } from '../cookie/cookie';
 // reactstrap components
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  Container,
-  Row,
-  Col,
-  CardTitle,
-} from "reactstrap";
+import { Button, Card, CardHeader, CardBody, Container, Row, Col, CardTitle, } from "reactstrap";
 
 //socekt(server-client)연결
 
@@ -26,12 +17,7 @@ import TextField from "@material-ui/core/TextField";
 
 // reactstrap components
 import Header from "components/Headers/Header.js";
-import {
-  BsCameraVideoFill,
-  BsCameraVideoOffFill,
-  BsFillMicFill,
-  BsFillMicMuteFill,
-} from "react-icons/bs";
+import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill, } from "react-icons/bs";
 import { Dropdown } from "react-bootstrap";
 // import Friends from '../variables/Friends'
 
@@ -52,17 +38,15 @@ const Room = (props) => {
   const [msg, setMsg] = useState([]);
   const messagesEndRef = useRef(null);
   const inputRef = useRef();
+  //채팅 메세지에 표시할 시간
   const [time, setTime] = useState('');
 
-  const [participant, setParticipant] = useState([
-    "참여자1",
-    "참여자2",
-    "참여자3",
-    "참여자4",
-  ]);
-
+  //다른 참여자의 Cam (임의데이터)
+  const [participant, setParticipant] = useState([ "참여자1", "참여자2", "참여자3", "참여자4",]);
+  // 화상통화 시 카메라/마이크 끄고 켜기
   const [cam, changeCam] = useState(true);
   const [mic, changeMic] = useState(true);
+  // 화상통화 할 카메라/마이크 설정바꾸기
   const [setCam, selectCam] = useState(["mode1_cam", "mode2_cam", "mode3_cam"]);
   const [setMic, selectMic] = useState(["mode1_mic", "mode2_mic", "mode3_mic"]);
 
@@ -181,7 +165,6 @@ const Room = (props) => {
       console.log(msg);
 
       if (msg) { 
-
         socket.emit("BE-send-message", { msg, sender: currentUser });
         inputRef.current.value = "";
       }
@@ -206,7 +189,6 @@ const Room = (props) => {
     peer.on("disconnect", () => {
       peer.destroy();
     });
-
     return peer;
   }
 
@@ -233,15 +215,15 @@ const Room = (props) => {
   function findPeer(id) {
     return peersRef.current.find((p) => p.peerID === id);
   }
+
   function createUserVideo(peer, index, arr) {
     return (
-      <VideoBox
+      <VideoBox 
         className={`width-peer${peers.length > 8 ? "" : peers.length}`}
         // onClick={expandScreen}
-        key={index}
+        key={index} 
       >
         {writeUserName(peer.userName)}
-
         <Video key={index} peer={peer} number={arr.length} />
       </VideoBox>
     );
@@ -253,18 +235,7 @@ const Room = (props) => {
         return <div key={userName}>{userName}</div>;
       }
     }
-  }
-
-  /* const [participant, setParticipant] = useState(['참여자1', '참여자2', '참여자3', '참여자4'])
-    const [message, setMessage] = useState('');
-    let [cam, changeCam] = useState(true);
-    let [mic, changeMic] = useState(true);
-  
-    function chatting() {
-      let newMessage = [...message];
-      message.unshift(message);
-      setMessage(newMessage);
-    } */
+  } 
 
   return (
     <>
@@ -273,18 +244,15 @@ const Room = (props) => {
         <Header />
         <Container className="mt--7" fluid>
           <Row>
-            {participant.map((data, i) => {
+            { participant.map((data, i) => {
               return (
                 <Col lg="6" xl="3" key={data}>
                   <Card className="card-stats mb-4 mb-xl-0">
                     <CardBody>
                       <Row>
-                        <div className="col">
-                          <CardTitle
-                            tag="h5"
-                            className="text-uppercase text-muted mb-0"
-                          >
-                            {data}
+                        <div className="col" >
+                          <CardTitle tag="h5" className="text-uppercase text-muted mb-0" >
+                            { data }
                           </CardTitle>
                         </div>
                       </Row>
@@ -296,15 +264,11 @@ const Room = (props) => {
             })}
           </Row>
           <Row className="mt-5">
-            <Col className="mb-5 mb-xl-0" xl="8">
-              <Card className="shadow">
-                {/* <CardHeader
-                  className="border-0"
-                  style={{ height: "350px" }}
-                ></CardHeader> */}
+            <Col className="mb-5 mb-xl-0" xl="9" >
+              <Card className="shadow"> 
                 <div>
                   <div className="col text-right">
-                    {/* <Col className="col-auto">
+                  {/* <Col className="col-auto">
                     <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeCam(!cam) }}>
                       {cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill />}
                     </div>&nbsp;
@@ -337,49 +301,42 @@ const Room = (props) => {
               <br />
               <div>
                 <Dropdown>
-                  <Dropdown.Toggle className="mr-4" size="sm">
-                    카메라 선택
-                  </Dropdown.Toggle>
+                  <Dropdown.Toggle className="mr-4" size="sm"> 카메라 선택 </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {setCam.map((data, i) => {
-                      return <Dropdown.Item>{data}</Dropdown.Item>;
-                    })}
+                    {setCam.map((data, i) => { return <Dropdown.Item>{ data }</Dropdown.Item>; })}
                   </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown>
                   <Dropdown.Toggle size="sm">마이크 선택</Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {setMic.map((data, i) => {
-                      return <Dropdown.Item>{data}</Dropdown.Item>;
-                    })}
+                    {setMic.map((data, i) => { return <Dropdown.Item>{ data }</Dropdown.Item>; })}
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
             </Col>
             <Col className="mb-5 mb-xl-0" xl="3">
               <Card className="shadow">
-                <CardHeader className="border-0" style={{ height: "420px" }}>
+                <CardHeader className="border-0" style={{ height: "46vh", overflow: "auto" }}>
                   <div>
                     {msg &&
                       msg.map(({ sender, msg }, idx) => {
                         if (sender !== currentUser) {
                           return (
                             <div key={idx}>
-                              <strong> 상대방: &nbsp;{msg}</strong>
+                              <strong> 상대방: &nbsp;{ msg }</strong>
                             </div>
                           );
                         } else {
                           return (
-                            <div className="col text-right" key={idx}>
-                              <strong>{msg} &nbsp; :나</strong>
+                            // <div className="col text-right" key={idx}>
+                            <div className="col text-right" key={idx} style={{background: 'lightgreen', borderRadius: '6px', width: 'auto'}}>
+                              {/* <strong>{ msg } &nbsp; :나</strong> */}
+                              <strong>{ msg } &nbsp; </strong>
                             </div>
                           );
                         }
                       })}
-                    <div
-                      style={{ float: "left", clear: "both" }}
-                      ref={messagesEndRef}
-                    />
+                    <div style={{ float: "left", clear: "both" }} ref={messagesEndRef} />
                   </div>
                 </CardHeader>
                 <CardHeader className="border-0">
@@ -392,9 +349,7 @@ const Room = (props) => {
                         placeholder="Enter your message"
                         style={{ width: "80%", border: "none" }}
                       />
-                      <Button className="timeBtn" color="primary" size="sm">
-                        SEND
-                      </Button>
+                      <Button color="primary" size="sm">SEND</Button>
                     </div>
                   </Row>
                 </CardHeader>
@@ -420,7 +375,7 @@ const VideoBox = styled.div`
   > video {
     top: 0;
     left: 0;
-    width: 100%;
+    width: 80vh;
     height: 100%;
   }
 
@@ -428,56 +383,6 @@ const VideoBox = styled.div`
     > i {
       display: block;
     }
-  }
-`;
-
-const Message = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  font-size: 16px;
-  margin-top: 15px;
-  margin-left: 15px;
-  text-align: left;
-  > strong {
-    margin-left: 3px;
-  }
-  > p {
-    max-width: 65%;
-    width: auto;
-    padding: 9px;
-    margin-top: 3px;
-    border: 1px solid rgb(78, 161, 211, 0.3);
-    border-radius: 15px;
-    box-shadow: 0px 0px 3px #4ea1d3;
-    font-size: 14px;
-  }
-`;
-
-const UserMessage = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  width: 100%;
-  font-size: 16px;
-  margin-top: 15px;
-  text-align: right;
-  > strong {
-    margin-right: 35px;
-  }
-  > p {
-    max-width: 65%;
-    width: auto;
-    padding: 9px;
-    margin-top: 3px;
-    margin-right: 30px;
-    border: 1px solid rgb(78, 161, 211, 0.3);
-    border-radius: 15px;
-    background-color: #4ea1d3;
-    color: white;
-    font-size: 14px;
-    text-align: left;
   }
 `;
 
