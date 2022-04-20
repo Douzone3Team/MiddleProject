@@ -99,6 +99,7 @@
     "react-app-polyfill": "^2.0.0",
     "react-bootstrap": "^2.2.3",
     "react-chartjs-2": "2.11.1",
+    "react-cookie": "^4.1.1",
     "react-copy-to-clipboard": "5.0.3",
     "react-datetime": "3.0.4",
     "react-dev-utils": "^11.0.3",
@@ -118,12 +119,10 @@
     "styled-components": "^5.3.5",
     "terser-webpack-plugin": "4.2.3",
     "ts-pnp": "1.2.0",
+    "universal-cookie": "^4.0.4",
     "url-loader": "4.1.1",
-
-    "uuid": "^8.3.2",
-
     "url-search-params-polyfill": "^8.1.1",
-
+    "uuid": "^8.3.2",
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "5.1.4"
   },

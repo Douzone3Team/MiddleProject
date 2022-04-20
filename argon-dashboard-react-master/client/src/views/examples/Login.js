@@ -17,7 +17,7 @@ import {
   Col,
 } from "reactstrap";
 
-const Login = () => {
+const Login = (props) => {
   const [id, setId] = useState('');
   const [pass,setPass] = useState('');
   
@@ -40,7 +40,12 @@ const Login = () => {
         }
         console.log(id + " " + pass);
         await axios.post(url,data).then((Response) =>{
-          
+          console.log(Response.data);
+          const getData = Response.data;
+          if(getData) {
+            
+            props.history.push("/");
+          }
         }).catch((ex) => {
           console.log(ex);
         })

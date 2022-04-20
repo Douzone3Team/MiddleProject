@@ -62,9 +62,15 @@ const Register = (props) => {
       }
       console.log("name:" + name + " id:" + id + " pass:" + pass);
       await axios.post(url,data).then((Response) =>{
-        alert("회원가입이 완료되었습니다.");
-        props.history.push('/login');
-
+        const isregit = Response.data;
+        console.log("isregit:" + isregit);
+        if(isregit){
+          alert("회원가입이 완료되었습니다.");
+          props.history.push('/login');
+        }
+        else {
+          alert("이미 가입한 회원입니다.");
+        }
 
       }).catch((ex) => {
         console.log(ex);
