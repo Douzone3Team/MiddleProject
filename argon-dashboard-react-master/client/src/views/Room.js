@@ -300,14 +300,14 @@ const Room = (props) => {
                 ></CardHeader> */}
                 <div>
                   <div className="col text-right">
-                    {/* <Col className="col-auto">
+                    <Col className="col-auto">
                     <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeCam(!cam) }}>
                       {cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill />}
                     </div>&nbsp;
                     <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeMic(!mic) }}>
                       {mic === true ? <BsFillMicFill /> : <BsFillMicMuteFill />}
                     </div>
-                  </Col> */}
+                  </Col>
                   </div>
                   <VideoBox
                     className={`width-peer${
@@ -424,56 +424,6 @@ const VideoBox = styled.div`
     > i {
       display: block;
     }
-  }
-`;
-
-const Message = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  font-size: 16px;
-  margin-top: 15px;
-  margin-left: 15px;
-  text-align: left;
-  > strong {
-    margin-left: 3px;
-  }
-  > p {
-    max-width: 65%;
-    width: auto;
-    padding: 9px;
-    margin-top: 3px;
-    border: 1px solid rgb(78, 161, 211, 0.3);
-    border-radius: 15px;
-    box-shadow: 0px 0px 3px #4ea1d3;
-    font-size: 14px;
-  }
-`;
-
-const UserMessage = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  width: 100%;
-  font-size: 16px;
-  margin-top: 15px;
-  text-align: right;
-  > strong {
-    margin-right: 35px;
-  }
-  > p {
-    max-width: 65%;
-    width: auto;
-    padding: 9px;
-    margin-top: 3px;
-    margin-right: 30px;
-    border: 1px solid rgb(78, 161, 211, 0.3);
-    border-radius: 15px;
-    background-color: #4ea1d3;
-    color: white;
-    font-size: 14px;
-    text-align: left;
   }
 `;
 

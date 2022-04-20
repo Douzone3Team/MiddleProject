@@ -125,10 +125,6 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         // });
     });
 
-
-
-
-
     //Join Room
     // socket.on('BE-join-room', ({ roomId, userName }) => {
     //     // Socket Join RoomName
