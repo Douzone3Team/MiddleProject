@@ -31,8 +31,49 @@ import {
   Row,
   Col,
 } from "reactstrap";
-
+import axios  from "axios";
+import { useState } from "react";
 const Register = () => {
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
+  const [pass,setPass] = useState('');
+  
+  const handleInputName = (e) => {
+    setName(e.target.value);    
+  }
+
+  const handleInputId = (e) => {
+    setId(e.target.value);    
+  }
+
+  const handleInputPw = (e) => {
+    setPass(e.target.value);    
+  }
+
+  const handleRegister = async () => {
+    console.log("isClicked");
+
+    const url = "/api/register";
+    try{
+      const data = {
+        name : {name},
+        id : {id},
+        pass : {pass},
+      }
+      console.log("name:" + name + " id:" + id + " pass:" + pass);
+      await axios.post(url,data).then((Response) =>{console.log(Response.data);
+
+      }).catch((ex) => {
+        console.log(ex);
+      })
+    }
+    catch(error) {
+      console.log(error);
+    }
+
+  }
+
+
   return (
     <>
       <Col lg="6" md="8">
@@ -90,7 +131,7 @@ const Register = () => {
                       <i className="ni ni-hat-3" />
                     </InputGroupText>
                   </InputGroupAddon>
-                  <Input placeholder="Name" type="text" />
+                  <Input placeholder="Name" type="text" value={name} onChange={handleInputName} />
                 </InputGroup>
               </FormGroup>
               <FormGroup>
@@ -101,9 +142,11 @@ const Register = () => {
                     </InputGroupText>
                   </InputGroupAddon>
                   <Input
-                    placeholder="Email"
+                    placeholder="ID"
                     type="email"
                     autoComplete="new-email"
+                    value = {id}
+                    onChange={handleInputId}
                   />
                 </InputGroup>
               </FormGroup>
@@ -118,6 +161,8 @@ const Register = () => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
+                    value = {pass}
+                    onChange = {handleInputPw}
                   />
                 </InputGroup>
               </FormGroup>
@@ -150,7 +195,9 @@ const Register = () => {
                 </Col>
               </Row>
               <div className="text-center">
-                <Button className="mt-4" color="primary" type="button">
+                <Button className="mt-4" color="primary" type="button" 
+                  onClick={handleRegister}
+                >
                   Create account
                 </Button>
               </div>
