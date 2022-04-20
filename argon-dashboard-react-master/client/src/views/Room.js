@@ -7,7 +7,7 @@ import styled from "styled-components";
 import classnames from "classnames";
 import Video from "./examples/Video";
 import socket from "client_socket";
-
+import { setCookie, getCookie } from '../cookie/cookie';
 // reactstrap components
 import {
   Button,
@@ -68,6 +68,10 @@ const Room = (props) => {
 
   // 렌더링될 때 client(message) 받기 //영상 가져오기
   useEffect(() => {
+    if (!getCookie('user')) {
+        alert("로그인을 해주세요");
+        props.history.push("/login");
+      }
     //채팅
     socket.on("FE-receive-message", ({ msg, sender }) => {
       setMsg((msgs) => [...msgs, { sender, msg }]);

@@ -12,19 +12,35 @@ import "assets/plugins/nucleo/css/nucleo.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/scss/argon-dashboard-react.scss";
 
-function App() {
-    return (
-        <BrowserRouter>
-            <Route exact path="/" component={Index} />
-            <Route exact path="/room/:roomId" component={Room} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <Route />
 
 
 
-        </BrowserRouter>
-    )
+function App(props) {
+    
+    
+        return (
+            
+            <BrowserRouter>
+                
+                <Route exact path="/" component={Index} />
+                <Route exact path="/room/:roomId" component={Room} />
+                <Route exact path="/register" component={Register} />
+                <Route exact path="/login" component={Login} />
+             
+                
+         </BrowserRouter>
+         
+        )
+    
+    // return (
+    //     <BrowserRouter>
+    //         <Route exact path="/" component={Index} />
+    //         <Route exact path="/room/:roomId" component={Room} />
+    //         <Route exact path="/register" component={Register} />
+    //         <Route exact path="/login" component={Login} />
+    //         <Route />
+    //     </BrowserRouter>
+    // )
 }
 
 export default App;
