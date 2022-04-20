@@ -33,7 +33,7 @@ import {
 } from "reactstrap";
 import axios  from "axios";
 import { useState } from "react";
-const Register = () => {
+const Register = (props) => {
   const [name, setName] = useState('');
   const [id, setId] = useState('');
   const [pass,setPass] = useState('');
@@ -61,7 +61,10 @@ const Register = () => {
         pass : {pass},
       }
       console.log("name:" + name + " id:" + id + " pass:" + pass);
-      await axios.post(url,data).then((Response) =>{console.log(Response.data);
+      await axios.post(url,data).then((Response) =>{
+        alert("회원가입이 완료되었습니다.");
+        props.history.push('/login');
+
 
       }).catch((ex) => {
         console.log(ex);
