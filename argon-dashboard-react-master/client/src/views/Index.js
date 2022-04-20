@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import axios from 'axios';
 import AuthNavbar from "../components/Navbars/AuthNavbar";
 import AdminFooter from "components/Footers/AdminFooter.js";
 // node.js library that concatenates classes (strings)
@@ -36,12 +37,30 @@ const Index = (props) => {
 
   //roomInput 변경
   const onCreateRoom = (event) => {
+    
+
     event.preventDefault();
     setRoomInput(event.target.value);
   }
 
   //변경된 roomInput을 배열에 저장
   const onRoomList = (event) => {
+    const url = '/api/createRoom';
+    const getData = null;
+      try {
+        const datas = { roomName: roomInput} 
+        console.log(roomInput);
+        axios.post(url,datas).then((Response) =>{
+          
+          console.log(Response);
+        }).catch((ex) => {
+          console.log(ex);
+        })
+        
+      }catch (error) {
+        console.log(error);
+      }
+    
     //새로고침 방지
     event.preventDefault();
     setRoomNames((currentArray) => [...currentArray, roomInput]);//배열에 roomName 추가
@@ -73,6 +92,8 @@ const Index = (props) => {
     } else {
       socket.emit('BE-check-user', { roomId: roomName, userName });
     }
+    
+
   };
 
 

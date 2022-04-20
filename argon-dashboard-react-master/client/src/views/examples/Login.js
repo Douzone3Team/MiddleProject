@@ -29,7 +29,7 @@ const Login = () => {
     setPass(e.target.value);    
   }
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
     console.log("isClicked");
 
       const url = '/api/login';
@@ -39,8 +39,8 @@ const Login = () => {
           pass : {pass},
         }
         console.log(id + " " + pass);
-        axios.post(url,data).then((Response) =>{
-
+        await axios.post(url,data).then((Response) =>{
+          
         }).catch((ex) => {
           console.log(ex);
         })
