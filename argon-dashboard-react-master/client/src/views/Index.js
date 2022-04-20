@@ -51,8 +51,9 @@ const Index = (props) => {
         const datas = { roomName: roomInput} 
         console.log(roomInput);
         axios.post(url,datas).then((Response) =>{
+          // console.log(Response);
+          //새로고침 방지
           
-          console.log(Response);
         }).catch((ex) => {
           console.log(ex);
         })
@@ -60,11 +61,11 @@ const Index = (props) => {
       }catch (error) {
         console.log(error);
       }
+      event.preventDefault();
+      setRoomNames((currentArray) => [...currentArray, 'roomInput']);//배열에 roomName 추가
+      setRoomInput(" "); //input창 초기화
     
-    //새로고침 방지
-    event.preventDefault();
-    setRoomNames((currentArray) => [...currentArray, roomInput]);//배열에 roomName 추가
-    setRoomInput(" "); //input창 초기화
+    
   }
 
   useEffect(() => {

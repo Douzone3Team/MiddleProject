@@ -63,12 +63,17 @@ app.post('/api/register', (req,res) => {
 
 //방 생성 기능
 app.post('/api/createRoom',(req,res) => {
-    const data = req.body.roomName; //clients에서 받아온 데이터
-    const sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'aaaa' )` //방생성 쿼리
+    const data = req.body; //clients에서 받아온 데이터
+    console.log(data);
+    const r_name = data.roomName;
+
+    // const sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${}' )` //방생성 쿼리
+    const sql = `INSERT INTO room(r_name, u_id, r_state) VALUES('${r_name}' ,'aaaa', 1 )` //방생성 쿼리
     
     mysqlDB.query(sql,function(err, results) { //db에 생성할 방 INSERT
         if(err) console.log(err);
-        else console.log("추가완료");
+        else {console.log("추가완료");
+    }
     });
                                  
     sql = 'SELECT u_id, r_name FROM '
