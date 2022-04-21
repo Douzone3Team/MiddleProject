@@ -19,20 +19,22 @@ import {
 } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
-import { v1 as uuid } from "uuid";
+
 
 
 
 const Index = (props) => {
   const roomRef = useRef();
+  const userRef = useRef();
   const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
-  const userRef = useRef();
+
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const userUuid = uuid();
-  let roomName = '';
-  let userName = '';
+
+  console.log(roomRef);
+  console.log(userRef);
+
 
   //roomInput 변경
   const onCreateRoom = (event) => {
@@ -48,7 +50,13 @@ const Index = (props) => {
     setRoomInput(" "); //input창 초기화
   }
 
+
+  let roomName;
+  let nickName;
+
+
   useEffect(() => {
+    console.log(userRef.current.value);
     socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 
       if (!error) { //에러가 없으면
@@ -64,8 +72,9 @@ const Index = (props) => {
 
   function clickJoin(item) {
     roomRef.current.value = item;
-    roomName = item;
-    userName = userUuid;
+    roomName = roomRef.current.value;
+    const userName = userRef.current.value;
+    console.log(userName);
 
     if (!roomName || !userName) {
       setErr(true);
@@ -94,17 +103,15 @@ const Index = (props) => {
                     <Col className="" >
                       {/* roomName Input */}
                       <Form id="form1" onSubmit={onRoomList} >
-                        <Input className="text-right" value={roomInput} type="text" id="roomName"
-                          ref={roomRef} placeholder="방 이름" onChange={onCreateRoom} />
-                        <Button
-                          color="primary"
-                          size="sm"
-                          type="submit"
-                          form="form1"
-                        >방 생성</Button>
+                        <Input className="text-right" value={roomInput} type="text" required id="1"
+                          ref={roomRef} placeholder="방 이름을 입력한 후에 Enter!" onChange={onCreateRoom} />
                       </Form>
                     </Col>
-
+                  </Row>
+                  <Row>
+                    {/* nickName Input */}
+                    <Input className="text-right" type="text" required id="2"
+                      ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" />
                   </Row>
                 </CardHeader>
                 <Table hover className="align-items-center table-flush" responsive>
@@ -134,7 +141,7 @@ const Index = (props) => {
         <Container fluid>
           <AdminFooter />
         </Container>
-      </div>
+      </div> 
     </>
   );
 };
