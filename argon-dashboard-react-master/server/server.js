@@ -14,7 +14,7 @@ const io = require('socket.io')(http, {
 });
 const PORT = 4000;
 const path = require('path');
-require("dotenv").config();
+require("dotenv").config(); //환경변수 설정
 const bodyParser = require("body-parser");
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
 
@@ -28,7 +28,7 @@ const mysqlDB = mysql.createConnection({   //express mysql conect
 
 let socketList = {};
 //개발
-app.use(cors());
+app.use(cors()); 
 app.use(express.static(path.join(__dirname, '../client/public')));
 app.use(cookieParser());
 app.get('/*', function (req, res) {
@@ -79,7 +79,7 @@ app.post('/api/login',(req, res, fields) => {
                     }
                 );
                 console.log(accessToken);
-                res.cookie("user", accessToken);
+                res.cookie("user", accessToken,{ maxAge: 60 * 1000, httpOnly: true });
                 var getName;
                 for(var data of results){
                     getName = data.u_name
@@ -126,10 +126,31 @@ app.post('/api/register', (req,res) => {
 })
 
 //로그인 체크
-// app.post('/api/loginCheck' (req,res) => {
+app.post('/api/loginCheck', (req,res) => {
+    console.log("---loginCheck---");
+    const getCookie = req.cookies.user; //clients 측 쿠키'user'  getCookie에 저장
+    var decode;
+    var sql;
+    //암호화 해제
+    jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
+        decode = decoded.getId;
+        console.log(decoded);
+        console.log(decode);
+    });
+    console.log("decode : "+ decode);
+    //
+    
+    sql = `SELECT * FROM user WHERE u_id = '${decode}'`;
+    
+    mysqlDB.query(sql,function(err,results){
+        if (err) {
+            console.log("인증실패");
+            res.send(false)
+        }
+        else res.send(true);
+    })
 
-
-// })
+})
 //방 생성 기능
 app.post('/api/createRoom',(req,res) => {
     const getCookie = req.cookies.user; //clients 측 쿠키'user'  getCookie에 저장
@@ -143,7 +164,7 @@ app.post('/api/createRoom',(req,res) => {
     console.log("decode : "+ decode);
     //
     
-    const lcsql = `SELECT * FROM user WHERE u_id = '${decode}'`;
+    sql = `SELECT * FROM user WHERE u_id = '${decode}'`;
     
     mysqlDB.query(crsql,function(err,results){
         if (err) {
@@ -278,8 +299,8 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //         .to(roomId)
     //         .emit('FE-toggle-camera', { userId: socket.id, switchTarget });
     // });
+    });
 });
-
 
 
 

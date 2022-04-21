@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from "react";
 import 'url-search-params-polyfill';
+
 // import jwt from "jsonwebtoken";
 import {
   Button,
@@ -44,6 +45,7 @@ const Login = (props) => {
           const getData = Response.data;
           if(getData) {
             
+            console.log("move index");
             props.history.push("/");
           }
         }).catch((ex) => {

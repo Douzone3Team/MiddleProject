@@ -11,7 +11,8 @@ import { Button, Card, CardHeader,  Table, Container, Row, Col } from "reactstra
 
 import Header from "components/Headers/Header.js";
 import { v1 as uuid } from "uuid"; 
-import { setCookie, getCookie } from '../cookie/cookie';
+import Cookies from "universal-cookie";
+
 
 
 
@@ -50,7 +51,7 @@ const Index = (props) => {
         const datas = { roomName: roomInput} 
         console.log(roomInput);
         axios.post(url,datas).then((Response) =>{
-          
+            
           console.log(Response);
         }).catch((ex) => {
           console.log(ex);
@@ -82,14 +83,23 @@ const Index = (props) => {
   }
 
   useEffect(() => {
-    if (!getCookie('user')) {
+    
+    if (Cookies.get('user') === undefined || Cookies.get('user') === false ) {
+      console.log(Cookies.get('user'));
       alert("로그인을 해주세요");
-      const url = "/api/loginCheck";
-      axios.post(url).then((response) =>{
-        console.log(response);
-      }).catch((ex) => console.log(ex))
       props.history.push("/login");
     }
+    else{
+      console.log("-----else-----");
+      const url = "/api/loginCheck";
+      axios.post(url).then((response) =>{
+        if(!response.data){
+          alert("다시 로그인 해주세요")
+          props.history.push("/login");
+        }
+      }).catch((ex) => console.log(ex))
+    }
+    
     socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 
       if (!error) { //에러가 없으면

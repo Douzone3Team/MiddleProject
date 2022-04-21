@@ -7,7 +7,7 @@ import styled from "styled-components";
 import classnames from "classnames";
 import Video from "./examples/Video";
 import socket from "client_socket";
-import { setCookie, getCookie } from '../cookie/cookie';
+
 // reactstrap components
 import { Button, Card, CardHeader, CardBody, Container, Row, Col, CardTitle, } from "reactstrap";
 
@@ -19,6 +19,7 @@ import TextField from "@material-ui/core/TextField";
 import Header from "components/Headers/Header.js";
 import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill, } from "react-icons/bs";
 import { Dropdown } from "react-bootstrap";
+import Cookies from "universal-cookie";
 // import Friends from '../variables/Friends'
 
 const Room = (props) => {
@@ -52,7 +53,7 @@ const Room = (props) => {
 
   // 렌더링될 때 client(message) 받기 //영상 가져오기
   useEffect(() => {
-    if (!getCookie('user')) {
+    if (!Cookies.get('user')) {
         alert("로그인을 해주세요");
         props.history.push("/login");
       }
