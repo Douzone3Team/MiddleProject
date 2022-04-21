@@ -7,6 +7,7 @@ import Register from "views/examples/Register.js";
 import Login from "views/examples/Login.js";
 import Room from "views/Room.js";
 import Profile from "views/examples/Profile.js";
+import Friend from "views/examples/Friend.js";
 
 import "assets/plugins/nucleo/css/nucleo.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -25,6 +26,9 @@ function App(props) {
                     <Route exact path="/room/:roomId" component={Room} />
                     <Route exact path="/register" component={Register} />
                     <Route exact path="/login" component={Login} />
+                    
+                    <Route exact path="/profile" component={Profile} />
+                    <Route exact path="/friend" component={Friend} />
                 </BrowserRouter>
             
         )
