@@ -109,7 +109,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         console.log('User disconnected!');
     });
 
-    // //
+    //
     socket.on('BE-check-user', ({ roomId, userName }) => {
         let error = false;
         console.log(roomId);

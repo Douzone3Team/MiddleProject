@@ -52,7 +52,7 @@ const Room = (props) => {
   const [msg, setMsg] = useState([]);
   const messagesEndRef = useRef(null);
   const inputRef = useRef();
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState("");
 
   const [participant, setParticipant] = useState([
     "참여자1",
@@ -176,8 +176,7 @@ const Room = (props) => {
       const msg = e.target.value;
       console.log(msg);
 
-      if (msg) { 
-
+      if (msg) {
         socket.emit("BE-send-message", { msg, sender: currentUser });
         inputRef.current.value = "";
       }
@@ -301,13 +300,32 @@ const Room = (props) => {
                 <div>
                   <div className="col text-right">
                     <Col className="col-auto">
-                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeCam(!cam) }}>
-                      {cam === true ? <BsCameraVideoFill /> : <BsCameraVideoOffFill />}
-                    </div>&nbsp;
-                    <div className="icon icon-shape bg-danger text-white rounded-circle shadow" onClick={() => { changeMic(!mic) }}>
-                      {mic === true ? <BsFillMicFill /> : <BsFillMicMuteFill />}
-                    </div>
-                  </Col>
+                      {/* <div
+                        className="icon icon-shape bg-danger text-white rounded-circle shadow"
+                        onClick={() => {
+                          changeCam(!cam);
+                        }}
+                      >
+                        {cam === true ? (
+                          <BsCameraVideoFill />
+                        ) : (
+                          <BsCameraVideoOffFill />
+                        )}
+                      </div>
+                      &nbsp;
+                      <div
+                        className="icon icon-shape bg-danger text-white rounded-circle shadow"
+                        onClick={() => {
+                          changeMic(!mic);
+                        }}
+                      >
+                        {mic === true ? (
+                          <BsFillMicFill />
+                        ) : (
+                          <BsFillMicMuteFill />
+                        )}
+                      </div> */}
+                    </Col>
                   </div>
                   <VideoBox
                     className={`width-peer${
@@ -355,20 +373,23 @@ const Room = (props) => {
             <Col className="mb-5 mb-xl-0" xl="3">
               <Card className="shadow">
                 <CardHeader className="border-0" style={{ height: "420px" }}>
-                  <div>
                     {msg &&
                       msg.map(({ sender, msg }, idx) => {
                         if (sender !== currentUser) {
                           return (
-                            <div key={idx}>
-                              <strong> 상대방: &nbsp;{msg}</strong>
-                            </div>
+                            <ChattingOther>
+                              <div key={idx}>
+                                <strong> 상대방: &nbsp;{msg}</strong>
+                              </div>
+                            </ChattingOther>
                           );
                         } else {
                           return (
-                            <div className="col text-right" key={idx}>
-                              <strong>{msg} &nbsp; :나</strong>
-                            </div>
+                            <ChattingMe>
+                              <div className="col text-right" key={idx}>
+                                <strong>{msg} &nbsp; :나</strong>
+                              </div>
+                            </ChattingMe>
                           );
                         }
                       })}
@@ -376,7 +397,6 @@ const Room = (props) => {
                       style={{ float: "left", clear: "both" }}
                       ref={messagesEndRef}
                     />
-                  </div>
                 </CardHeader>
                 <CardHeader className="border-0">
                   <Row className="align-items-center">
@@ -425,6 +445,31 @@ const VideoBox = styled.div`
       display: block;
     }
   }
+`;
+
+const ChattingOther = styled.div`
+  position: relative;
+  margin-bottom: 10px;
+  padding: 6px;
+  width: 100%;
+  height: auto;
+  color: black;
+  border: 2px solid #5e72e4;
+  border-radius: 10px;
+  font-size: 5px;
+  float: left;
+`;
+const ChattingMe = styled.div`
+  position: relative;
+  margin-bottom: 10px;
+  padding: 6px;
+  width: 100%;
+  height: auto;
+  color: black;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 5px;
+  float: right;
 `;
 
 export default Room;
