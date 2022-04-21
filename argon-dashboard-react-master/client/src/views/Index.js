@@ -11,28 +11,39 @@ import { Button, Card, CardHeader,  Table, Container, Row, Col } from "reactstra
 
 import Header from "components/Headers/Header.js";
 import { v1 as uuid } from "uuid"; 
+import { setCookie, getCookie } from '../cookie/cookie';
 
-const Index = (props) => {
+
+
+
+
+
+
+const Index = (props) => { 
+  
+  
+  console.log();
+  
+
+  // console.log(props);
   const roomRef = useRef();
+
+
+
+
   const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
   const userRef = useRef();
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const userUuid = uuid();
+  
+
   let roomName = '';
   let userName = '';
-
+  
   //roomInput 변경
   const onCreateRoom = (event) => {
-    
-
-    event.preventDefault();
-    setRoomInput(event.target.value);
-  }
-
-  //변경된 roomInput을 배열에 저장
-  const onRoomList = (event) => {
     const url = '/api/createRoom';
     const getData = null;
       try {
@@ -40,7 +51,7 @@ const Index = (props) => {
         console.log(roomInput);
         axios.post(url,datas).then((Response) =>{
           
-          // console.log(Response);
+          console.log(Response);
         }).catch((ex) => {
           console.log(ex);
         })
@@ -48,6 +59,14 @@ const Index = (props) => {
       }catch (error) {
         console.log(error);
       }
+
+    event.preventDefault();
+    setRoomInput(event.target.value);
+  }
+
+  //변경된 roomInput을 배열에 저장
+  const onRoomList = (event) => {
+    
     
     //새로고침 방지
     event.preventDefault(); 
@@ -63,6 +82,14 @@ const Index = (props) => {
   }
 
   useEffect(() => {
+    if (!getCookie('user')) {
+      alert("로그인을 해주세요");
+      const url = "/api/loginCheck";
+      axios.post(url).then((response) =>{
+        console.log(response);
+      }).catch((ex) => console.log(ex))
+      props.history.push("/login");
+    }
     socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 
       if (!error) { //에러가 없으면
