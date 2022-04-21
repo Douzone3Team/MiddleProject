@@ -72,14 +72,13 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        // console.log('User disconnected!');
+        console.log(`${socket.id} +User disconnected!`);
     });
 
 
-    //
-    socket.on('BE-check-user', async ({ roomId, userName }) => {
+    socket.on('BE-check-user', ({ roomId, userName }) => {
         let error = false;
-
+        console.log("유저가 있는지 확인");
         io.sockets.in(roomId).clients((err, clients) => {
 
             clients.forEach((client) => {
@@ -91,27 +90,27 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     });
 
-
-    //Join Room
+    /**
+     * Join Room
+     */
     socket.on('BE-join-room', ({ roomId, userName }) => {
-
+        console.log("server : Userjoin message 받음");
         // Socket Join RoomName
         socket.join(roomId);
         socketList[socket.id] = { userName, video: true, audio: true };
 
         // Set User List
         io.sockets.in(roomId).clients((err, clients) => {
-            console.log(clients);
+            console.log("server : room안에 user추가");
             try {
                 const users = [];
                 clients.forEach((client) => {
                     // Add User List
-                    console.log(clients);
                     users.push({ userId: client, info: socketList[client] });
-                    console.log(users);
-
+                    console.log("server : room안에 user추가2");
                 });
                 socket.broadcast.to(roomId).emit('FE-user-join', users);
+                console.log("server : client에게 userjoin 알림");
                 // io.sockets.in(roomId).emit('FE-user-join', users);
             } catch (e) {
                 io.sockets.in(roomId).emit('FE-error-user-exist', { err: true });
@@ -121,6 +120,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
 
 
     socket.on('BE-call-user', ({ userToCall, from, signal }) => {
+        console.log("server : signal값 받고 fe-receive-call message를 client에 전달")
         io.to(userToCall).emit('FE-receive-call', {
             signal,
             from,

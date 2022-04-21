@@ -62,11 +62,10 @@ const Room = (props) => {
 
 
     useEffect(() => {
-
         navigator.mediaDevices.enumerateDevices().then((devices) => {
             const camera = devices.filter((device) => device.kind === 'videoinput');
             setVideoDevices(camera);
-
+            console.log("client : 영상 준비");
         });
 
         // Connect Camera & Mic
@@ -76,16 +75,20 @@ const Room = (props) => {
                 console.log(stream);
                 userVideoRef.current.srcObject = stream;
                 userStream.current = stream;
-
+                console.log("client : 영상출력 ");
                 socket.emit('BE-join-room', { roomId, userName: currentUser });
-
-                socket.on('FE-user-join', async (users) => {
+                console.log("client : server에 join message 전송 ");
+                socket.on('FE-user-join', (users) => {
                     // all users
+                    console.log("client : server에서 join완료 message ");
                     const peers = [];
-                    await users.forEach(({ userId, info }) => {
+                    users.forEach(({ userId, info }) => {
                         let { userName, video, audio } = info;
-
+                        console.log("client : server에서 받아온 username과 현재 user을 비교 ");
                         if (userName !== currentUser) {
+                            console.log("client : server에서 받아온 username과 현재 user가 다름 ");
+                            console.log("client : 새로운 user 생성 ");
+                            console.log("createPeer내 BE-call-user message를 server에 전송")
                             const peer = createPeer(userId, socket.id, stream);
 
                             peer.userName = userName;
@@ -97,6 +100,7 @@ const Room = (props) => {
                                 userName,
                             });
                             peers.push(peer);
+                            console.log("client : user리스트에 추가 ");
 
                             setUserVideoAudio((preList) => {
                                 return {
@@ -106,87 +110,93 @@ const Room = (props) => {
                             });
                         }
                     });
-
+                    //useState peer값 변경 -> 전체접속자
                     setPeers(peers);
                 });
 
-                //     socket.on('FE-receive-call', ({ signal, from, info }) => {
-                //         let { userName, video, audio } = info;
-                //         const peerIdx = findPeer(from);
 
-                //         if (!peerIdx) {
-                //             const peer = addPeer(signal, from, stream);
+                socket.on('FE-receive-call', async ({ signal, from, info }) => {
+                    console.log("client : signal과 fe-receive-call message 전달받음  ")
+                    let { userName, video, audio } = info;
+                    const peerIdx = await findPeer(from);
 
-                //             peer.userName = userName;
+                    if (!peerIdx) {
+                        const peer = addPeer(signal, from, stream);
 
-                //             peersRef.current.push({
-                //                 peerID: from,
-                //                 peer,
-                //                 userName: userName,
-                //             });
-                //             setPeers((users) => {
-                //                 return [...users, peer];
-                //             });
-                //             setUserVideoAudio((preList) => {
-                //                 return {
-                //                     ...preList,
-                //                     [peer.userName]: { video, audio },
-                //                 };
-                //             });
-                //         }
-                //     });
+                        peer.userName = userName;
 
-                //     socket.on('FE-call-accepted', ({ signal, answerId }) => {
-                //         const peerIdx = findPeer(answerId);
-                //         peerIdx.peer.signal(signal);
-                //     });
+                        peersRef.current.push({
+                            peerID: from,
+                            peer,
+                            userName: userName,
+                        });
+                        setPeers((users) => {
+                            return [...users, peer];
+                        });
+                        setUserVideoAudio((preList) => {
+                            return {
+                                ...preList,
+                                [peer.userName]: { video, audio },
+                            };
+                        });
+                    }
+                });
 
-                //     socket.on('FE-user-leave', ({ userId, userName }) => {
-                //         const peerIdx = findPeer(userId);
-                //         peerIdx.peer.destroy();
-                //         setPeers((users) => {
-                //             users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
-                //             return [...users];
-                //         });
-                //         peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
-                //     });
-                // });
-            })
+                socket.on('FE-call-accepted', ({ signal, answerId }) => {
+                    const peerIdx = findPeer(answerId);
+                    peerIdx.peer.signal(signal);
+                });
 
-        const onTextChange = (e) => {
-            setState({ ...state, [e.target.name]: e.target.value });
+                socket.on('FE-user-leave', ({ userId, userName }) => {
+                    const peerIdx = findPeer(userId);
+                    peerIdx.peer.destroy();
+                    setPeers((users) => {
+                        users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
+                        return [...users];
+                    });
+                    peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
+                });
+            });
+
+        return () => {
+            socket.disconnect();
         };
+    }, [currentUser, roomId]);
 
-        // message이벤트 지정하고 message이벤트 보내기
-        const onMessageSubmit = (e) => {
-            e.preventDefault();
-            const { name, message } = state;
-            socket.emit("message", { name, message });
-            setState({ message: "", name });
+    // const onTextChange = (e) => {
+    //     setState({ ...state, [e.target.name]: e.target.value });
+    // };
 
-            // 현재시간
-            let nowTime = new Date();
-            let sendTime = [...time];
-            sendTime.push(nowTime.getHours() + ':' + nowTime.getMinutes())
-            // renderChat();
-            setTime(sendTime);
-        };
+    // // message이벤트 지정하고 message이벤트 보내기
+    // const onMessageSubmit = (e) => {
+    //     e.preventDefault();
+    //     const { name, message } = state;
+    //     socket.emit("message", { name, message });
+    //     setState({ message: "", name });
 
-        // messgae이벤트 보이기
-        const renderChat = () => {
-            // console.log(chat);
-            return (
-                chat.map(({ name, message }, index) => (
-                    <div key={index}>
-                        {time[index]}&nbsp;&nbsp; {name}: <span>{message}</span>
-                    </div>)
-                ));
-        };
+    //     // 현재시간
+    //     let nowTime = new Date();
+    //     let sendTime = [...time];
+    //     sendTime.push(nowTime.getHours() + ':' + nowTime.getMinutes())
+    //     // renderChat();
+    //     setTime(sendTime);
+    // };
 
-    }, []);
+    // // messgae이벤트 보이기
+    // const renderChat = () => {
+    //     // console.log(chat);
+    //     return (
+    //         chat.map(({ name, message }, index) => (
+    //             <div key={index}>
+    //                 {time[index]}&nbsp;&nbsp; {name}: <span>{message}</span>
+    //             </div>)
+    //         ));
+    // };
+
 
     //영상
     function createPeer(userId, caller, stream) {
+        console.log("client : peer 생성")
         const peer = new Peer({
             initiator: true,
             trickle: false,
@@ -194,6 +204,7 @@ const Room = (props) => {
         });
 
         peer.on('signal', (signal) => {
+            console.log("client : signal 전송 및 server에 be-call-user 전송");
             socket.emit('BE-call-user', {
                 userToCall: userId,
                 from: caller,
@@ -203,7 +214,7 @@ const Room = (props) => {
         peer.on('disconnect', () => {
             peer.destroy();
         });
-
+        console.log("client : createPeer에 peer값 리턴");
         return peer;
     }
 
