@@ -59,12 +59,102 @@ const Room = (props) => {
         setChat([...chat, message]);
     });
     // 렌더링될 때 client(message) 받기
+
+
     useEffect(() => {
         socket.on("message", (message) => {
             setChat([...chat, message]);
         });
-    });
 
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
+            const camera = devices.filter((device) => device.kind === 'videoinput');
+            setVideoDevices(camera);
+            console.log("room0");
+        });
+        console.log("room1");
+        // Connect Camera & Mic
+        navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true }, console.log("room2"))
+            .then((stream) => {
+                console.log("room3");
+                userVideoRef.current.srcObject = stream;
+                userStream.current = stream;
+
+                socket.emit('BE-join-room', { roomId, userName: currentUser });
+                socket.on('FE-user-join', (users) => {
+                    // all users
+                    const peers = [];
+                    users.forEach(({ userId, info }) => {
+                        let { userName, video, audio } = info;
+
+                        if (userName !== currentUser) {
+                            const peer = createPeer(userId, socket.id, stream);
+
+                            peer.userName = userName;
+                            peer.peerID = userId;
+
+                            peersRef.current.push({
+                                peerID: userId,
+                                peer,
+                                userName,
+                            });
+                            peers.push(peer);
+
+                            setUserVideoAudio((preList) => {
+                                return {
+                                    ...preList,
+                                    [peer.userName]: { video, audio },
+                                };
+                            });
+                        }
+                    });
+
+                    setPeers(peers);
+                });
+
+                socket.on('FE-receive-call', ({ signal, from, info }) => {
+                    let { userName, video, audio } = info;
+                    const peerIdx = findPeer(from);
+
+                    if (!peerIdx) {
+                        const peer = addPeer(signal, from, stream);
+
+                        peer.userName = userName;
+
+                        peersRef.current.push({
+                            peerID: from,
+                            peer,
+                            userName: userName,
+                        });
+                        setPeers((users) => {
+                            return [...users, peer];
+                        });
+                        setUserVideoAudio((preList) => {
+                            return {
+                                ...preList,
+                                [peer.userName]: { video, audio },
+                            };
+                        });
+                    }
+                });
+
+                socket.on('FE-call-accepted', ({ signal, answerId }) => {
+                    const peerIdx = findPeer(answerId);
+                    peerIdx.peer.signal(signal);
+                });
+
+                socket.on('FE-user-leave', ({ userId, userName }) => {
+                    const peerIdx = findPeer(userId);
+                    peerIdx.peer.destroy();
+                    setPeers((users) => {
+                        users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
+                        return [...users];
+                    });
+                    peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
+                });
+            });
+    })
+    
     const onTextChange = (e) => {
         setState({ ...state, [e.target.name]: e.target.value });
     };
@@ -167,102 +257,13 @@ const Room = (props) => {
     const [message, setMessage] = useState('');
     let [cam, changeCam] = useState(true);
     let [mic, changeMic] = useState(true);
-  
+     
     function chatting() {
       let newMessage = [...message];
       message.unshift(message);
       setMessage(newMessage);
     } */
 
-    useEffect(() => {
-        navigator.mediaDevices.enumerateDevices().then((devices) => {
-            const camera = devices.filter((device) => device.kind === 'videoinput');
-            setVideoDevices(camera);
-            console.log("room0");
-        });
-        console.log("room1");
-        // Connect Camera & Mic
-        navigator.mediaDevices
-            .getUserMedia({ video: true, audio: true }, console.log("room2"))
-            .then((stream) => {
-                console.log("room3");
-                userVideoRef.current.srcObject = stream;
-                userStream.current = stream;
-
-                socket.emit('BE-join-room', { roomId, userName: currentUser });
-                socket.on('FE-user-join', (users) => {
-                    // all users
-                    const peers = [];
-                    users.forEach(({ userId, info }) => {
-                        let { userName, video, audio } = info;
-
-                        if (userName !== currentUser) {
-                            const peer = createPeer(userId, socket.id, stream);
-
-                            peer.userName = userName;
-                            peer.peerID = userId;
-
-                            peersRef.current.push({
-                                peerID: userId,
-                                peer,
-                                userName,
-                            });
-                            peers.push(peer);
-
-                            setUserVideoAudio((preList) => {
-                                return {
-                                    ...preList,
-                                    [peer.userName]: { video, audio },
-                                };
-                            });
-                        }
-                    });
-
-                    setPeers(peers);
-                });
-
-                socket.on('FE-receive-call', ({ signal, from, info }) => {
-                    let { userName, video, audio } = info;
-                    const peerIdx = findPeer(from);
-
-                    if (!peerIdx) {
-                        const peer = addPeer(signal, from, stream);
-
-                        peer.userName = userName;
-
-                        peersRef.current.push({
-                            peerID: from,
-                            peer,
-                            userName: userName,
-                        });
-                        setPeers((users) => {
-                            return [...users, peer];
-                        });
-                        setUserVideoAudio((preList) => {
-                            return {
-                                ...preList,
-                                [peer.userName]: { video, audio },
-                            };
-                        });
-                    }
-                });
-
-                socket.on('FE-call-accepted', ({ signal, answerId }) => {
-                    const peerIdx = findPeer(answerId);
-                    peerIdx.peer.signal(signal);
-                });
-
-                socket.on('FE-user-leave', ({ userId, userName }) => {
-                    const peerIdx = findPeer(userId);
-                    peerIdx.peer.destroy();
-                    setPeers((users) => {
-                        users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
-                        return [...users];
-                    });
-                    peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
-                });
-            });
-    })
 
     return (
         <>
