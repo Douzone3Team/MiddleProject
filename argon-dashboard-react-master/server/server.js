@@ -278,8 +278,8 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //         .to(roomId)
     //         .emit('FE-toggle-camera', { userId: socket.id, switchTarget });
     // });
+    });
 });
-
 
 
 
