@@ -53,7 +53,7 @@ const Room = (props) => {
   const [setMic, selectMic] = useState(["mode1_mic", "mode2_mic", "mode3_mic"]);
 
   // 렌더링될 때 client(message) 받기 //영상 가져오기
-  useEffect(() => {
+  useEffect(() => {  
     
     if (!getCookie('user')) {
         

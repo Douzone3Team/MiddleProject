@@ -11,7 +11,9 @@ import { Button, Card, CardHeader,  Table, Container, Row, Col } from "reactstra
 
 import Header from "components/Headers/Header.js";
 import { v1 as uuid } from "uuid"; 
-import { setCookie, getCookie } from '../cookie/cookie';
+import Cookie from 'universal-cookie'
+import Cookies from "universal-cookie";
+
 
 
 
@@ -20,7 +22,7 @@ import { setCookie, getCookie } from '../cookie/cookie';
 
 
 const Index = (props) => { 
-  
+  const cookie = new Cookie();
   
   console.log();
   
@@ -82,14 +84,34 @@ const Index = (props) => {
   }
 
   useEffect(() => {
-    
-    if (!getCookie('user')) {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log(cookie.get('user'));
+    if (!cookie.get('user')) {
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
       alert("로그인을 해주세요");
-      const url = "/api/loginCheck";
-      axios.post(url).then((response) =>{
-        console.log(response);
-      }).catch((ex) => console.log(ex))
       props.history.push("/login");
+    }
+    else{
+      const url = "/api/loginCheck";
+      const boolean = true;
+      axios.post(url).then((response) =>{
+        console.log(response.data);
+        if(!response.data){
+          cookie.remove('user');
+          alert("다시 로그인 해주세요.");
+          props.history.push('/login');
+        }
+        
+      }).catch((ex) => {
+        console.log(ex);
+      })
+      
+      
+      
+      console.log("dobby is free");
+      
     }
     socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 

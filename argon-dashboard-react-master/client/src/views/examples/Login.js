@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import 'url-search-params-polyfill';
 // import jwt from "jsonwebtoken";
 import {
@@ -16,6 +16,8 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 const Login = (props) => {
   const [id, setId] = useState('');
@@ -53,8 +55,7 @@ const Login = (props) => {
       }catch (error) {
         console.log(error);
       }
-  }
-
+  }  
   return (
     <>
       <Col lg="5" md="7">

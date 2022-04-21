@@ -79,7 +79,7 @@ app.post('/api/login',(req, res, fields) => {
                     }
                 );
                 console.log(accessToken);
-                res.cookie("user", accessToken);
+                res.cookie("user", accessToken,{maxAge: 60 * 60 * 1000});
                 var getName;
                 for(var data of results){
                     getName = data.u_name
@@ -114,11 +114,11 @@ app.post('/api/register', (req,res) => {
     const sql =`INSERT INTO user(u_id, u_pass, u_name) VALUES('${getId}', '${getPass}', '${getName}')`;
     console.log(sql);
     mysqlDB.query(sql,function(err, results) {
-        if(err) {
-            console.log("이미 등록된 아이디입니다.");
+        if(err) {   //아이디가 있으면 return false
+            console.log("이미 등록된 아이디입니다.");   
             res.send(false);
         }
-        else {
+        else {  //없으면 INSERT 되고 return true
             res.send(true);
             
         };
@@ -126,10 +126,43 @@ app.post('/api/register', (req,res) => {
 })
 
 //로그인 체크
-// app.post('/api/loginCheck' (req,res) => {
-
-
-// })
+app.post('/api/loginCheck', (req,res) => {
+    console.log(req); //클라이언트 전송정보  
+    const getCookie = req.cookies.user; //쿠키내 user 정보
+    
+    var getName; //암호화된 쿠키내 user 정보
+    //암호화 해제
+    jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
+        console.log(decoded);
+        if(decoded === undefined){
+            getName = "error";
+        }
+        else getName = decoded.getId;
+    });
+    console.log("getName:" + getName);
+    
+    //
+    const sql = `SELECT * FROM user WHERE u_id = '${getName}'`;
+    mysqlDB.query(sql,function(err,results){
+        if (err) {
+            console.log("인증실패");
+            res.send(false);
+        }
+        else {
+            console.log(results);
+            if(results.length > 0){
+                console.log("good");
+                res.send(true);
+            }
+            else{
+                console.log("nodata");
+                res.send(false);
+                
+            }
+            
+        }
+    })
+})
 //방 생성 기능
 app.post('/api/createRoom',(req,res) => {
     const getCookie = req.cookies.user; //clients 측 쿠키'user'  getCookie에 저장
