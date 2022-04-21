@@ -54,7 +54,9 @@ const Room = (props) => {
 
   // 렌더링될 때 client(message) 받기 //영상 가져오기
   useEffect(() => {
+    
     if (!getCookie('user')) {
+        
         alert("로그인을 해주세요");
         props.history.push("/login");
       }

@@ -82,6 +82,7 @@ const Index = (props) => {
   }
 
   useEffect(() => {
+    
     if (!getCookie('user')) {
       alert("로그인을 해주세요");
       const url = "/api/loginCheck";

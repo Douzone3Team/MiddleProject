@@ -20,16 +20,13 @@ function App(props) {
     
         return (
             
-            <BrowserRouter>
-                
-                <Route exact path="/" component={Index} />
-                <Route exact path="/room/:roomId" component={Room} />
-                <Route exact path="/register" component={Register} />
-                <Route exact path="/login" component={Login} />
-             
-                
-         </BrowserRouter>
-         
+                <BrowserRouter>
+                    <Route exact path="/" component={Index} />
+                    <Route exact path="/room/:roomId" component={Room} />
+                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/login" component={Login} />
+                </BrowserRouter>
+            
         )
     
     // return (
