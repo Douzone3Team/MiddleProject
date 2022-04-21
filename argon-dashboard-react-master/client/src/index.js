@@ -1,8 +1,11 @@
+import axios from "axios";
 import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "serviceWorker";
 /* import { CookieProvider } from "react-cookie"; */
 import App from "./App"
+
+
 
 ReactDOM.render(
   

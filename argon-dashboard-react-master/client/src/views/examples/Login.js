@@ -31,29 +31,37 @@ const Login = (props) => {
     setPass(e.target.value);    
   }
 
+  //login functon
   const handleLogin = async() => {
     console.log("isClicked");
-
+      var isLogin;
       const url = '/api/login';
       try {
-        const data = {
+        
+        const data = {//입력받은 ID와 PASSWORD
           id : {id},
           pass : {pass},
         }
         console.log(id + " " + pass);
-        await axios.post(url,data).then((Response) =>{
+        await axios.post(url,data).then((Response) =>{//SERVER에 CLIENTS DATA 전송
+          console.log("~~~~~~~~~~~~~~~~");
+          console.log(Response);
           console.log(Response.data);
-          const getData = Response.data;
-          if(getData) {
-            
-            props.history.push("/");
-          }
+          console.log("~~~~~~~~~~~~~~~~");
+          isLogin = Response.data;  //서버에서 DB와 ID PASS 검사후 true false
+          console.log("isLogin:" + isLogin);
+          
         }).catch((ex) => {
           console.log(ex);
         })
         
+        
+        
       }catch (error) {
         console.log(error);
+      }
+      if(isLogin) {  //true면 로그인후 인덱스로 이동  
+        props.history.push("/");
       }
   }  
   return (

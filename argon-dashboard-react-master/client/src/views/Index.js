@@ -19,13 +19,12 @@ import Cookies from "universal-cookie";
 
 
 
+  
 
 
-const Index = (props) => { 
+
+const Index = (props) => {
   const cookie = new Cookie();
-  
-  console.log();
-  
 
   // console.log(props);
   const roomRef = useRef();
@@ -46,11 +45,19 @@ const Index = (props) => {
   
   //roomInput 변경
   const onCreateRoom = (event) => {
+    
+
+    event.preventDefault();
+    setRoomInput(event.target.value);
+  }
+
+  //변경된 roomInput을 배열에 저장
+  const onRoomList = (event) => {
     const url = '/api/createRoom';
     const getData = null;
       try {
         const datas = { roomName: roomInput} 
-        console.log(roomInput);
+        // console.log(roomInput);
         axios.post(url,datas).then((Response) =>{
           
           console.log(Response);
@@ -61,14 +68,6 @@ const Index = (props) => {
       }catch (error) {
         console.log(error);
       }
-
-    event.preventDefault();
-    setRoomInput(event.target.value);
-  }
-
-  //변경된 roomInput을 배열에 저장
-  const onRoomList = (event) => {
-    
     
     //새로고침 방지
     event.preventDefault(); 
@@ -83,36 +82,31 @@ const Index = (props) => {
     }
   }
 
-  useEffect(() => {
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    console.log(cookie.get('user'));
-    if (!cookie.get('user')) {
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  //로그인 정보 확인
+  const loginCheck = () => {
+    if (!cookie.get('user')) {  //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
       alert("로그인을 해주세요");
       props.history.push("/login");
     }
-    else{
+    else{ //쿠키가 있으면 쿠키 정보 검증
       const url = "/api/loginCheck";
       const boolean = true;
-      axios.post(url).then((response) =>{
-        console.log(response.data);
-        if(!response.data){
+      axios.post(url).then((response) =>{ //서버에 암호화된 쿠키 정보 전달
+        console.log(response.data); //서버의 검증에서 받아온 true false;
+        if(!response.data){ //false 라면 잘못된 쿠키이므로 다시 로그인시킴
           cookie.remove('user');
           alert("다시 로그인 해주세요.");
           props.history.push('/login');
         }
-        
       }).catch((ex) => {
         console.log(ex);
       })
-      
-      
-      
-      console.log("dobby is free");
-      
     }
+  }
+
+  useEffect(() => {    
+    loginCheck(); //로그인 정보 쿠키 체크
+    
     socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 
       if (!error) { //에러가 없으면
