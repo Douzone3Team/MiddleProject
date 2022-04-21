@@ -97,7 +97,6 @@ const Index = (props) => {
       setErrMsg('Not found roomName');
     } else {
       socket.emit('BE-check-user', { roomId: roomName, userName });
-      console.log(1);
     }
   };
 

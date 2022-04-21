@@ -78,46 +78,45 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
 
     //
     socket.on('BE-check-user', async ({ roomId, userName }) => {
-        const ids = await io.in(roomId).allSockets();
-        const clients = await io.in(roomId).fetchSockets();
-        console.log(2);
         let error = false;
-        clients.forEach((name) => {
-            console.log(3);
-            if (socketList[name] == userName) {
-                error = true;
-            }
-            console.log(4);
-        });
-        console.log(31);
-        console.log(clients);
-        socket.emit('FE-error-user-exist', { error });
-        console.log(5);
 
+        io.sockets.in(roomId).clients((err, clients) => {
+
+            clients.forEach((client) => {
+                if (socketList[client] == userName) {
+                    error = true;
+                }
+            });
+            socket.emit('FE-error-user-exist', { error });
+        });
     });
 
 
-
     //Join Room
-    socket.on('BE-join-room', async ({ roomId, userName }) => {
-        const clients = await io.in(roomId).fetchSockets();
+    socket.on('BE-join-room', ({ roomId, userName }) => {
+
         // Socket Join RoomName
         socket.join(roomId);
         socketList[socket.id] = { userName, video: true, audio: true };
 
         // Set User List
-        try {
-            const users = [];
-            clients.forEach((client) => {
-                // Add User List
-                users.push({ userId: client, info: socketList[client] });
-            });
-            socket.broadcast.to(roomId).emit('FE-user-join', users);
-            // io.sockets.in(roomId).emit('FE-user-join', users);
-        } catch (e) {
-            io.in(roomId).emit('FE-error-user-exist', { err: true });
-        }
+        io.sockets.in(roomId).clients((err, clients) => {
+            console.log(clients);
+            try {
+                const users = [];
+                clients.forEach((client) => {
+                    // Add User List
+                    console.log(clients);
+                    users.push({ userId: client, info: socketList[client] });
+                    console.log(users);
 
+                });
+                socket.broadcast.to(roomId).emit('FE-user-join', users);
+                // io.sockets.in(roomId).emit('FE-user-join', users);
+            } catch (e) {
+                io.sockets.in(roomId).emit('FE-error-user-exist', { err: true });
+            }
+        });
     });
 
 

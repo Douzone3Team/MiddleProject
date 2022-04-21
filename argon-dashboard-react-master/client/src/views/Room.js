@@ -62,29 +62,27 @@ const Room = (props) => {
 
 
     useEffect(() => {
-        socket.on("message", (message) => {
-            setChat([...chat, message]);
-        });
 
         navigator.mediaDevices.enumerateDevices().then((devices) => {
             const camera = devices.filter((device) => device.kind === 'videoinput');
             setVideoDevices(camera);
-            console.log("room0");
+
         });
-        console.log("room1");
+
         // Connect Camera & Mic
         navigator.mediaDevices
-            .getUserMedia({ video: true, audio: true }, console.log("room2"))
+            .getUserMedia({ video: true, audio: true })
             .then((stream) => {
-                console.log("room3");
+                console.log(stream);
                 userVideoRef.current.srcObject = stream;
                 userStream.current = stream;
 
                 socket.emit('BE-join-room', { roomId, userName: currentUser });
-                socket.on('FE-user-join', (users) => {
+
+                socket.on('FE-user-join', async (users) => {
                     // all users
                     const peers = [];
-                    users.forEach(({ userId, info }) => {
+                    await users.forEach(({ userId, info }) => {
                         let { userName, video, audio } = info;
 
                         if (userName !== currentUser) {
@@ -112,79 +110,80 @@ const Room = (props) => {
                     setPeers(peers);
                 });
 
-                socket.on('FE-receive-call', ({ signal, from, info }) => {
-                    let { userName, video, audio } = info;
-                    const peerIdx = findPeer(from);
+                //     socket.on('FE-receive-call', ({ signal, from, info }) => {
+                //         let { userName, video, audio } = info;
+                //         const peerIdx = findPeer(from);
 
-                    if (!peerIdx) {
-                        const peer = addPeer(signal, from, stream);
+                //         if (!peerIdx) {
+                //             const peer = addPeer(signal, from, stream);
 
-                        peer.userName = userName;
+                //             peer.userName = userName;
 
-                        peersRef.current.push({
-                            peerID: from,
-                            peer,
-                            userName: userName,
-                        });
-                        setPeers((users) => {
-                            return [...users, peer];
-                        });
-                        setUserVideoAudio((preList) => {
-                            return {
-                                ...preList,
-                                [peer.userName]: { video, audio },
-                            };
-                        });
-                    }
-                });
+                //             peersRef.current.push({
+                //                 peerID: from,
+                //                 peer,
+                //                 userName: userName,
+                //             });
+                //             setPeers((users) => {
+                //                 return [...users, peer];
+                //             });
+                //             setUserVideoAudio((preList) => {
+                //                 return {
+                //                     ...preList,
+                //                     [peer.userName]: { video, audio },
+                //                 };
+                //             });
+                //         }
+                //     });
 
-                socket.on('FE-call-accepted', ({ signal, answerId }) => {
-                    const peerIdx = findPeer(answerId);
-                    peerIdx.peer.signal(signal);
-                });
+                //     socket.on('FE-call-accepted', ({ signal, answerId }) => {
+                //         const peerIdx = findPeer(answerId);
+                //         peerIdx.peer.signal(signal);
+                //     });
 
-                socket.on('FE-user-leave', ({ userId, userName }) => {
-                    const peerIdx = findPeer(userId);
-                    peerIdx.peer.destroy();
-                    setPeers((users) => {
-                        users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
-                        return [...users];
-                    });
-                    peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
-                });
-            });
-    })
-    
-    const onTextChange = (e) => {
-        setState({ ...state, [e.target.name]: e.target.value });
-    };
+                //     socket.on('FE-user-leave', ({ userId, userName }) => {
+                //         const peerIdx = findPeer(userId);
+                //         peerIdx.peer.destroy();
+                //         setPeers((users) => {
+                //             users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
+                //             return [...users];
+                //         });
+                //         peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
+                //     });
+                // });
+            })
 
-    // message이벤트 지정하고 message이벤트 보내기
-    const onMessageSubmit = (e) => {
-        e.preventDefault();
-        const { name, message } = state;
-        socket.emit("message", { name, message });
-        setState({ message: "", name });
+        const onTextChange = (e) => {
+            setState({ ...state, [e.target.name]: e.target.value });
+        };
 
-        // 현재시간
-        let nowTime = new Date();
-        let sendTime = [...time];
-        sendTime.push(nowTime.getHours() + ':' + nowTime.getMinutes())
-        // renderChat();
-        setTime(sendTime);
-    };
+        // message이벤트 지정하고 message이벤트 보내기
+        const onMessageSubmit = (e) => {
+            e.preventDefault();
+            const { name, message } = state;
+            socket.emit("message", { name, message });
+            setState({ message: "", name });
 
-    // messgae이벤트 보이기
-    const renderChat = () => {
-        // console.log(chat);
-        return (
-            chat.map(({ name, message }, index) => (
-                <div key={index}>
-                    {time[index]}&nbsp;&nbsp; {name}: <span>{message}</span>
-                </div>)
-            ));
-    };
+            // 현재시간
+            let nowTime = new Date();
+            let sendTime = [...time];
+            sendTime.push(nowTime.getHours() + ':' + nowTime.getMinutes())
+            // renderChat();
+            setTime(sendTime);
+        };
 
+        // messgae이벤트 보이기
+        const renderChat = () => {
+            // console.log(chat);
+            return (
+                chat.map(({ name, message }, index) => (
+                    <div key={index}>
+                        {time[index]}&nbsp;&nbsp; {name}: <span>{message}</span>
+                    </div>)
+                ));
+        };
+
+    }, []);
 
     //영상
     function createPeer(userId, caller, stream) {
@@ -336,7 +335,7 @@ const Room = (props) => {
                                 </Dropdown>
                             </div>
                         </Col>
-                        <Col className="mb-5 mb-xl-0" xl="3">
+                        {/* <Col className="mb-5 mb-xl-0" xl="3">
                             <form onSubmit={onMessageSubmit}>
                                 <Card className="shadow">
                                     <CardHeader className="border-0" style={{ height: "420px" }}>
@@ -375,9 +374,7 @@ const Room = (props) => {
                                     </div>
                                 </form>
                             </div>
-                        </Col>
-
-
+                        </Col> */}
                     </Row>
                 </Container>
                 <Container fluid>
@@ -385,8 +382,9 @@ const Room = (props) => {
                 </Container>
             </div>
         </>
-    );
+    )
 };
+
 
 const MyVideo = styled.video``;
 
