@@ -72,7 +72,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        console.log(`${socket.id} +User disconnected!`);
+        console.log(`${socket.id} User disconnected!`);
     });
 
 
@@ -129,6 +129,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     });
 
     socket.on('BE-accept-call', ({ signal, to }) => {
+        console.log("sever : 추가되는 peer확인, client에게 확인 message 전달")
         io.to(to).emit('FE-call-accepted', {
             signal,
             answerId: socket.id,

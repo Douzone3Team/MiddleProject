@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-
+import styled from 'styled-components';
 
 const Video = (props) => {
     const ref = useRef();
@@ -14,13 +14,9 @@ const Video = (props) => {
     }, [peer]);
 
     return (
-        <>
-            <div playsInline autoPlay ref={ref}>
-            </div>
-        </>
-
-
+        <VideoInput playsInline autoPlay ref={ref} />
     );
 };
+const VideoInput = styled.video``;
 
 export default Video;

@@ -143,6 +143,7 @@ const Room = (props) => {
                 });
 
                 socket.on('FE-call-accepted', ({ signal, answerId }) => {
+                    console.log("client : server에서 확인 message 받음, 방문 peer 추가")
                     const peerIdx = findPeer(answerId);
                     peerIdx.peer.signal(signal);
                 });
@@ -219,6 +220,7 @@ const Room = (props) => {
     }
 
     function addPeer(incomingSignal, callerId, stream) {
+        console.log("client : peer 추가")
         const peer = new Peer({
             initiator: false,
             trickle: false,
@@ -226,6 +228,7 @@ const Room = (props) => {
         });
 
         peer.on('signal', (signal) => {
+            console.log("client : server로 message와 signal,추가되는 user 전달")
             socket.emit('BE-accept-call', { signal, to: callerId });
         });
 
@@ -241,6 +244,7 @@ const Room = (props) => {
     function findPeer(id) {
         return peersRef.current.find((p) => p.peerID === id);
     }
+
     function createUserVideo(peer, index, arr) {
         return (
             <VideoBox
@@ -297,7 +301,7 @@ const Room = (props) => {
                                 </Col>
                             )
                         })
-                        }
+                        };
                     </Row>
                     <Row className="mt-5">
                         <Col className="mb-5 mb-xl-0" xl="8">
@@ -400,22 +404,22 @@ const Room = (props) => {
 const MyVideo = styled.video``;
 
 const VideoBox = styled.div`
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-  > video {
-                top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-  }
-
-            :hover {
-    > i {
-                display: block;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > video {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     }
-  }
-            `;
+
+    :hover {
+    > i {
+        display: block;
+        }
+    }
+`;
 
 export default Room;
