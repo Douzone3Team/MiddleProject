@@ -5,7 +5,6 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Peer from 'simple-peer';
 import styled from 'styled-components';
 // node.js library that concatenates classes (strings)
-import classnames from "classnames";
 import Video from "./examples/Video";
 import socket from "client_socket";
 
@@ -177,14 +176,16 @@ const Room = (props) => {
 
     useEffect(() => {
         navigator.mediaDevices.enumerateDevices().then((devices) => {
-            const filtered = devices.filter((device) => device.kind === 'videoinput');
-            setVideoDevices(filtered);
+            const camera = devices.filter((device) => device.kind === 'videoinput');
+            setVideoDevices(camera);
+            console.log("room0");
         });
-
+        console.log("room1");
         // Connect Camera & Mic
         navigator.mediaDevices
-            .getUserMedia({ video: true, audio: true })
+            .getUserMedia({ video: true, audio: true }, console.log("room2"))
             .then((stream) => {
+                console.log("room3");
                 userVideoRef.current.srcObject = stream;
                 userStream.current = stream;
 
@@ -383,7 +384,7 @@ const Room = (props) => {
                 </Container>
             </div>
         </>
-    )
+    );
 };
 
 const MyVideo = styled.video``;

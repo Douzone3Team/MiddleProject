@@ -19,6 +19,7 @@ import {
 } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
+import { event } from "jquery";
 
 
 
@@ -28,12 +29,14 @@ const Index = (props) => {
   const userRef = useRef();
   const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
-
+  const [nameInput, setNameInput] = useState("")
+  const [roomID, setRoomID] = useState("");
+  const [userID, setUserID] = useState("");
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState('');
 
-  console.log(roomRef);
-  console.log(userRef);
+
+
 
 
   //roomInput 변경
@@ -50,37 +53,51 @@ const Index = (props) => {
     setRoomInput(" "); //input창 초기화
   }
 
+  const userNameSet = (event) => {
+    event.preventDefault();
+    setNameInput(event.target.value);
+  }
 
-  let roomName;
-  let nickName;
+  const onUserName = (event) => {
+    event.preventDefault();
+    setUserID(nameInput)
+    setNameInput("");
+  }
+
+
+
 
 
   useEffect(() => {
-    console.log(userRef.current.value);
-    socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
-
+    socket.on('FE-error-user-exist', ({ error }) => {
       if (!error) { //에러가 없으면
+        const roomName = roomID;
+        const userName = userID;
+
         sessionStorage.setItem('user', userName);
-        props.history.push(`/room/${roomId}`); // roomName으로 push
+        props.history.push(`/room/${roomName}`); // roomName으로 push
       } else {
         setErr(error);
         setErrMsg('User name already exist');
       }
     });
-  }, [props.history]);
+  }, [props.history, roomID, userID]);
 
 
   function clickJoin(item) {
-    roomRef.current.value = item;
-    roomName = roomRef.current.value;
-    const userName = userRef.current.value;
-    console.log(userName);
+    /* roomRef.current.value = item; */
+    setRoomID(item)
+    const roomName = roomID;
+    const userName = userID;
+
+
 
     if (!roomName || !userName) {
       setErr(true);
-      setErrMsg('Enter Room Name or User Name');
+      setErrMsg('Not found roomName');
     } else {
       socket.emit('BE-check-user', { roomId: roomName, userName });
+      console.log(1);
     }
   };
 
@@ -103,15 +120,17 @@ const Index = (props) => {
                     <Col className="" >
                       {/* roomName Input */}
                       <Form id="form1" onSubmit={onRoomList} >
-                        <Input className="text-right" value={roomInput} type="text" required id="1"
+                        <Input className="text-right" value={roomInput} type="text" required
                           ref={roomRef} placeholder="방 이름을 입력한 후에 Enter!" onChange={onCreateRoom} />
                       </Form>
                     </Col>
                   </Row>
                   <Row>
                     {/* nickName Input */}
-                    <Input className="text-right" type="text" required id="2"
-                      ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" />
+                    <Form onSubmit={onUserName}>
+                      <Input className="text-right" value={nameInput} type="text" required
+                        ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" onChange={userNameSet} />
+                    </Form>
                   </Row>
                 </CardHeader>
                 <Table hover className="align-items-center table-flush" responsive>
@@ -141,7 +160,7 @@ const Index = (props) => {
         <Container fluid>
           <AdminFooter />
         </Container>
-      </div> 
+      </div>
     </>
   );
 };
