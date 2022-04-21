@@ -10,15 +10,15 @@ import socket from "client_socket";
 import { setCookie, getCookie } from '../cookie/cookie';
 // reactstrap components
 import { Button, Card, CardHeader, CardBody, Container, Row, Col, CardTitle, } from "reactstrap";
-
-//socekt(server-client)연결
-
-import TextField from "@material-ui/core/TextField";
+// import Cookie from 'universal-cookie';
+// const cookie = new Cookie();
+import Clock from 'react-live-clock';
 
 // reactstrap components
 import Header from "components/Headers/Header.js";
 import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill, } from "react-icons/bs";
 import { Dropdown } from "react-bootstrap";
+import { monthsShort } from "moment";
 // import Friends from '../variables/Friends'
 
 const Room = (props) => {
@@ -38,10 +38,13 @@ const Room = (props) => {
   const [msg, setMsg] = useState([]);
   const messagesEndRef = useRef(null);
   const inputRef = useRef();
-
-  //채팅 메세지에 표시할 시간
   const [time, setTime] = useState('');
+  let today = new Date();
+  let hour = today.getHours();
+  let minute = today.getMinutes();
 
+  var dateString = hour + ' : '+ minute;
+  // console.log(dateString);
 
   //다른 참여자의 Cam (임의데이터)
   const [participant, setParticipant] = useState([ "참여자1", "참여자2", "참여자3", "참여자4",]);
@@ -59,7 +62,7 @@ const Room = (props) => {
         props.history.push("/login");
       }
     //채팅
-    socket.on("FE-receive-message", ({ msg, sender }) => {
+    socket.on("FE-receive-message", ({ msg, sender}) => {
       setMsg((msgs) => [...msgs, { sender, msg }]);
     });
 
@@ -162,17 +165,28 @@ const Room = (props) => {
   };
 
   const sendMessage = (e) => {
+    // let nowTime = dateString;
+    // 현재시간
+
+
     if (e.key === "Enter") {
       const msg = e.target.value;
       console.log(msg);
+      
+      let nowTime = new Date();
+      let sendTime = [...time];
+      sendTime.push(nowTime.getHours() + ':' + nowTime.getMinutes())
+      // renderChat();
+      setTime(sendTime);
+      console.log(time);
 
       if (msg) {
-
-        socket.emit("BE-send-message", { msg, sender: currentUser });
+        socket.emit("BE-send-message", { msg, sender: currentUser});
         inputRef.current.value = "";
       }
     }
   };
+  
 
   //영상
   function createPeer(userId, caller, stream) {
@@ -342,14 +356,15 @@ const Room = (props) => {
               <Card className="shadow">
                 <CardHeader className="border-0" style={{ height: "46vh", overflow: "auto" }}>
                   <div>
-
                     {msg &&
-                      msg.map(({ sender, msg }, idx) => {
+                      msg.map(({ sender, msg}, idx) => {
                         if (sender !== currentUser) {
                           return (
                             <ChattingOther>
                               <div key={idx}>
-                                <strong> 상대방: &nbsp;{msg}</strong>
+                                 {/* <strong>상대방: &nbsp;{msg}   &nbsp;&nbsp;&nbsp;{time[idx]}</strong> */}
+                                 <strong>상대방: &nbsp;{msg} &nbsp;&nbsp;&nbsp;  {time[idx]}</strong>
+                                 
                               </div>
                             </ChattingOther>
                           );
@@ -357,7 +372,7 @@ const Room = (props) => {
                           return (
                             <ChattingMe>
                               <div className="col text-right" key={idx}>
-                                <strong>{msg} &nbsp; :나</strong>
+                                <strong>{msg}</strong>
                               </div>
                             </ChattingMe>
                           );
@@ -381,7 +396,7 @@ const Room = (props) => {
                         placeholder="Enter your message"
                         style={{ width: "80%", border: "none" }}
                       />
-                      <Button color="primary" size="sm">SEND</Button>
+                      <Button color="primary" size="sm" onClick={sendMessage}>SEND</Button>
                     </div>
                   </Row>
                 </CardHeader>
@@ -429,6 +444,8 @@ const ChattingOther = styled.div`
   border-radius: 10px;
   font-size: 5px;
   float: left;
+
+
 `;
 const ChattingMe = styled.div`
   position: relative;
@@ -441,6 +458,8 @@ const ChattingMe = styled.div`
   border-radius: 10px;
   font-size: 5px;
   float: right;
+  flex-direction: column-reverse;
+
 `;
 
 export default Room;

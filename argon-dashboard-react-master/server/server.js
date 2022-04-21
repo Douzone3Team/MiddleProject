@@ -50,8 +50,6 @@ app.post('/api/login',(req, res, fields) => {
     // const parsedCookies = cookie.parse(cookies);
     // console.log(parsedCookies);
 
-    
-
     //요청해서 서버로 받아온 데이터
     const data = req.body;   
     const getId = data.id.id;
@@ -182,7 +180,7 @@ app.post('/api/createRoom',(req,res) => {
 
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
-    console.log(`New User connected: ${socket.id}`);
+    // console.log(`New User connected: ${socket.id}`);
 
     // 채팅연결 - git
     socket.on('BE-send-message', ({msg, sender}) => {
@@ -192,7 +190,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        console.log('User disconnected!');
+        // console.log('User disconnected!');
     });
 
     //
@@ -210,12 +208,6 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         //     console.log(2);
         // });
     });
-
-
-
-
-
-
 
     //Join Room
     socket.on('BE-join-room', ({ roomId, userName }) => {
@@ -280,7 +272,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     // });
 });
 
-
+});
 
 
 
