@@ -68,6 +68,9 @@ const Login = (props) => {
     if (isLogin) {  //true면 로그인후 인덱스로 이동  
       props.history.push("/");
     }
+    else {
+      alert("아이디나 비밀번호를 확인해주세요")
+    }
   }
   return (
     <>

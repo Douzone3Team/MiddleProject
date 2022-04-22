@@ -80,8 +80,9 @@ app.post('/api/login', (req, res, fields) => {
                     dbPass = data.u_pass;
                     dbName = data.u_name;
                 }
-                res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
+                
                 if ((dbId === getId) && (dbPass === getPass)) {
+                    res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
                     res.send(true);
                 }
                 else res.send(false);
@@ -196,12 +197,22 @@ app.post('/api/loginCheck', (req, res) => {
     })
 })
 
+//방 참여 기능
+app.post('/api/joinRoom', (req,res) => {
+        
+    console.log("#########################")
+    console.log(req);
+    sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${getRoomMax}) `
+    console.log("sql = " +sql); 
+})
+
 //방 생성 기능
 app.post('/api/createRoom', (req, res) => {
     const data = req.body.roomName; //clients에서 받아온 데이터
     const getCookie = req.cookies.user; //쿠키내 user 정보
-    var getName; //암호화된 쿠키내 user 정보    
-    var getRoomMax //쿼리에 넣을 방 번호
+
+    let getName; //암호화된 쿠키내 user 정보    
+    let getRoomMax; //쿼리에 넣을 방 번호
 
     //암호화 해제
     jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
@@ -212,28 +223,31 @@ app.post('/api/createRoom', (req, res) => {
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
 
-
-
-
+    console.log("getName:" + getName);
 
 
     let sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${getName}' );` //방생성 쿼리
     mysqlDB.query(sql, function (err, results, next) { //db에 생성할 방 INSERT
         if (err) console.log(err);
         else { console.log("방 추가완료"); }
-
     });
+
     sql = `SELECT r_code from room order by r_code desc limit 1;`;
     mysqlDB.query(sql, function (err, results, next) {
         if (err) console.log(err);
         else {
+
             for (var data of results) {
+
                 getRoomMax = data.r_code;
+                console.log("getRoomMax!:" +getRoomMax);
             }
+            console.log("getRoomMax!!:" +getRoomMax);
+            res.send({getRoomMax: getRoomMax});
         }
+
+
     });
-
-
 })
 
 
