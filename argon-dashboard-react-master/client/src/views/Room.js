@@ -63,7 +63,7 @@ const Room = (props) => {
       props.history.push("/login");
     }
     //채팅
-    socket.on("FE-receive-message", ({ msg, sender }) => {
+    socket.on("FE-receive-message", ({ msg, sender, roomId }) => {
       setMsg((msgs) => [...msgs, { sender, msg }]);
     });
 
@@ -259,8 +259,8 @@ const Room = (props) => {
       console.log(msg);
 
       if (msg) {
+        socket.emit("BE-send-message", { roomId, msg, sender: currentUser });
 
-        socket.emit("BE-send-message", { msg, sender: currentUser });
         inputRef.current.value = "";
       }
     }
@@ -374,7 +374,7 @@ const Room = (props) => {
                           return (
                             <ChattingOther>
                               <div key={idx}>
-                                <strong> 상대방: &nbsp;{msg}</strong>
+                                <strong> {sender} &nbsp;{msg}</strong>
                               </div>
                             </ChattingOther>
                           );
@@ -382,7 +382,7 @@ const Room = (props) => {
                           return (
                             <ChattingMe>
                               <div className="col text-right" key={idx}>
-                                <strong>{msg} &nbsp; :나</strong>
+                                <strong>{msg} {sender}</strong>
                               </div>
                             </ChattingMe>
                           );

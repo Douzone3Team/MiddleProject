@@ -334,9 +334,9 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
 
 
 
-    // socket.on('BE-send-message', ({ roomId, msg, sender }) => {
-    //     io.sockets.in(roomId).emit('FE-receive-message', { msg, sender });
-    // });
+    socket.on('BE-send-message', ({ roomId, msg, sender }) => {
+        io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId });
+    });
 
     // socket.on('BE-leave-room', ({ roomId, leaver }) => {
     //     delete socketList[socket.id];
