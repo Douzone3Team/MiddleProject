@@ -33,12 +33,17 @@ import {
   BsFillMicMuteFill,
 } from "react-icons/bs";
 import { Dropdown } from "react-bootstrap";
+import Cookies from "universal-cookie";
+import { ScriptElementKindModifier } from "typescript";
 
 // import Friends from '../variables/Friends'
 
 const Room = (props) => {
+  
+  const cookie = new Cookies();
+  const myName = cookie.get('myname');
   //영상
-  const currentUser = sessionStorage.getItem("user");
+  const currentUser = myName;
   const [peers, setPeers] = useState([]);
   const [userVideoAudio, setUserVideoAudio] = useState({
     localUser: { video: true, audio: true },
@@ -72,10 +77,12 @@ const Room = (props) => {
 
   // 렌더링될 때 client(message) 받기 //영상 가져오기
   useEffect(() => {
+    
     if (!getCookie("user")) {
       alert("로그인을 해주세요");
       props.history.push("/login");
     }
+    
     //채팅
     socket.on("FE-receive-message", ({ msg, sender, roomId, time }) => {
       setMsg((msgs) => [...msgs, { sender, msg, time }]);
@@ -289,6 +296,7 @@ const Room = (props) => {
     if (e.key === "Enter") {
       const msg = e.target.value;
       // console.log(msg);
+      alert(myName);
 
       if (msg) {
         socket.emit("BE-send-message", { roomId, msg, sender: currentUser,time });
@@ -399,7 +407,7 @@ const Room = (props) => {
                   <div>
                     {msg &&
                       msg.map(({ sender, msg, time }, idx) => {
-                        if (sender !== currentUser) {
+                        if ( sender !== currentUser) {
                           return (
                             <div key={idx}>
                               <ChattingOther>
