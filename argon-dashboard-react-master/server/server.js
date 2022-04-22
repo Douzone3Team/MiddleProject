@@ -72,17 +72,23 @@ app.post('/api/login', (req, res, fields) => {
                     }
                 );
                 res.cookie("user", accessToken, { maxAge: 60 * 60 * 1000 });
-
+                
                 var dbId, dbPass, dbName;
 
                 for (var data of results) {
                     dbId = data.u_id;
                     dbPass = data.u_pass;
                     dbName = data.u_name;
+                    
                 }
+                console.log("@@@@@@@@@@@@@@@@@0000");
+                console.log("dbName = "+ dbName);
+                res.cookie("myname",dbName,{maxAge: 60 *60*1000});
+                console.log("@@@@@@@@@@@@@@@@@0000");
                 
                 if ((dbId === getId) && (dbPass === getPass)) {
                     res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
+                    
                     res.send(true);
                 }
                 else res.send(false);
