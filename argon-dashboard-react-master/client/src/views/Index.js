@@ -3,19 +3,12 @@ import axios from 'axios';
 import AuthNavbar from "../components/Navbars/AuthNavbar";
 import AdminFooter from "components/Footers/AdminFooter.js";
 // node.js library that concatenates classes (strings)
-
 import socket from "../client_socket";
-
 // reactstrap components
 import { Form, Input, Button, Card, CardHeader, Table, Container, Row, Col } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
-
-import { event } from "jquery";
-
 import Cookie from 'universal-cookie'
-import Cookies from "universal-cookie";
-
 
 const Index = (props) => {
   const cookie = new Cookie();
@@ -109,9 +102,12 @@ const Index = (props) => {
     setNameInput("");
   }
 
-
   useEffect(() => {
     loginCheck(); //로그인 정보 쿠키 체크
+  })
+
+  useEffect(() => {
+    console.log("user-exist");
     socket.on('FE-error-user-exist', ({ error }) => {
       if (!error) { //에러가 없으면
         const roomName = roomID;
@@ -132,98 +128,88 @@ const Index = (props) => {
     setRoomID(item)
     const roomName = roomID;
     const userName = userID;
-
-
-
+    console.log("clickJoin");
     if (!roomName || !userName) {
       setErr(true);
       setErrMsg('Not found roomName');
     } else {
+      console.log("check-user1");
       socket.emit('BE-check-user', { roomId: roomName, userName });
+      console.log("check-user2");
     }
-
 
   };
 
 
   return (
-    <div className="main-content">
-      {/* <div className="main-content"> */}
-      <AuthNavbar />
-      <Header />
-      {/* Page content */}
-      <Container className="mt--7" fluid style={{ minHeight: '383px' }}>
-        <Row className="mt-5">
-          <Col className="mb-5 mb-xl-0" >
-            <Card className="shadow">
-              <CardHeader className="border-0">
-                <Row className="align-items-center" >
-                  {/* <Col className="col-sm-5"> */}
-                  <Col className="">
-                    <h3 className="mb-0">방 목록</h3>
-                  </Col>
-                  <Col>
-                    <form id="form1" onSubmit={onRoomList}>
-                      <Card>
-                        <CardHeader className="border-0">
-                          <Row className="align-items-center">
-                            <div className="col text-right">
-                              <input className="text-left" value={roomInput} type="text" id="roomName"
-                                ref={roomRef} placeholder="방 이름" autoFocus onChange={onCreateRoom} style={{ width: "80%", border: "none" }}
-                              />
-                              <Button color="primary" size="sm" type="submit" form="form1" >방 생성</Button>
-                            </div>
-                          </Row>
-                        </CardHeader>
-                      </Card>
-                    </form>
-                  </Col>
-                  <Col className="" >
-                    {/* roomName Input */}
-                    <Form id="form1" onSubmit={onRoomList} >
-                      <Input className="text-right" value={roomInput} type="text" required
-                        ref={roomRef} placeholder="방 이름을 입력한 후에 Enter!" onChange={onCreateRoom} />
-                    </Form>
-                  </Col>
-
-                  <Row>
-                    {/* nickName Input */}
-                    <Form onSubmit={onUserName}>
-                      <Input className="text-right" value={nameInput} type="text" required
-                        ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" onChange={userNameSet} />
-                    </Form>
-
+    <>
+      <div className="main-content">
+        {/* <div className="main-content"> */}
+        <AuthNavbar />
+        <Header />
+        {/* Page content */}
+        <Container className="mt--7" fluid style={{ minHeight: '383px' }}>
+          <Row className="mt-5">
+            <Col className="mb-5 mb-xl-0" >
+              <Card className="shadow">
+                <CardHeader className="border-0">
+                  <Row className="align-items-center" >
+                    {/* <Col className="col-sm-5"> */}
+                    <Col className="">
+                      <h3 className="mb-0">방 목록</h3>
+                    </Col>
+                   
+                    <Col className="" >
+                      {/* roomName Input */}
+                      <Form id="form1" onSubmit={onRoomList} >
+                        <Input className="text-right" value={roomInput} type="text" required
+                          ref={roomRef} placeholder="방 이름을 입력한 후에 Enter!" onChange={onCreateRoom} />
+                      </Form>
+                    </Col>
+                    <Row>
+                      {/* nickName Input */}
+                      <Form onSubmit={onUserName}>
+                        <Input className="text-right" value={nameInput} type="text" required
+                          ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" onChange={userNameSet} />
+                      </Form>
+                    </Row>
                   </Row>
-                </Row>
+
+                
               </CardHeader>
-              <Table hover className="align-items-center table-flush" responsive>
-                <thead className="thead-light">
-                  <tr>
-                    <th >방 이름</th>
-                    <th scope="col"> </th>
-                    <th scope="col">참여인원</th>
-                    <th scope="col"> </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {roomNames.map((item, index) => ( //map함수 이용, 저장된 roomName으로 테이블 row 생성
-                    <tr key={index}>
-                      <th >{item}</th>
-                      <td> </td>
-                      <td> </td>
-                      <td><Button onClick={() => clickJoin(item)} color="primary" size="sm">참여</Button></td>
+              
+                
+                
+                <Table hover className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th >방 이름</th>
+                      <th scope="col"> </th>
+                      <th scope="col">참여인원</th>
+                      <th scope="col"> </th>
+
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-      <Container fluid  >
-        <AdminFooter />
-      </Container>
-    </div>
+                  </thead>
+                  <tbody>
+                    {roomNames.map((item, index) => ( //map함수 이용, 저장된 roomName으로 테이블 row 생성
+                      <tr key={index}>
+                        <th >{item}</th>
+                        <td> </td>
+                        <td> </td>
+                        <td><Button onClick={() => clickJoin(item)} color="primary" size="sm">참여</Button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+        <Container fluid  >
+          <AdminFooter />
+        </Container>
+      </div>
+    </>
   );
 };
 

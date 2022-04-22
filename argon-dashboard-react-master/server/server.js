@@ -5,7 +5,7 @@ const http = require('http').createServer(app);
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
-const cookie = require('cookie');
+const cookies = require('cookie');
 const io = require('socket.io')(http, {
     cors: {
         origin: "*",
@@ -20,11 +20,11 @@ const { read } = require('fs');
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
 
 const mysqlDB = mysql.createConnection({   //express mysql conect
-    host:'kosa2.iptime.org', 
-    user:'rok', 
-    password:'1234', 
-    port:50324, 
-    database:'chat_db', 
+    host: 'kosa2.iptime.org',
+    user: 'rok',
+    password: '1234',
+    port: 50324,
+    database: 'chat_db',
     multipleStatements: true,
 });
 
@@ -45,25 +45,25 @@ app.use(bodyParser.json());
 
 
 //로그인 기능
-app.post('/api/login',(req, res, fields) => {
-   
+app.post('/api/login', (req, res, fields) => {
+
     //요청해서 서버로 받아온 데이터
-    const data = req.body;   
+    const data = req.body;
     const getId = data.id.id;
     const getPass = data.pass.pass;
     console.log(data);
-    console.log(getId + " " + getPass);    
+    console.log(getId + " " + getPass);
     //쿼리 작성
     const sql = `SELECT u_id, u_pass, u_name FROM user WHERE u_id = '${getId}'`;
 
     //Mysql로 쿼리 동작
-    mysqlDB.query(sql,function(err, results) {
-        if(err) console.log(err);
+    mysqlDB.query(sql, function (err, results) {
+        if (err) console.log(err);
         else {
             isUser = true;
-            if(isUser) {                
+            if (isUser) {
                 const YOUR_SECRET_KEY = process.env.SECRET_KEY;
-                console.log(YOUR_SECRET_KEY);                
+                console.log(YOUR_SECRET_KEY);
                 const accessToken = jwt.sign(
                     {
                         getId,
@@ -74,52 +74,54 @@ app.post('/api/login',(req, res, fields) => {
                     }
                 );
                 console.log(accessToken);
-                res.cookie("user", accessToken,{maxAge: 60*60* 1000});
-                
+                res.cookie("user", accessToken, { maxAge: 60 * 60 * 1000 });
+
                 var dbId, dbPass, dbName;
-                
-                for(var data of results){
+
+                for (var data of results) {
                     dbId = data.u_id;
                     dbPass = data.u_pass;
                     dbName = data.u_name;
                 }
-                res.cookie("myId", dbId,{maxAge: 60*60* 1000});
-                if((dbId === getId) && (dbPass === getPass)){
+                res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
+                if ((dbId === getId) && (dbPass === getPass)) {
                     res.send(true);
                 }
                 else res.send(false);
 
-                
-                
+
+
             } else {
-                res.state(400).json({ error : 'invalide user',
-                isLogin : false, })
-                
+                res.state(400).json({
+                    error: 'invalide user',
+                    isLogin: false,
+                })
+
             }
             // res.cookie('islogined',getId);
-            
-        } 
+
+        }
 
         console.log(results);
-    });    
+    });
 });
 
 //회원가입 기능
-app.post('/api/register', (req,res) => {
+app.post('/api/register', (req, res) => {
     //가입할 정보 입력
-    const data = req.body; const getName = data.name.name; 
+    const data = req.body; const getName = data.name.name;
     const getId = data.id.id; const getPass = data.pass.pass;
     //user INSERT 쿼리
-    const sql =`INSERT INTO user(u_id, u_pass, u_name) VALUES('${getId}', '${getPass}', '${getName}')`;
+    const sql = `INSERT INTO user(u_id, u_pass, u_name) VALUES('${getId}', '${getPass}', '${getName}')`;
     console.log(sql);
-    mysqlDB.query(sql,function(err, results) {
-        if(err) {   //아이디가 있으면 return false
-            console.log("이미 등록된 아이디입니다.");   
+    mysqlDB.query(sql, function (err, results) {
+        if (err) {   //아이디가 있으면 return false
+            console.log("이미 등록된 아이디입니다.");
             res.send(false);
         }
         else {  //없으면 INSERT 되고 return true
             res.send(true);
-            
+
         };
     })
 });
@@ -166,92 +168,108 @@ app.post('/api/register', (req,res) => {
 
 
 //로그인 체크
-app.post('/api/loginCheck', (req,res) => {
+app.post('/api/loginCheck', (req, res) => {
     console.log(req); //클라이언트 전송정보  
     const getCookie = req.cookies.user; //쿠키내 user 정보
-    
+
     var getName; //암호화된 쿠키내 user 정보
-    var dbId,dbPass;
+    var dbId, dbPass;
     //암호화 해제
-    jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
+    jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
         console.log(decoded);
-        if(decoded === undefined){  //cookie가 없을때 error라고 임의로 값전달
+        if (decoded === undefined) {  //cookie가 없을때 error라고 임의로 값전달
             getName = "error";
         }
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
-    console.log("getName:" + getName);  
-    
+    console.log("getName:" + getName);
+
     //로그인 하는 유저 정보 확인
     let sql = `SELECT * FROM user WHERE u_id = '${getName}'`;
-    mysqlDB.query(sql,function(err,results){
+    mysqlDB.query(sql, function (err, results) {
         if (err) {  //에러가 나면 false 전달
             console.log("인증실패");
             res.send(false);
         }
         else {
             console.log(results);
-            if(results.length > 0){
+            if (results.length > 0) {
                 console.log("good");
-                
-                res.cookie("myId", getName,{maxAge: 60*60* 1000});
+
+                res.cookie("myId", getName, { maxAge: 60 * 60 * 1000 });
                 res.send(true);
             }
-            else{ //값이 비었으면 없는 정보이므로 false 전달
+            else { //값이 비었으면 없는 정보이므로 false 전달
                 console.log("nodata");
                 res.send(false);
-                
+
             }
-            
+
         }
     })
 })
 //방 생성 기능
-app.post('/api/createRoom',(req,res) => {
+app.post('/api/createRoom', (req, res) => {
     const data = req.body.roomName; //clients에서 받아온 데이터
     const getCookie = req.cookies.user; //쿠키내 user 정보
+<<<<<<< HEAD
     let getName; //암호화된 쿠키내 user 정보    
     let getRoomMax; //쿼리에 넣을 방 번호
     
+=======
+    var getName; //암호화된 쿠키내 user 정보    
+    var getRoomMax //쿼리에 넣을 방 번호
+
+>>>>>>> 8813baa0745440d46e370d30f0ab21f4640b7c5d
     //암호화 해제
-    jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
+    jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
         console.log(decoded);
-        if(decoded === undefined){  //cookie가 없을때 error라고 임의로 값전달
+        if (decoded === undefined) {  //cookie가 없을때 error라고 임의로 값전달
             getName = "error";
         }
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
     console.log(data);
     console.log("getName:" + getName);
-    
-    
 
-    
-    
+
+
+
+
     let sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${getName}' );` //방생성 쿼리
-    mysqlDB.query(sql,function(err, results, next) { //db에 생성할 방 INSERT
-        if(err) console.log(err);
-        else {console.log("방 추가완료");}
-        
+    mysqlDB.query(sql, function (err, results, next) { //db에 생성할 방 INSERT
+        if (err) console.log(err);
+        else { console.log("방 추가완료"); }
+
     });
-    sql = `SELECT r_code from room order by r_code desc limit 1;`;                          
-    mysqlDB.query(sql,function(err, results, next) {
-        if(err) console.log(err);
+    sql = `SELECT r_code from room order by r_code desc limit 1;`;
+    mysqlDB.query(sql, function (err, results, next) {
+        if (err) console.log(err);
         else {
+<<<<<<< HEAD
             
             for(const data of results){
                 console.log("data.r_code" + data.r_code);
+=======
+            for (var data of results) {
+>>>>>>> 8813baa0745440d46e370d30f0ab21f4640b7c5d
                 getRoomMax = data.r_code;
                 console.log("getRoomMax!:" +getRoomMax);
             }
             console.log("getRoomMax!!:" +getRoomMax);
             
         }
+<<<<<<< HEAD
     });    
     console.log("getRoomMax!!"+ getRoomMax)
     sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${getRoomMax}) `
     console.log("sql = " +sql);
     
+=======
+    });
+
+
+>>>>>>> 8813baa0745440d46e370d30f0ab21f4640b7c5d
 })
 
 
@@ -271,12 +289,13 @@ app.post('/api/createRoom',(req,res) => {
 io.on('connection', (socket) => { //소켓이 연결됐을때
     console.log(`New User connected: ${socket.id}`);
 
-    
+
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
         console.log(`${socket.id} User disconnected!`);
-    
+    });
+
     socket.on('BE-check-user', ({ roomId, userName }) => {
         let error = false;
         console.log("유저가 있는지 확인");
@@ -292,7 +311,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     });
 
     //Join Room
-      
+
     socket.on('BE-join-room', ({ roomId, userName }) => {
         console.log("server : Userjoin message 받음");
         // Socket Join RoomName
@@ -337,7 +356,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     });
 
 
-   
+
     // socket.on('BE-send-message', ({ roomId, msg, sender }) => {
     //     io.sockets.in(roomId).emit('FE-receive-message', { msg, sender });
     // });
@@ -360,10 +379,8 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //         .to(roomId)
     //         .emit('FE-toggle-camera', { userId: socket.id, switchTarget });
     // });
-    });
+
 });
-
-
 
 
 http.listen(PORT, () => {
