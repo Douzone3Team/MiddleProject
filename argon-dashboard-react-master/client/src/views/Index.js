@@ -7,7 +7,7 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import socket from "../client_socket";
 
 // reactstrap components
-import { Button, Card, CardHeader, Table, Container, Row, Col } from "reactstrap";
+import { Form, Input, Button, Card, CardHeader, Table, Container, Row, Col } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
 
@@ -170,6 +170,7 @@ const Index = (props) => {
                               <Button color="primary" size="sm" type="submit" form="form1" >방 생성</Button>
                             </div>
                           </Row>
+                          
                         </CardHeader>
                       </Card>
                     </form>
@@ -190,6 +191,7 @@ const Index = (props) => {
                     </Form>
 
                   </Row>
+                </Row>
               </CardHeader>
               <Table hover className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
