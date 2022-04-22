@@ -106,7 +106,7 @@ app.post('/api/login', (req, res, fields) => {
             }
         }
     });
-});
+}); 
 
 //회원가입 기능
 app.post('/api/register', (req, res) => {

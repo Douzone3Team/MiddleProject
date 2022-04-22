@@ -70,7 +70,7 @@ const Index = (props) => {
     }
   };
   //살아있는 방 로드
-<<<<<<< HEAD
+
   /* const loadRoom = async() => {
     try{
       const [lastIdx, setLastIdx] = useState(0);
@@ -95,14 +95,7 @@ const Index = (props) => {
       
     }
   } */
-=======
-  const loadRoom = async () => {
-    const url = "/api/loadRoom"
-    await axios.post(url).then((response) => {
-      console.log(response.data);
-    }).catch((ex) => console.log(ex));
-  }
->>>>>>> a2a9979ddd8a3727537bf86bd268d1bb48f3ab5d
+
   //방 입장
   const joinRoom = async (e) => {
 
@@ -147,11 +140,8 @@ const Index = (props) => {
   const onRoomList = (event) => {
     //새로고침 방지
     event.preventDefault();
-<<<<<<< HEAD
     console.log(roomNames);
-=======
 
->>>>>>> a2a9979ddd8a3727537bf86bd268d1bb48f3ab5d
     //방 제목을 입력하지 않을 경우 alert창
     if (roomInput.length <= 1) {
       alert("방 제목을 입력해주세요.")
