@@ -1,10 +1,12 @@
+/* eslint-disable */
+
 // 1. 유저(전체)를 보여주며 유저 아이디 검색 가능. 유저 정보 확인 가능
 // 2. 친구 추가/삭제가 가능한 페이지
 
 import React, { useState, useEffect } from 'react'
 import { BsPersonCircle } from 'react-icons/bs'
 import { Button, Card, CardHeader, CardBody, Container, Row, Col, } from "reactstrap";
-import { MdPersonOff, MdPersonAdd, MdPersonSearch, MdEmojiPeople } from 'react-icons/md' 
+import { MdPersonOff, MdPersonAdd, MdPersonSearch } from 'react-icons/md' 
 import Fade from 'react-reveal/Fade';
 import Friend_data from '../examples/Friend_data.js'  
 import MyFriend from '../../components/MyFriend.js'   
@@ -48,7 +50,6 @@ function Friend(props) {
   useEffect(() => {
     loginCheck();
   })
-  
   
   return (
     <> 
