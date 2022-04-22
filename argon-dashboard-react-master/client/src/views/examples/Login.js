@@ -21,49 +21,49 @@ const cookies = new Cookies();
 
 const Login = (props) => {
   const [id, setId] = useState('');
-  const [pass,setPass] = useState('');
-  
+  const [pass, setPass] = useState('');
+
   const handleInputId = (e) => {
-    setId(e.target.value);    
+    setId(e.target.value);
   }
 
   const handleInputPw = (e) => {
-    setPass(e.target.value);    
+    setPass(e.target.value);
   }
 
   //login functon
-  const handleLogin = async() => {
+  const handleLogin = async () => {
     console.log("isClicked");
-      var isLogin;
-      const url = '/api/login';
-      try {
-        
-        const data = {//입력받은 ID와 PASSWORD
-          id : {id},
-          pass : {pass},
-        }
-        console.log(id + " " + pass);
-        await axios.post(url,data).then((Response) =>{//SERVER에 CLIENTS DATA 전송
-          console.log("~~~~~~~~~~~~~~~~");
-          console.log(Response);
-          console.log(Response.data);
-          console.log("~~~~~~~~~~~~~~~~");
-          isLogin = Response.data;  //서버에서 DB와 ID PASS 검사후 true false
-          console.log("isLogin:" + isLogin);
-          
-        }).catch((ex) => {
-          console.log(ex);
-        })
-        
-        
-        
-      }catch (error) {
-        console.log(error);
+    var isLogin;
+    const url = '/api/login';
+    try {
+
+      const data = {//입력받은 ID와 PASSWORD
+        id: { id },
+        pass: { pass },
       }
-      if(isLogin) {  //true면 로그인후 인덱스로 이동  
-        props.history.push("/");
-      }
-  }  
+      console.log(id + " " + pass);
+      await axios.post(url, data).then((Response) => {//SERVER에 CLIENTS DATA 전송
+        console.log("~~~~~~~~~~~~~~~~");
+        console.log(Response);
+        console.log(Response.data);
+        console.log("~~~~~~~~~~~~~~~~");
+        isLogin = Response.data;  //서버에서 DB와 ID PASS 검사후 true false
+        console.log("isLogin:" + isLogin);
+
+      }).catch((ex) => {
+        console.log(ex);
+      })
+
+
+
+    } catch (error) {
+      console.log(error);
+    }
+    if (isLogin) {  //true면 로그인후 인덱스로 이동  
+      props.history.push("/");
+    }
+  }
   return (
     <>
       <Col lg="5" md="7">
@@ -125,9 +125,9 @@ const Login = (props) => {
                     placeholder="Email"
                     type="email"
                     autoComplete="new-email"
-                    value ={id}
-                    onChange = {handleInputId}
-                                       
+                    value={id}
+                    onChange={handleInputId}
+
                   />
                 </InputGroup>
               </FormGroup>
@@ -142,8 +142,8 @@ const Login = (props) => {
                     placeholder="Password"
                     type="password"
                     autoComplete="new-password"
-                    value ={pass}
-                    onChange = {handleInputPw}
+                    value={pass}
+                    onChange={handleInputPw}
                   />
                 </InputGroup>
               </FormGroup>
@@ -161,7 +161,7 @@ const Login = (props) => {
                 </label>
               </div>
               <div className="text-center">
-                <Button onClick = {handleLogin} className="my-4" color="primary" type="button">
+                <Button onClick={handleLogin} className="my-4" color="primary" type="button">
                   Sign in
                 </Button>
               </div>
