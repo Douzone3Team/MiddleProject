@@ -36,7 +36,7 @@ const Index = (props) => {
   let roomName = "";
   let userName = "";
   //로그인 정보 확인
-  const loginCheck = () => {
+  const loginCheck = async() => {
     if (!cookie.get("user")) {
       //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
       alert("로그인을 해주세요");
@@ -45,7 +45,7 @@ const Index = (props) => {
       //쿠키가 있으면 쿠키 정보 검증
       const url = "/api/loginCheck";
       const boolean = true;
-      axios
+      await axios
         .post(url)
         .then((response) => {
           //서버에 암호화된 쿠키 정보 전달
@@ -62,39 +62,52 @@ const Index = (props) => {
         });
     }
   };
-  loginCheck(); //로그인 정보 쿠키 체크
+  //살아있는 방 로드
+  const loadRoom = async() => {
+    const url = "/api/loadRoom"
+    await axios.post(url).then((response) =>{
+      console.log(response.data);
+    }).catch((ex) => console.log(ex));
+  }
+  //방 입장
+  const joinRoom = async(e) => {
+    
+    const url = "/api/joinRoom";
+    console.log(e);
+    await axios.post(url,e).then((response) =>
+    {
+      console.log(response);
+    }).catch()
+
+
+  };
   //roomInput 변경
   const onCreateRoom = (event) => {
     event.preventDefault();
     setRoomInput(event.target.value);
   };
-  const createRoom = () => {
-    //creatroom//////////////////
-    const url = "/api/createRoom";
-    var getRoomCode;
+  const createRoom = async() => {
     try {
+      const url = "/api/createRoom";
+      var getRoomCode;
       const datas = { roomName: roomInput };
-      // console.log(roomInput);
-      axios
-        .post(url, datas)
-        .then((Response) => {
-          console.log("sssssss");
-          console.log(Response);
-          console.log("sssssss");
-          console.log(Response.data);
-          getRoomCode = Number(Response.data.getRoomMax) + 1;
-          console.log(getRoomCode);
-          joinRoom(getRoomCode);
-        })
-        .catch((ex) => {
-          console.log(ex);
-        });
-        
-        
+      console.log(roomInput);
+      
+      await axios.post(url,datas).then((Response) => 
+      {
+        console.log("sssssss");
+        console.log(Response);
+        console.log("sssssss");
+        getRoomCode = Response.data.getRoomMax;
+        joinRoom({getRoomCode : getRoomCode});
+
+      }).catch((ex) => {
+        console.log(ex);
+      });
     } catch (error) {
       console.log(error);
     }
-    
+    console.log("end");
     ///////////////
     
   };
@@ -102,27 +115,20 @@ const Index = (props) => {
   const onRoomList = (event) => {
       //새로고침 방지
     event.preventDefault();
-
+    
     //방 제목을 입력하지 않을 경우 alert창
     if (roomInput.length <= 1) {
       alert("방 제목을 입력해주세요.")
       return false
     } else {
+      createRoom();
       setRoomNames((currentArray) => [...currentArray, roomInput]); //배열에 roomName 추가
       setRoomInput(" "); //input창 초기화 
     } 
+    
   };
   
-  const joinRoom = (e) => {
-    const url = "/api/joinRoom";
-    console.log(e);
-    axios.post(url,e).then((response) =>
-    {
-      console.log(response);
-    }).catch()
-
-
-  };
+  
   const userNameSet = (event) => {
     event.preventDefault();
     setNameInput(event.target.value);
@@ -133,11 +139,12 @@ const Index = (props) => {
     setNameInput("");
 
   };
-
+  loginCheck(); //로그인 정보 쿠키 체크
   
 
 
   useEffect(() => {
+    loadRoom();
     console.log("user-exist");
     socket.on("FE-error-user-exist", ({ error }) => {
       if (!error) {
