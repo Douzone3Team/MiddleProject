@@ -33,8 +33,6 @@ const Index = (props) => {
 
   //변경된 roomInput을 배열에 저장
   const onRoomList = (event) => {
-
-    loginCheck();
     const url = '/api/createRoom';
     const getData = null;
     try {
@@ -66,6 +64,7 @@ const Index = (props) => {
 
   //로그인 정보 확인
   const loginCheck = () => {
+    console.log(1);
     if (!cookie.get('user')) {  //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
       alert("로그인을 해주세요");
       props.history.push("/login");
@@ -85,6 +84,7 @@ const Index = (props) => {
       })
     }
   }
+  loginCheck();
 
 
   const userNameSet = (event) => {
@@ -97,9 +97,7 @@ const Index = (props) => {
     setNameInput("");
   }
 
-  useEffect(() => {
-    loginCheck(); //로그인 정보 쿠키 체크
-  })
+
 
   useEffect(() => {
     console.log("user-exist");

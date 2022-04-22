@@ -51,8 +51,7 @@ app.post('/api/login', (req, res, fields) => {
     const data = req.body;
     const getId = data.id.id;
     const getPass = data.pass.pass;
-    console.log(data);
-    console.log(getId + " " + getPass);
+
     //쿼리 작성
     const sql = `SELECT u_id, u_pass, u_name FROM user WHERE u_id = '${getId}'`;
 
@@ -63,7 +62,6 @@ app.post('/api/login', (req, res, fields) => {
             isUser = true;
             if (isUser) {
                 const YOUR_SECRET_KEY = process.env.SECRET_KEY;
-                console.log(YOUR_SECRET_KEY);
                 const accessToken = jwt.sign(
                     {
                         getId,
@@ -73,7 +71,6 @@ app.post('/api/login', (req, res, fields) => {
                         expiresIn: "1h",
                     }
                 );
-                console.log(accessToken);
                 res.cookie("user", accessToken, { maxAge: 60 * 60 * 1000 });
 
                 var dbId, dbPass, dbName;
@@ -89,8 +86,6 @@ app.post('/api/login', (req, res, fields) => {
                 }
                 else res.send(false);
 
-
-
             } else {
                 res.state(400).json({
                     error: 'invalide user',
@@ -98,11 +93,7 @@ app.post('/api/login', (req, res, fields) => {
                 })
 
             }
-            // res.cookie('islogined',getId);
-
         }
-
-        console.log(results);
     });
 });
 
@@ -113,7 +104,7 @@ app.post('/api/register', (req, res) => {
     const getId = data.id.id; const getPass = data.pass.pass;
     //user INSERT 쿼리
     const sql = `INSERT INTO user(u_id, u_pass, u_name) VALUES('${getId}', '${getPass}', '${getName}')`;
-    console.log(sql);
+
     mysqlDB.query(sql, function (err, results) {
         if (err) {   //아이디가 있으면 return false
             console.log("이미 등록된 아이디입니다.");
@@ -169,20 +160,17 @@ app.post('/api/register', (req, res) => {
 
 //로그인 체크
 app.post('/api/loginCheck', (req, res) => {
-    console.log(req); //클라이언트 전송정보  
     const getCookie = req.cookies.user; //쿠키내 user 정보
 
     var getName; //암호화된 쿠키내 user 정보
     var dbId, dbPass;
     //암호화 해제
     jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
-        console.log(decoded);
         if (decoded === undefined) {  //cookie가 없을때 error라고 임의로 값전달
             getName = "error";
         }
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
-    console.log("getName:" + getName);
 
     //로그인 하는 유저 정보 확인
     let sql = `SELECT * FROM user WHERE u_id = '${getName}'`;
@@ -192,7 +180,6 @@ app.post('/api/loginCheck', (req, res) => {
             res.send(false);
         }
         else {
-            console.log(results);
             if (results.length > 0) {
                 console.log("good");
 
@@ -208,6 +195,7 @@ app.post('/api/loginCheck', (req, res) => {
         }
     })
 })
+
 //방 생성 기능
 app.post('/api/createRoom', (req, res) => {
     const data = req.body.roomName; //clients에서 받아온 데이터
@@ -217,14 +205,13 @@ app.post('/api/createRoom', (req, res) => {
 
     //암호화 해제
     jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
-        console.log(decoded);
+
         if (decoded === undefined) {  //cookie가 없을때 error라고 임의로 값전달
             getName = "error";
         }
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
-    console.log(data);
-    console.log("getName:" + getName);
+
 
 
 

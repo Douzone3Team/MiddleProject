@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import AuthNavbar from "../components/Navbars/AuthNavbar";
+import AuthNavbar from "components/Navbars/AuthNavbar";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Peer from "simple-peer";
 import styled from "styled-components";
@@ -10,7 +10,7 @@ import { setCookie, getCookie } from '../cookie/cookie';
 // reactstrap components
 import { Button, Card, CardHeader, CardBody, Container, Row, Col, CardTitle, } from "reactstrap";
 
-//socekt(server-client)연결
+//socket(server-client)연결
 
 import TextField from "@material-ui/core/TextField";
 
@@ -228,15 +228,28 @@ const Room = (props) => {
 
   function createUserVideo(peer, index, arr) {
     return (
-      <VideoBox
-        className={`width-peer${peers.length > 8 ? '' : peers.length}`}
-        // onClick={expandScreen}
-        key={index}
-      >
-        {writeUserName(peer.userName)}
+      <Col lg="6" xl="3" key={index}>
+        <Card className="card-stats mb-4 mb-xl-0">
+          <CardBody>
+            <Row>
+              <div className="col" >
+                <CardTitle tag="h5" className="text-uppercase mb-0" >
+                  <VideoBox
+                    className={`width-peer${peers.length > 8 ? '' : peers.length}`}
+                    // onClick={expandScreen}
+                    key={index}
+                  >
+                    {writeUserName(peer.userName)}
 
-        <Video key={index} peer={peer} number={arr.length} />
-      </VideoBox>
+                    <Video key={index} peer={peer} number={arr.length} />
+                  </VideoBox>
+                </CardTitle>
+              </div>
+            </Row>
+          </CardBody>
+        </Card>{" "}
+        <br />
+      </Col>
     );
   }
 
@@ -274,24 +287,9 @@ const Room = (props) => {
         <Header />
         <Container className="mt--7" fluid>
           <Row>
-            {participant.map((data, i) => {
-              return (
-                <Col lg="6" xl="3" key={data}>
-                  <Card className="card-stats mb-4 mb-xl-0">
-                    <CardBody>
-                      <Row>
-                        <div className="col" >
-                          <CardTitle tag="h5" className="text-uppercase text-muted mb-0" >
-                            {data}
-                          </CardTitle>
-                        </div>
-                      </Row>
-                    </CardBody>
-                  </Card>{" "}
-                  <br />
-                </Col>
-              );
-            })}
+            {peers && peers.map((peer, index, arr) =>
+              createUserVideo(peer, index, arr)
+            )}
           </Row>
           <Row className="mt-5">
             <Col className="mb-5 mb-xl-0" xl="9" >
@@ -342,10 +340,7 @@ const Room = (props) => {
                       playsInline
                     ></MyVideo>
                   </VideoBox>
-                  {peers &&
-                    peers.map((peer, index, arr) =>
-                      createUserVideo(peer, index, arr)
-                    )}
+
                 </div>
               </Card>
               <br />
@@ -432,8 +427,8 @@ const VideoBox = styled.div`
     > video {
     top: 0;
     left: 0;
-    width: 80vh;
-    height: 100%;
+    width: 40vh;
+    height: 80%;
     }
 
     :hover {
