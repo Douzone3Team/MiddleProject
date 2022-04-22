@@ -51,8 +51,7 @@ app.post('/api/login', (req, res, fields) => {
     const data = req.body;
     const getId = data.id.id;
     const getPass = data.pass.pass;
-    console.log(data);
-    console.log(getId + " " + getPass);
+    
     //쿼리 작성
     const sql = `SELECT u_id, u_pass, u_name FROM user WHERE u_id = '${getId}'`;
 
@@ -62,8 +61,7 @@ app.post('/api/login', (req, res, fields) => {
         else {
             isUser = true;
             if (isUser) {
-                const YOUR_SECRET_KEY = process.env.SECRET_KEY;
-                console.log(YOUR_SECRET_KEY);
+                const YOUR_SECRET_KEY = process.env.SECRET_KEY;                
                 const accessToken = jwt.sign(
                     {
                         getId,
@@ -73,7 +71,7 @@ app.post('/api/login', (req, res, fields) => {
                         expiresIn: "1h",
                     }
                 );
-                console.log(accessToken);
+               
                 res.cookie("user", accessToken, { maxAge: 60 * 60 * 1000 });
 
                 var dbId, dbPass, dbName;
@@ -83,8 +81,9 @@ app.post('/api/login', (req, res, fields) => {
                     dbPass = data.u_pass;
                     dbName = data.u_name;
                 }
-                res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
+                
                 if ((dbId === getId) && (dbPass === getPass)) {
+                    res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
                     res.send(true);
                 }
                 else res.send(false);
@@ -102,7 +101,7 @@ app.post('/api/login', (req, res, fields) => {
 
         }
 
-        console.log(results);
+        
     });
 });
 
@@ -113,7 +112,7 @@ app.post('/api/register', (req, res) => {
     const getId = data.id.id; const getPass = data.pass.pass;
     //user INSERT 쿼리
     const sql = `INSERT INTO user(u_id, u_pass, u_name) VALUES('${getId}', '${getPass}', '${getName}')`;
-    console.log(sql);
+    
     mysqlDB.query(sql, function (err, results) {
         if (err) {   //아이디가 있으면 return false
             console.log("이미 등록된 아이디입니다.");
@@ -169,14 +168,14 @@ app.post('/api/register', (req, res) => {
 
 //로그인 체크
 app.post('/api/loginCheck', (req, res) => {
-    console.log(req); //클라이언트 전송정보  
+      
     const getCookie = req.cookies.user; //쿠키내 user 정보
 
     var getName; //암호화된 쿠키내 user 정보
     var dbId, dbPass;
     //암호화 해제
     jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
-        console.log(decoded);
+       
         if (decoded === undefined) {  //cookie가 없을때 error라고 임의로 값전달
             getName = "error";
         }
@@ -192,7 +191,7 @@ app.post('/api/loginCheck', (req, res) => {
             res.send(false);
         }
         else {
-            console.log(results);
+            
             if (results.length > 0) {
                 console.log("good");
 
@@ -208,68 +207,56 @@ app.post('/api/loginCheck', (req, res) => {
         }
     })
 })
+//방 참여 기능
+app.post('/api/joinRoom', (req,res) => {
+        
+    console.log("#########################")
+    console.log(req);
+    sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${getRoomMax}) `
+    console.log("sql = " +sql); 
+})
+
 //방 생성 기능
 app.post('/api/createRoom', (req, res) => {
     const data = req.body.roomName; //clients에서 받아온 데이터
     const getCookie = req.cookies.user; //쿠키내 user 정보
-<<<<<<< HEAD
+
     let getName; //암호화된 쿠키내 user 정보    
     let getRoomMax; //쿼리에 넣을 방 번호
-    
-=======
-    var getName; //암호화된 쿠키내 user 정보    
-    var getRoomMax //쿼리에 넣을 방 번호
 
->>>>>>> 8813baa0745440d46e370d30f0ab21f4640b7c5d
     //암호화 해제
     jwt.verify(getCookie, process.env.SECRET_KEY, function (err, decoded) {
-        console.log(decoded);
+        
         if (decoded === undefined) {  //cookie가 없을때 error라고 임의로 값전달
             getName = "error";
         }
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
-    console.log(data);
+    
     console.log("getName:" + getName);
-
-
-
-
 
     let sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${getName}' );` //방생성 쿼리
     mysqlDB.query(sql, function (err, results, next) { //db에 생성할 방 INSERT
         if (err) console.log(err);
         else { console.log("방 추가완료"); }
-
     });
+
     sql = `SELECT r_code from room order by r_code desc limit 1;`;
     mysqlDB.query(sql, function (err, results, next) {
         if (err) console.log(err);
         else {
-<<<<<<< HEAD
-            
-            for(const data of results){
-                console.log("data.r_code" + data.r_code);
-=======
+
             for (var data of results) {
->>>>>>> 8813baa0745440d46e370d30f0ab21f4640b7c5d
+
                 getRoomMax = data.r_code;
                 console.log("getRoomMax!:" +getRoomMax);
             }
             console.log("getRoomMax!!:" +getRoomMax);
-            
+            res.send({getRoomMax: getRoomMax});
         }
-<<<<<<< HEAD
-    });    
-    console.log("getRoomMax!!"+ getRoomMax)
-    sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${getRoomMax}) `
-    console.log("sql = " +sql);
-    
-=======
+
+
     });
-
-
->>>>>>> 8813baa0745440d46e370d30f0ab21f4640b7c5d
 })
 
 
