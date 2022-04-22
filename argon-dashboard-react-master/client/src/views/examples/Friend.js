@@ -3,17 +3,19 @@
 
 import React, { useState } from 'react'
 import { BsPersonCircle } from 'react-icons/bs'
-import { Button, Card, CardHeader, CardBody, Container, Row, Col } from "reactstrap";
-import { MdPersonOff, MdPersonAdd, MdPersonSearch } from 'react-icons/md' 
+import { Button, Card, CardHeader, CardBody, Container, Row, Col, } from "reactstrap";
+import { MdPersonOff, MdPersonAdd, MdPersonSearch, MdEmojiPeople } from 'react-icons/md' 
 import Fade from 'react-reveal/Fade';
-import Friend_data from '../examples/Friend_data.js'   
+import Friend_data from '../examples/Friend_data.js'  
+import MyFriend from '../../components/MyFriend.js'   
+import Jump  from 'react-reveal/Jump';
 
 function Friend() {
   // 친구 목록 (Friend_data.js에서 임의 데이터 받아옴)
   const [friend, myFriend] = useState('')  
   
   return (
-    <>
+    <> 
       <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{ minHeight: "100px", backgroundSize: "cover", backgroundPosition: "center top" }}
       > 
@@ -21,6 +23,11 @@ function Friend() {
         <Container style={{ align: 'right' }}>
           <Row>
             <Col md="12">
+              <Jump>
+                <div style={{textAlign: 'right'}}>
+                  <MyFriend friend={friend} />
+                </div>
+              </Jump>
               <div style={{textAlign: 'center'}}>
                 {/* 로그인한 유저명 보여주기 */}
                 <h1 className="display-2 text-white">Hello, Douzone !</h1>
@@ -114,6 +121,7 @@ function Friend() {
   </Container>
   </>
   );
-}
+} 
+
 
 export default Friend;
