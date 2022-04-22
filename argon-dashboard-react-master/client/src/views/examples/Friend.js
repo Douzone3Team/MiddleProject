@@ -1,18 +1,55 @@
+/* eslint-disable */
+
 // 1. 유저(전체)를 보여주며 유저 아이디 검색 가능. 유저 정보 확인 가능
 // 2. 친구 추가/삭제가 가능한 페이지
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BsPersonCircle } from 'react-icons/bs'
 import { Button, Card, CardHeader, CardBody, Container, Row, Col, } from "reactstrap";
-import { MdPersonOff, MdPersonAdd, MdPersonSearch, MdEmojiPeople } from 'react-icons/md' 
+import { MdPersonOff, MdPersonAdd, MdPersonSearch } from 'react-icons/md' 
 import Fade from 'react-reveal/Fade';
 import Friend_data from '../examples/Friend_data.js'  
 import MyFriend from '../../components/MyFriend.js'   
 import Jump  from 'react-reveal/Jump';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
 
-function Friend() {
+function Friend(props) {
   // 친구 목록 (Friend_data.js에서 임의 데이터 받아옴)
   const [friend, myFriend] = useState('')  
+
+  const cookie = new Cookies();
+  const myName = cookie.get("myname");
+  
+  const loginCheck = async() => {
+    if (!cookie.get("user")) {
+      //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
+      alert("로그인을 해주세요");
+      props.history.push("/login");
+    } else {
+      //쿠키가 있으면 쿠키 정보 검증
+      const url = "/api/loginCheck";
+      const boolean = true;
+      await axios
+        .post(url)
+        .then((response) => {
+          //서버에 암호화된 쿠키 정보 전달
+          console.log(response.data); //서버의 검증에서 받아온 true false;
+          if (!response.data) {
+            //false 라면 잘못된 쿠키이므로 다시 로그인시킴
+            cookie.remove("user");
+            alert("다시 로그인 해주세요.");
+            props.history.push("/login");
+          }
+        })
+        .catch((ex) => {
+          console.log(ex);
+        });
+    }
+  };
+  useEffect(() => {
+    loginCheck();
+  })
   
   return (
     <> 
@@ -30,7 +67,7 @@ function Friend() {
               </Jump>
               <div style={{textAlign: 'center'}}>
                 {/* 로그인한 유저명 보여주기 */}
-                <h1 className="display-2 text-white">Hello, Douzone !</h1>
+                <h1 className="display-2 text-white">Hello, {myName} !</h1>
                 <p className="text-white mt-0 mb-5"> 당신의 친구를 찾아보세요 </p>
                 {/* 검색 */}
                 <input className="id_search" type="text" placeholder="유저 아이디 검색" autoFocus 

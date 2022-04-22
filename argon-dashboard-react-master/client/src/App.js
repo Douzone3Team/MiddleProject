@@ -17,30 +17,19 @@ import "assets/scss/argon-dashboard-react.scss";
 
 
 function App(props) {
-        
-        return (
-            
-                <BrowserRouter>
-                    <Route exact path="/" component={Index} />
-                    <Route exact path="/room/:roomId" component={Room} />
-                    <Route exact path="/register" component={Register} />
-                    <Route exact path="/login" component={Login} />
-                    
-                    <Route exact path="/profile" component={Profile} />
-                    <Route exact path="/friend" component={Friend} />
-                </BrowserRouter>
-            
-        )
-    
-    // return (
-    //     <BrowserRouter>
-    //         <Route exact path="/" component={Index} />
-    //         <Route exact path="/room/:roomId" component={Room} />
-    //         <Route exact path="/register" component={Register} />
-    //         <Route exact path="/login" component={Login} />
-    //         <Route />
-    //     </BrowserRouter>
-    // )
+
+    return (
+
+        <BrowserRouter>
+            <Route exact path="/" component={Index} />
+            <Route exact path="/room/:roomId" component={Room} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/profile" component={Profile} />
+            <Route exact path="/friend" component={Friend} />
+        </BrowserRouter>
+
+    )
 }
 
 export default App;

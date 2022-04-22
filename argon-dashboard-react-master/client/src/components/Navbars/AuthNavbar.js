@@ -17,7 +17,7 @@ import {
   DropdownToggle,
   Media,
 } from "reactstrap";
-import { FaUserFriends } from "react-icons/fa"; 
+import { FaUserFriends } from "react-icons/fa";
 
 const AdminNavbar = () => {
   return (
@@ -65,25 +65,19 @@ const AdminNavbar = () => {
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className="nav-link-icon" to="/admin/tables" tag={Link}>
-                  <i className="ni ni-planet" />
-                  <span className="nav-link-inner--text">Tables</span>
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink className="nav-link-icon" to="/admin/room" tag={Link}>
-                  <i className="ni ni-planet" />
-                  <span className="nav-link-inner--text">Room</span>
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/register" tag={Link} >
+                <NavLink className="nav-link-icon" to="/friend" tag={Link}>
                   <i className="ni ni-circle-08" />
+                  <span className="nav-link-inner--text">Friend</span>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink className="nav-link-icon" to="/register" tag={Link} >
+                  <i className="ni ni-badge" />
                   <span className="nav-link-inner--text">Register</span>
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className="nav-link-icon" to="/auth/login" tag={Link}>
+                <NavLink className="nav-link-icon" to="/login" tag={Link}>
                   <i className="ni ni-key-25" />
                   <span className="nav-link-inner--text">Login</span>
                 </NavLink>
@@ -91,7 +85,7 @@ const AdminNavbar = () => {
               <NavItem>
                 <NavLink
                   className="nav-link-icon"
-                  to="/admin/user-profile"
+                  to="/profile"
                   tag={Link}
                 >
                   <i className="ni ni-single-02" />
@@ -122,11 +116,11 @@ const AdminNavbar = () => {
                     <DropdownItem className="noti-title" header tag="div">
                       <h6 className="text-overflow m-0">Welcome!</h6>
                     </DropdownItem>
-                    <DropdownItem to="/admin/user-profile" tag={Link}>
+                    <DropdownItem to="/profile" tag={Link}>
                       <i className="ni ni-single-02" />
                       <span>My profile</span>
                     </DropdownItem>
-                    <DropdownItem to="/admin/user-profile" tag={Link}>
+                    <DropdownItem to="/profile" tag={Link}>
                       {/* <i className="ni ni-calendar-grid-58" />
                       <i className="ni ni-calendar-grid-58" /> */}
                       <FaUserFriends />
