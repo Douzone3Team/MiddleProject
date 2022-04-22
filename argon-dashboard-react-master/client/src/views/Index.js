@@ -10,43 +10,31 @@ import socket from "../client_socket";
 import { Button, Card, CardHeader,  Table, Container, Row, Col } from "reactstrap";
 
 import Header from "components/Headers/Header.js";
-import { v1 as uuid } from "uuid"; 
+
+import { event } from "jquery";
+
 import Cookie from 'universal-cookie'
 import Cookies from "universal-cookie";
 
 
-
-
-
-
-  
-
-
-
 const Index = (props) => {
   const cookie = new Cookie();
-
-  // console.log(props);
   const roomRef = useRef();
-
-
-
+  const userRef = useRef();
 
   const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
-  const userRef = useRef();
+  const [nameInput, setNameInput] = useState("")
+  const [roomID, setRoomID] = useState("");
+  const [userID, setUserID] = useState("");
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState('');
-  const userUuid = uuid();
-  
 
   let roomName = '';
   let userName = '';
   
   //roomInput 변경
   const onCreateRoom = (event) => {
-    
-
     event.preventDefault();
     setRoomInput(event.target.value);
   }
@@ -104,30 +92,54 @@ const Index = (props) => {
     }
   }
 
-  useEffect(() => {    
-    loginCheck(); //로그인 정보 쿠키 체크
-    
-    socket.on('FE-error-user-exist', ({ roomId, userName, error }) => {
 
+  const userNameSet = (event) => {
+    event.preventDefault();
+    setNameInput(event.target.value);
+  }
+  const onUserName = (event) => {
+    event.preventDefault();
+    setUserID(nameInput)
+    setNameInput("");
+  }
+
+
+
+
+  
+
+
+
+
+
+  useEffect(() => {
+    loginCheck(); //로그인 정보 쿠키 체크
+    socket.on('FE-error-user-exist', ({ error }) => {
       if (!error) { //에러가 없으면
+        const roomName = roomID;
+        const userName = userID;
+
         sessionStorage.setItem('user', userName);
-        props.history.push(`/room/${roomId}`); // roomName으로 push
+        props.history.push(`/room/${roomName}`); // roomName으로 push
       } else {
         setErr(error);
         setErrMsg('User name already exist');
       }
     });
-  }, [props.history]);
+  }, [props.history, roomID, userID]);
 
 
   function clickJoin(item) {
-    roomRef.current.value = item;
-    roomName = item;
-    userName = userUuid;
+    /* roomRef.current.value = item; */
+    setRoomID(item)
+    const roomName = roomID;
+    const userName = userID;
+
+
 
     if (!roomName || !userName) {
       setErr(true);
-      setErrMsg('Enter Room Name or User Name');
+      setErrMsg('Not found roomName');
     } else {
       socket.emit('BE-check-user', { roomId: roomName, userName });
     }
@@ -168,14 +180,21 @@ const Index = (props) => {
                       </Card>
                     </form> 
                     </Col>
-                    {/* <Col className="" >  */}
+                    <Col className="" >
                       {/* roomName Input */}
-                      {/* <Form id="form1" onSubmit={onRoomList} >
-                        <Input className="text-left" value={roomInput} type="text" id="roomName"
-                          ref={roomRef} placeholder="방 이름" onChange={onCreateRoom} md={3} />
-                        <Button color="primary" size="sm" type="submit" form="form1" >방 생성</Button>
-                      </Form> */}
-                    {/* </Col> */}
+                      <Form id="form1" onSubmit={onRoomList} >
+                        <Input className="text-right" value={roomInput} type="text" required
+                          ref={roomRef} placeholder="방 이름을 입력한 후에 Enter!" onChange={onCreateRoom} />
+                      </Form>
+                    </Col>
+  
+                  <Row>
+                    {/* nickName Input */}
+                    <Form onSubmit={onUserName}>
+                      <Input className="text-right" value={nameInput} type="text" required
+                        ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" onChange={userNameSet} />
+                    </Form>
+
                   </Row>
                 </CardHeader>
                 <Table hover className="align-items-center table-flush" responsive>

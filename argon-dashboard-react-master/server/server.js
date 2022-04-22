@@ -37,8 +37,12 @@ app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '../client/public/index.html'));
 });
 
-app.use(bodyParser.urlencoded({ extended:false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
+
+
+
+
 
 //로그인 기능
 app.post('/api/login',(req, res, fields) => {
@@ -95,6 +99,7 @@ app.post('/api/login',(req, res, fields) => {
             // res.cookie('islogined',getId);
             
         } 
+
         console.log(results);
     });    
 });
@@ -158,6 +163,7 @@ app.post('/api/register', (req,res) => {
         }
     })
 }) */
+
 
 //로그인 체크
 app.post('/api/loginCheck', (req,res) => {
@@ -223,6 +229,7 @@ app.post('/api/createRoom',(req,res) => {
 
 
 
+
 // //배포
 // // if (process.env.NODE_ENV === 'production') {
 // app.use(express.static(path.join(__dirname, '../client/build')));
@@ -237,78 +244,73 @@ app.post('/api/createRoom',(req,res) => {
 io.on('connection', (socket) => { //소켓이 연결됐을때
     console.log(`New User connected: ${socket.id}`);
 
-    // 채팅연결 - git
-    socket.on('BE-send-message', ({msg, sender}) => {
-        io.sockets.emit('FE-receive-message', { msg, sender});
-    });
-
+    
     //연결해제
     socket.on('disconnect', () => {
         socket.disconnect();
-        console.log('User disconnected!');
-    });
-
-    //
+        console.log(`${socket.id} User disconnected!`);
+    
     socket.on('BE-check-user', ({ roomId, userName }) => {
         let error = false;
-        console.log(roomId);
-        // io.sockets.in(roomId).clients((err, clients) => {
-        //     console.log(13);
-        //     clients.forEach((client) => {
-        //         if (socketList[client] == userName) {
-        //             error = true;
-        //         }
-        //     });
-        socket.emit('FE-error-user-exist', { roomId, userName, error });
-        //     console.log(2);
-        // });
+        console.log("유저가 있는지 확인");
+        io.sockets.in(roomId).clients((err, clients) => {
+
+            clients.forEach((client) => {
+                if (socketList[client] == userName) {
+                    error = true;
+                }
+            });
+            socket.emit('FE-error-user-exist', { error });
+        });
     });
 
-
-
-
-
-
-
     //Join Room
+      
     socket.on('BE-join-room', ({ roomId, userName }) => {
+        console.log("server : Userjoin message 받음");
         // Socket Join RoomName
         socket.join(roomId);
         socketList[socket.id] = { userName, video: true, audio: true };
 
 
-    //     // Set User List
-    //     io.sockets.in(roomId).clients((err, clients) => {
-    //         try {
-    //             const users = [];
-    //             clients.forEach((client) => {
-    //                 // Add User List
-    //                 users.push({ userId: client, info: socketList[client] });
-    //             });
-    //             socket.broadcast.to(roomId).emit('FE-user-join', users);
-    //             // io.sockets.in(roomId).emit('FE-user-join', users);
-    //         } catch (e) {
-    //             io.sockets.in(roomId).emit('FE-error-user-exist', { err: true });
-    //         }
-    //     });
-    // });
+        // Set User List
+        io.sockets.in(roomId).clients((err, clients) => {
+            console.log("server : room안에 user추가");
+            try {
+                const users = [];
+                clients.forEach((client) => {
+                    // Add User List
+                    users.push({ userId: client, info: socketList[client] });
+                    console.log("server : room안에 user추가2");
+                });
+                socket.broadcast.to(roomId).emit('FE-user-join', users);
+                console.log("server : client에게 userjoin 알림");
+                // io.sockets.in(roomId).emit('FE-user-join', users);
+            } catch (e) {
+                io.sockets.in(roomId).emit('FE-error-user-exist', { err: true });
+            }
+        });
+    })
+
+    socet.on('BE-call-user', ({ userToCall, from, signal }) => {
+        console.log("server : signal값 받고 fe-receive-call message를 client에 전달")
+        io.to(userToCall).emit('FE-receive-call', {
+            signal,
+            from,
+            info: socketList[socket.id],
+        });
+    });
+
+    socket.on('BE-accept-call', ({ signal, to }) => {
+        console.log("sever : 추가되는 peer확인, client에게 확인 message 전달")
+        io.to(to).emit('FE-call-accepted', {
+            signal,
+            answerId: socket.id,
+        });
+    });
 
 
-    // socket.on('BE-call-user', ({ userToCall, from, signal }) => {
-    //     io.to(userToCall).emit('FE-receive-call', {
-    //         signal,
-    //         from,
-    //         info: socketList[socket.id],
-    //     });
-    // });
-
-    // socket.on('BE-accept-call', ({ signal, to }) => {
-    //     io.to(to).emit('FE-call-accepted', {
-    //         signal,
-    //         answerId: socket.id,
-    //     });
-    // });
-
+   
     // socket.on('BE-send-message', ({ roomId, msg, sender }) => {
     //     io.sockets.in(roomId).emit('FE-receive-message', { msg, sender });
     // });
