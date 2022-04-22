@@ -83,6 +83,7 @@ const Room = (props) => {
         console.log("client : 영상출력 ");
         socket.emit('BE-join-room', { roomId, userName: currentUser });
         console.log("client : server에 join message 전송 ");
+
         socket.on('FE-user-join', (users) => {
           // all users
           console.log("client : server에서 join완료 message ");
@@ -167,7 +168,7 @@ const Room = (props) => {
     return () => {
       socket.disconnect();
     };
-  }, [currentUser, roomId]);
+  }, [currentUser, props.history, roomId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -418,7 +419,6 @@ const Room = (props) => {
       </div>
     </>
   );
-
 };
 
 
