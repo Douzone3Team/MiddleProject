@@ -22,6 +22,8 @@ import Cookie from "universal-cookie";
 
 const Index = (props) => {
   const cookie = new Cookie();
+  const myName = cookie.get('myname');
+  
   const roomRef = useRef();
   const userRef = useRef();
 
@@ -152,7 +154,7 @@ const Index = (props) => {
         const roomName = roomID;
         const userName = userID;
 
-        sessionStorage.setItem("user", userName);
+        sessionStorage.setItem("user", myName);
         props.history.push(`/room/${roomName}`); // roomName으로 push
       } else {
         setErr(error);
