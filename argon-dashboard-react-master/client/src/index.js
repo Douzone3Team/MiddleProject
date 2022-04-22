@@ -1,12 +1,19 @@
+import axios from "axios";
 import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "serviceWorker";
+/* import { CookieProvider } from "react-cookie"; */
 import App from "./App"
 
+
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  
+  <React.StrictMode>    
+    <App />    
+  </React.StrictMode>
+  ,
+
   // <BrowserRouter>
   //   <Switch>
   //     <Route path="/admin" render={(props) => <AdminLayout {...props} />} />

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import 'url-search-params-polyfill';
 // import jwt from "jsonwebtoken";
 import {
@@ -16,8 +16,10 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
-const Login = () => {
+const Login = (props) => {
   const [id, setId] = useState('');
   const [pass,setPass] = useState('');
   
@@ -29,27 +31,39 @@ const Login = () => {
     setPass(e.target.value);    
   }
 
-  const handleLogin = () => {
+  //login functon
+  const handleLogin = async() => {
     console.log("isClicked");
-
+      var isLogin;
       const url = '/api/login';
       try {
-        const data = {
+        
+        const data = {//입력받은 ID와 PASSWORD
           id : {id},
           pass : {pass},
         }
         console.log(id + " " + pass);
-        axios.post(url,data).then((Response) =>{
-
+        await axios.post(url,data).then((Response) =>{//SERVER에 CLIENTS DATA 전송
+          console.log("~~~~~~~~~~~~~~~~");
+          console.log(Response);
+          console.log(Response.data);
+          console.log("~~~~~~~~~~~~~~~~");
+          isLogin = Response.data;  //서버에서 DB와 ID PASS 검사후 true false
+          console.log("isLogin:" + isLogin);
+          
         }).catch((ex) => {
           console.log(ex);
         })
         
+        
+        
       }catch (error) {
         console.log(error);
       }
-  }
-
+      if(isLogin) {  //true면 로그인후 인덱스로 이동  
+        props.history.push("/");
+      }
+  }  
   return (
     <>
       <Col lg="5" md="7">
