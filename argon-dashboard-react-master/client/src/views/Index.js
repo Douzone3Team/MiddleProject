@@ -3,19 +3,15 @@ import axios from 'axios';
 import AuthNavbar from "../components/Navbars/AuthNavbar";
 import AdminFooter from "components/Footers/AdminFooter.js";
 // node.js library that concatenates classes (strings)
-
 import socket from "../client_socket";
-
 // reactstrap components
 import { Form, Input, Button, Card, CardHeader, Table, Container, Row, Col } from "reactstrap";
+<<<<<<< HEAD
 
+=======
+>>>>>>> dfc647e3d60a3c6c4106406e830fed30cc16dd1f
 import Header from "components/Headers/Header.js";
-
-import { event } from "jquery";
-
 import Cookie from 'universal-cookie'
-import Cookies from "universal-cookie";
-
 
 const Index = (props) => {
   const cookie = new Cookie();
@@ -182,16 +178,15 @@ const Index = (props) => {
                         ref={roomRef} placeholder="방 이름을 입력한 후에 Enter!" onChange={onCreateRoom} />
                     </Form>
                   </Col>
-
                   <Row>
                     {/* nickName Input */}
                     <Form onSubmit={onUserName}>
                       <Input className="text-right" value={nameInput} type="text" required
                         ref={userRef} placeholder="닉네임을 입력한 후에 Enter!" onChange={userNameSet} />
                     </Form>
-
                   </Row>
                 </Row>
+<<<<<<< HEAD
               </CardHeader>
               <Table hover className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
@@ -209,10 +204,29 @@ const Index = (props) => {
                       <td> </td>
                       <td> </td>
                       <td><Button onClick={() => clickJoin(item)} color="primary" size="sm">참여</Button></td>
+=======
+                <Table hover className="align-items-center table-flush" responsive>
+                  <thead className="thead-light">
+                    <tr>
+                      <th >방 이름</th>
+                      <th scope="col"> </th>
+                      <th scope="col">참여인원</th>
+                      <th scope="col"> </th>
+>>>>>>> dfc647e3d60a3c6c4106406e830fed30cc16dd1f
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
+                  </thead>
+                  <tbody>
+                    {roomNames.map((item, index) => ( //map함수 이용, 저장된 roomName으로 테이블 row 생성
+                      <tr key={index}>
+                        <th >{item}</th>
+                        <td> </td>
+                        <td> </td>
+                        <td><Button onClick={() => clickJoin(item)} color="primary" size="sm">참여</Button></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </CardHeader>
             </Card>
           </Col>
         </Row>

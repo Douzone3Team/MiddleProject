@@ -393,7 +393,6 @@ const Room = (props) => {
                     />
 
                   </div>
-
                 </CardHeader>
                 <CardHeader className="border-0">
                   <Row className="align-items-center">
