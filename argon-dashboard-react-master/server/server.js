@@ -233,7 +233,7 @@ app.post('/api/createRoom', (req, res) => {
     });
 
     sql = `SELECT r_code from room order by r_code desc limit 1;`;
-    mysqlDB.query(sql, function (err, results, next) {
+    /* mysqlDB.query(sql, function (err, results, next) {
         if (err) console.log(err);
         else {
 
@@ -247,7 +247,7 @@ app.post('/api/createRoom', (req, res) => {
         }
 
 
-    });
+    }); */
 })
 
 
