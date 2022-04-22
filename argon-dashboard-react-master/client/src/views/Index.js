@@ -41,6 +41,8 @@ const Index = (props) => {
 
   //변경된 roomInput을 배열에 저장
   const onRoomList = (event) => {
+
+    loginCheck();
     const url = '/api/createRoom';
     const getData = null;
     try {

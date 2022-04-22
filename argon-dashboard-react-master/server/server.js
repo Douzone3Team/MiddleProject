@@ -183,7 +183,7 @@ app.post('/api/loginCheck', (req,res) => {
     console.log("getName:" + getName);  
     
     //로그인 하는 유저 정보 확인
-    const sql = `SELECT * FROM user WHERE u_id = '${getName}'`;
+    let sql = `SELECT * FROM user WHERE u_id = '${getName}'`;
     mysqlDB.query(sql,function(err,results){
         if (err) {  //에러가 나면 false 전달
             console.log("인증실패");
@@ -209,20 +209,40 @@ app.post('/api/loginCheck', (req,res) => {
 //방 생성 기능
 app.post('/api/createRoom',(req,res) => {
     const data = req.body.roomName; //clients에서 받아온 데이터
-    const u_id = req.cookies.myId;
+    const getCookie = req.cookies.user; //쿠키내 user 정보
+    var getName; //암호화된 쿠키내 user 정보    
+    var getRoomMax //쿼리에 넣을 방 번호
+    
+    //암호화 해제
+    jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
+        console.log(decoded);
+        if(decoded === undefined){  //cookie가 없을때 error라고 임의로 값전달
+            getName = "error";
+        }
+        else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
+    });
     console.log(data);
+    console.log("getName:" + getName);
     
     
+
     
-    const sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${u_id}' );
-                 INSERT INTO    ` //방생성 쿼리
     
+    let sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${getName}' );` //방생성 쿼리
     mysqlDB.query(sql,function(err, results, next) { //db에 생성할 방 INSERT
         if(err) console.log(err);
-        else console.log("방 추가완료");
-        return results
+        else {console.log("방 추가완료");}
+        
     });
-                                 
+    sql = `SELECT r_code from room order by r_code desc limit 1;`;                          
+    mysqlDB.query(sql,function(err, results, next) {
+        if(err) console.log(err);
+        else {
+            for(var data of results){
+                getRoomMax = data.r_code;
+            }
+        }
+    });
     
     
 })
