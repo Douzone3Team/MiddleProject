@@ -9,10 +9,7 @@ function MyFriend() {
   const handleShow = () => setShow(true);
   
   // 친구 목록 (Friend_data.js에서 임의 데이터 받아옴)
-  const [friend, myFriend] = useState('')  
-  
-  // console.log(props);
-  // console.log(props.friend);
+  const [friend, myFriend] = useState('')   
 
   return (
     <>
@@ -20,7 +17,7 @@ function MyFriend() {
         친구목록<MdEmojiPeople size={40} color={ 'Yellow '} />
       </div>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={ show } onHide={ handleClose } style={{ marginTop: '3%', height: '100%' }}>
         <Modal.Header>
           <Modal.Title>친구 목록</Modal.Title>
           <i className="ni ni-fat-remove" onClick={ handleClose }></i>

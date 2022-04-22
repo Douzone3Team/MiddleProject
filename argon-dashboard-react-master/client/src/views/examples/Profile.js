@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // 접속한 사용자의 기존 정보를 수정할 페이지
 
 import React, { useEffect } from 'react' 
@@ -7,12 +9,10 @@ import Fade from 'react-reveal/Fade';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
-function Profile(props) { 
-  // 마지막 접속일자 계산 시 사용
-  let today = new Date(); 
-  
+function Profile(props) {   
   const cookie = new Cookies();
   const myName = cookie.get("myname");
+  const myId = cookie.get("myId");
   
   const loginCheck = async() => {
     if (!cookie.get("user")) {
@@ -38,14 +38,14 @@ function Profile(props) {
         .catch((ex) => {
           console.log(ex);
         });
-    }
-  };
+      }
+    };
   useEffect(() => {
     loginCheck();
   })
   
   return (
-    <>
+    <> 
       <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{ minHeight: "100px", backgroundSize: "cover", backgroundPosition: "center top" }}
       > 
@@ -65,9 +65,8 @@ function Profile(props) {
               <div className="search_box" style={{ textAlign: 'center' }}>
                 <BsPersonCircle size={120} color={'white'} />
                 {/* 로그인한 유저명 보여주기 */}
-                <h1 className="display-2 text-white">Hello, {myName} </h1>
-                {/* 마지막 접속일자 띄워주기 (현재는 오늘 날짜 가져오도록 임의로 넣어놓음) */}
-                <p className="text-white mt-0 mb-5"> 마지막 접속일자 : { today.getFullYear()+"/"+today.getDay() } </p> 
+                <h1 className="display-2 text-white"> { myName } </h1>
+                <p className="text-white mt-0 mb-5"> ID : { myId } </p> 
               </div>
             </Col>
           </Row> 
@@ -96,24 +95,23 @@ function Profile(props) {
                   <h6 className="heading-small text-muted mb-4"> User information </h6>
                   <div className="pl-lg-4">
                     <Row>
-                      <Col lg="6">
+                      <Col lg="10">
                         <FormGroup>
                           <label className="form-control-label"> 유저명 </label>
-                          <Input className="form-control-alternative" type="text" id="input-username" placeholder="Username" />
+                          <Input className="form-control-alternative" id="input-username" type="text" />
+                        </FormGroup>
+                      </Col> 
+                      <Col lg="6">
+                        <FormGroup>
+                          <label className="form-control-label"> 암호 변경 </label>
+                          <Input className="form-control-alternative" id="input-pwd1" type="password1" />
                         </FormGroup>
                       </Col>
-                      {/* <Col lg="6"> */}
-                        {/* DB 이메일 가능할 경우 사용할 Form */}
-                        {/* <FormGroup>
-                          <label className="form-control-label"> 이메일 주소 </label>
-                          <Input className="form-control-alternative" id="input-email" type="email" placeholder="user@douzone.com" />
-                        </FormGroup>
-                      </Col> */}
+                      {/* 위에서 입력한 암호와 값이 같은지 확인 */}
                       <Col lg="6">
-                        {/* DB 이메일 가능할 경우 사용할 Form */}
                         <FormGroup>
-                          <label className="form-control-label"> 이메일 주소 </label>
-                          <Input className="form-control-alternative" id="input-pwd" type="password" placeholder="user@douzone.com" />
+                          <label className="form-control-label"> 암호 확인 </label>
+                          <Input className="form-control-alternative" id="input-pwd2" type="password2" />
                         </FormGroup>
                       </Col>
                     </Row> 
