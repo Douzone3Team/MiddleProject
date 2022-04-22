@@ -210,8 +210,8 @@ app.post('/api/loginCheck', (req,res) => {
 app.post('/api/createRoom',(req,res) => {
     const data = req.body.roomName; //clients에서 받아온 데이터
     const getCookie = req.cookies.user; //쿠키내 user 정보
-    var getName; //암호화된 쿠키내 user 정보    
-    var getRoomMax //쿼리에 넣을 방 번호
+    let getName; //암호화된 쿠키내 user 정보    
+    let getRoomMax; //쿼리에 넣을 방 번호
     
     //암호화 해제
     jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
@@ -238,12 +238,19 @@ app.post('/api/createRoom',(req,res) => {
     mysqlDB.query(sql,function(err, results, next) {
         if(err) console.log(err);
         else {
-            for(var data of results){
+            
+            for(const data of results){
+                console.log("data.r_code" + data.r_code);
                 getRoomMax = data.r_code;
+                console.log("getRoomMax!:" +getRoomMax);
             }
+            console.log("getRoomMax!!:" +getRoomMax);
+            
         }
-    });
-    
+    });    
+    console.log("getRoomMax!!"+ getRoomMax)
+    sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${getRoomMax}) `
+    console.log("sql = " +sql);
     
 })
 
@@ -312,7 +319,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     })
 
-    socet.on('BE-call-user', ({ userToCall, from, signal }) => {
+    socket.on('BE-call-user', ({ userToCall, from, signal }) => {
         console.log("server : signal값 받고 fe-receive-call message를 client에 전달")
         io.to(userToCall).emit('FE-receive-call', {
             signal,

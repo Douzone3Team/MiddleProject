@@ -43,8 +43,19 @@ const Index = (props) => {
   const onRoomList = (event) => {
 
     loginCheck();
-    const url = '/api/createRoom';
-    const getData = null;
+    
+    //새로고침 방지
+    event.preventDefault();
+
+    //방 제목을 입력하지 않을 경우 alert창
+    if (roomInput.length <= 1) {
+      alert("방 제목을 입력해주세요.")
+      return false
+    } else {
+
+      //creatroom//////////////////
+      const url = '/api/createRoom';
+      let getRoomCode;
     try {
       const datas = { roomName: roomInput }
       // console.log(roomInput);
@@ -58,15 +69,8 @@ const Index = (props) => {
     } catch (error) {
       console.log(error);
     }
+    ///////////////
 
-    //새로고침 방지
-    event.preventDefault();
-
-    //방 제목을 입력하지 않을 경우 alert창
-    if (roomInput.length <= 1) {
-      alert("방 제목을 입력해주세요.")
-      return false
-    } else {
       setRoomNames((currentArray) => [...currentArray, roomInput]); //배열에 roomName 추가
       setRoomInput(" "); //input창 초기화 
     }
