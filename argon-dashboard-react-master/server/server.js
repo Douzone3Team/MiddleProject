@@ -12,12 +12,16 @@ const io = require('socket.io')(http, {
         Credential: true
     }
 });
+var moment = require('moment');
 const PORT = 4000;
 const path = require('path');
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const { read } = require('fs');
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
+// require('date-utils');
+require('moment-timezone');
+
 
 const mysqlDB = mysql.createConnection({   //express mysql conect
     host: 'kosa2.iptime.org',
@@ -188,8 +192,10 @@ app.post('/api/loginCheck', (req, res) => {
         }
         else {
             if (results.length > 0) {
+
                 console.log("good");
                 res.cookie("myId", getName, { maxAge: 60 * 60 * 1000 });    //로그인 유지시간 1시간
+
                 res.send(true);
             }
             else { //값이 비었으면 없는 정보이므로 false 전달
@@ -367,11 +373,22 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     });
 
+    // console.log(date);
 
-
-    socket.on('BE-send-message', ({ roomId, msg, sender }) => {
-        io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId });
+    //채팅
+    socket.on('BE-send-message', ({ roomId, msg, sender, time}) => {
+        // var nowTime = new Date();
+        // var time = nowTime.toFormat('HH:MM:SS');
+        
+        moment.tz.setDefault("Asia/Seoul");
+        var time = moment().format('HH:MM:SS');
+        io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId, time });
+        console.log('server에서 보내는 시간: '+ time);
     });
+
+    // socket.on('BE-send-message', ({ roomId, msg, sender }) => {
+    //     io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId });
+    // });
 
     // socket.on('BE-leave-room', ({ roomId, leaver }) => {
     //     delete socketList[socket.id];
