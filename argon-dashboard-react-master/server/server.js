@@ -227,7 +227,7 @@ app.post('/api/loginCheck', (req, res) => {
     });
 });
 //방 불러오는 기능
-/* app.post('/api/loadRoom', (req, res) => {
+app.post('/api/loadRoom', (req, res) => {
     const sql = `SELECT * FROM room WHERE r_state = 1;
                 SELECT r_p_r_code, count(*) as cnt FROM room_participants rp JOIN room r ON rp.r_p_r_code = r.r_code GROUP BY r_p_r_code;`;
     mysqlDB.query(sql, function(err, results){
@@ -240,19 +240,11 @@ app.post('/api/loginCheck', (req, res) => {
 
             res.json({roomDetail: results[0],roomCount : results[1]});         
         }
-    })
-    
-
-    mysqlDB.query(sql, function (err, results) {
-        if (err) console.log(err);
-        else {
-            console.log("DFASDFASDFADSFASFDS");
-        }
-    });
-}); */
-/* app.post('/api/loadRoomCount', (req,res) =>{
+    })    
+});
+app.post('/api/loadRoomCount', (req,res) =>{
     const sql = `SELECT `
-}) */
+})
 //방 참여 기능
 app.post('/api/joinRoom', (req, res) => {
     const userId = req.cookies.myId;
@@ -319,6 +311,18 @@ app.post('/api/createRoom', (req, res) => {
 
 
     });
+})
+
+app.post('/api/loadProfile', (req, res) => {
+    const myName = req.cookies.myId;
+    const sql = `SELECT * FROM user WHERE u_id = '${myName}';`
+    mysqlDB.query(sql, function(err, results) {
+        if (err) console.log(err);
+        else { 
+            console.log(results);
+            res.send(results);
+        };
+    })
 })
 
 

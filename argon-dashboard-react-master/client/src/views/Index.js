@@ -28,15 +28,16 @@ const Index = (props) => {
 
 
   const [roomInput, setRoomInput] = useState("");
-  const [roomNames, setRoomNames] = useState([]);
+  const [roomInfo, setRoomInfo] = useState([{
+    r_name:'',r_code:'', r_id:''
+  }]);
 
   const [roomID, setRoomID] = useState("");
   const userID = cookie.get('myname');
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-
-
-
+  const [getRoomName, setGetRoomName] = useState([]);
+  const [getRoomCreater, setGetRoomCreater] = useState([]);
 
 
   //로그인 정보 확인
@@ -68,30 +69,26 @@ const Index = (props) => {
   };
   //살아있는 방 로드
 
-  /* const loadRoom = async() => {
-    try{
-      const [lastIdx, setLastIdx] = useState(0);
+  const loadRoom = async() => {
+    try{      
       const url = "/api/loadRoom"
       await axios.post(url).then((response) =>{
-        const getNew = response.data.roomDetail;
-        console.log(getNew);
-        const _inputData = getNew.data.map((rowData) =>(
-          setLastIdx(lastIdx+1),
-          {
-              r_code: rowData.r_code,
-              r_name: rowData.r_name, 
-              u_id: rowData.u_id,
-              r_state: r_state
-          })
-            
-          )
-          setRoomDB(roomDB.concat(_inputData))
+        
+        const getRoomDetail =(response.data.roomDetail);
+        console.log(getRoomDetail);
+        for(var i = 0; i < getRoomDetail.length; i++){
+          setGetRoomCreater((currentArray) => [...currentArray , getRoomDetail[i].u_id]);
+          setGetRoomName((currentArray) => [...currentArray ,getRoomDetail[i].r_name]);
+          // setRoomInfo((currentArray) => [...currentArray,{r_name:getRoomDetail[i].r_name,r_code:getRoomDetail[i].r_co, r_id:''}])
+        }
+        
       }).catch((ex) => console.log(ex));
       
     }catch(e) {
       
     }
-  } */
+    
+  }
 
 
 
@@ -146,19 +143,19 @@ const Index = (props) => {
       return false
     } else {
       createRoom();
-      setRoomNames((currentArray) => [...currentArray, roomInput]); //배열에 roomName 추가
+      // setRoomNames((currentArray) => [...currentArray, roomInput]); //배열에 roomName 추가
       setRoomInput(" "); //input창 초기화 
     }
 
   };
 
-  loginCheck(); //로그인 정보 쿠키 체크
-
+  
+  
 
 
   useEffect(() => {
-    /* loadRoom(); */
-
+    loginCheck(); //로그인 정보 쿠키 체크
+    loadRoom();
 
     console.log("user-exist");
     socket.on("FE-error-user-exist", ({ error }) => {
@@ -243,7 +240,7 @@ const Index = (props) => {
                     </tr>
                   </thead>
                   <tbody>
-                    {roomNames.map(
+                    {getRoomName.map(
                       (
                         item,
                         index //map함수 이용, 저장된 roomName으로 테이블 row 생성
