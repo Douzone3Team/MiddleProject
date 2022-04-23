@@ -10,7 +10,7 @@ import { BsPersonCircle, BsPencilSquare } from 'react-icons/bs'
 import Fade from 'react-reveal/Fade';
 import AuthNavbar from "components/Navbars/AuthNavbar";
 import AdminFooter from "components/Footers/AdminFooter.js";
-import Header from "components/Headers/Header.js";
+
 
 import axios from 'axios';
 import Cookies from 'universal-cookie';
@@ -52,6 +52,7 @@ function Profile(props) {
 
   return (
     <>
+      <AuthNavbar className=" " style={{ color: '#525f7f' }} />
       <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{ minHeight: "100px", backgroundSize: "cover", backgroundPosition: "center top" }}
       >

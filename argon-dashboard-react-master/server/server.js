@@ -76,23 +76,23 @@ app.post('/api/login', (req, res, fields) => {
                     }
                 );
                 res.cookie("user", accessToken, { maxAge: 60 * 60 * 1000 });
-                
+
                 var dbId, dbPass, dbName;
 
                 for (var data of results) {
                     dbId = data.u_id;
                     dbPass = data.u_pass;
                     dbName = data.u_name;
-                    
+
                 }
                 console.log("@@@@@@@@@@@@@@@@@0000");
-                console.log("dbName = "+ dbName);
-                res.cookie("myname",dbName,{maxAge: 60 *60*1000});
+                console.log("dbName = " + dbName);
+                res.cookie("myname", dbName, { maxAge: 60 * 60 * 1000 });
                 console.log("@@@@@@@@@@@@@@@@@0000");
-                
+
                 if ((dbId === getId) && (dbPass === getPass)) {
                     res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
-                    
+
                     res.send(true);
                 }
                 else res.send(false);
@@ -207,39 +207,36 @@ app.post('/api/loginCheck', (req, res) => {
     });
 });
 //방 불러오는 기능
-app.post('/api/loadRoom',(req, res) =>{ 
+app.post('/api/loadRoom', (req, res) => {
     const sql = `SELECT * FROM room WHERE r_state = 1;
                 SELECT r_p_r_code, count(*) FROM room_participants rp JOIN room r ON rp.r_p_r_code = r.r_code GROUP BY r_p_r_code;`;
-    mysqlDB.query(sql, function(err, results){
-        if(err) console.log(err);
-        else{
+    mysqlDB.query(sql, function (err, results) {
+        if (err) console.log(err);
+        else {
             console.log("DFASDFASDFADSFASFDS");
-            console.log(results[0]);
-            console.log(results[1]);
-            
         }
     })
 });
 //방 참여 기능
-app.post('/api/joinRoom', (req,res) => {
-    
-    
+app.post('/api/joinRoom', (req, res) => {
+
+
     const userId = req.cookies.myId;
     const r_p_r_code = req.body.getRoomCode;
     // console.log("user)id" + userId);
     sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${r_p_r_code},'${userId}') `
-    console.log("sql = " +sql);
-    mysqlDB.query(sql, function(err, results){
-        if(err) console.log(err);
-        else{
+    console.log("sql = " + sql);
+    mysqlDB.query(sql, function (err, results) {
+        if (err) console.log(err);
+        else {
             console.log("성공");
             res.send(results);
         }
     });
     sql = `UPDATE user SET u_isJoin = '0' WHERE u_id = '${userId}'`;
-    mysqlDB.query(sql, function(err, results) {
-        if(err) console.log(err)
-        else{
+    mysqlDB.query(sql, function (err, results) {
+        if (err) console.log(err)
+        else {
             console.log("update success");
         };
     })
@@ -247,7 +244,7 @@ app.post('/api/joinRoom', (req,res) => {
 
 //방 생성 기능
 app.post('/api/createRoom', (req, res) => {
-    
+
     const data = req.body.roomName; //clients에서 받아온 데이터
     const getCookie = req.cookies.user; //쿠키내 user 정보
 
@@ -280,10 +277,10 @@ app.post('/api/createRoom', (req, res) => {
             for (var data of results) {
 
                 getRoomMax = data.r_code;
-                console.log("getRoomMax!:" +getRoomMax);
+
             }
-            console.log("getRoomMax!!:" +getRoomMax);
-            res.send({getRoomMax: getRoomMax});
+
+            res.send({ getRoomMax: getRoomMax });
         }
 
 
@@ -375,14 +372,14 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     // console.log(date);
 
     //채팅
-    socket.on('BE-send-message', ({ roomId, msg, sender, time}) => {
+    socket.on('BE-send-message', ({ roomId, msg, sender, time }) => {
         // var nowTime = new Date();
         // var time = nowTime.toFormat('HH:MM:SS');
-        
+
         moment.tz.setDefault("Asia/Seoul");
         var time = moment().format('HH:MM:SS');
         io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId, time });
-        console.log('server에서 보내는 시간: '+ time);
+        console.log('server에서 보내는 시간: ' + time);
     });
 
     // socket.on('BE-send-message', ({ roomId, msg, sender }) => {

@@ -22,8 +22,8 @@ import Cookie from "universal-cookie";
 
 const Index = (props) => {
   const cookie = new Cookie();
-  const myName = cookie.get('myname');
-  
+
+
   const roomRef = useRef();
   const userRef = useRef();
 
@@ -31,14 +31,14 @@ const Index = (props) => {
   const [roomNames, setRoomNames] = useState([]);
   const [nameInput, setNameInput] = useState("");
   const [roomID, setRoomID] = useState("");
-  const [userID, setUserID] = useState("");
+  const userID = cookie.get('myname');
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   let roomName = "";
   let userName = "";
   //로그인 정보 확인
-  const loginCheck = async() => {
+  const loginCheck = async () => {
     if (!cookie.get("user")) {
       //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
       alert("로그인을 해주세요");
@@ -65,19 +65,18 @@ const Index = (props) => {
     }
   };
   //살아있는 방 로드
-  const loadRoom = async() => {
+  const loadRoom = async () => {
     const url = "/api/loadRoom"
-    await axios.post(url).then((response) =>{
+    await axios.post(url).then((response) => {
       console.log(response.data);
     }).catch((ex) => console.log(ex));
   }
   //방 입장
-  const joinRoom = async(e) => {
-    
+  const joinRoom = async (e) => {
+
     const url = "/api/joinRoom";
     console.log(e);
-    await axios.post(url,e).then((response) =>
-    {
+    await axios.post(url, e).then((response) => {
       console.log(response);
     }).catch()
 
@@ -88,20 +87,19 @@ const Index = (props) => {
     event.preventDefault();
     setRoomInput(event.target.value);
   };
-  const createRoom = async() => {
+  const createRoom = async () => {
     try {
       const url = "/api/createRoom";
       var getRoomCode;
       const datas = { roomName: roomInput };
       console.log(roomInput);
-      
-      await axios.post(url,datas).then((Response) => 
-      {
+
+      await axios.post(url, datas).then((Response) => {
         console.log("sssssss");
         console.log(Response);
         console.log("sssssss");
         getRoomCode = Response.data.getRoomMax;
-        joinRoom({getRoomCode : getRoomCode});
+        joinRoom({ getRoomCode: getRoomCode });
 
       }).catch((ex) => {
         console.log(ex);
@@ -111,13 +109,13 @@ const Index = (props) => {
     }
     console.log("end");
     ///////////////
-    
+
   };
   //변경된 roomInput을 배열에 저장
   const onRoomList = (event) => {
-      //새로고침 방지
+    //새로고침 방지
     event.preventDefault();
-    
+
     //방 제목을 입력하지 않을 경우 alert창
     if (roomInput.length <= 1) {
       alert("방 제목을 입력해주세요.")
@@ -126,23 +124,12 @@ const Index = (props) => {
       createRoom();
       setRoomNames((currentArray) => [...currentArray, roomInput]); //배열에 roomName 추가
       setRoomInput(" "); //input창 초기화 
-    } 
-    
-  };
-  
-  
-  const userNameSet = (event) => {
-    event.preventDefault();
-    setNameInput(event.target.value);
-  };
-  const onUserName = (event) => {
-    event.preventDefault();
-    setUserID(nameInput);
-    setNameInput("");
+    }
 
   };
+
   loginCheck(); //로그인 정보 쿠키 체크
-  
+
 
 
   useEffect(() => {
@@ -154,7 +141,9 @@ const Index = (props) => {
         const roomName = roomID;
         const userName = userID;
 
-        sessionStorage.setItem("user", myName);
+
+
+        sessionStorage.setItem("user", userName);
         props.history.push(`/room/${roomName}`); // roomName으로 push
       } else {
         setErr(error);
@@ -211,20 +200,6 @@ const Index = (props) => {
                         />
                       </Form>
                     </Col>
-                    <Row>
-                      {/* nickName Input */}
-                      <Form onSubmit={onUserName}>
-                        <Input
-                          className="text-right"
-                          value={nameInput}
-                          type="text"
-                          required
-                          ref={userRef}
-                          placeholder="닉네임을 입력한 후에 Enter!"
-                          onChange={userNameSet}
-                        />
-                      </Form>
-                    </Row>
                   </Row>
                 </CardHeader>
 
