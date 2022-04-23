@@ -18,7 +18,7 @@ const cookieParser = require('cookie-parser')
 const cookies = require('cookie');
 const io = require('socket.io')(https, {
     cors: {
-        origin: "https://bong8230.iptime.org:4001",
+        origin: "https://bong8230.iptime.org:4000",
         Credential: true
     }
 }, app);
@@ -47,17 +47,17 @@ let socketList = {};
 //개발
 app.use(cors());
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, '../client/public')));
-// app.get('/*', function (req, res) {
-//     res.sendFile(path.join(__dirname, '../client/public/index.html'));
-// });
+app.use(express.static(path.join(__dirname, '../client/public')));
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, '../client/public/index.html'));
+});
 //배포
 // if (process.env.NODE_ENV === 'production') {
-app.use(express.static(path.join(__dirname, '../client/build')));
+// app.use(express.static(path.join(__dirname, '../client/build')));
 
-app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, '../client/build/index.html'));
-});
+// app.get('/*', function (req, res) {
+//     res.sendFile(path.join(__dirname, '../client/build/index.html'));
+// });
 // }
 // console.log(io._parser.);
 
@@ -403,7 +403,7 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         // moment.tz.setDefault("Asia/Seoul");
         // var time = moment().format('HH:MM');
         var time = new Date().toTimeString().split(" ")[0];
-        
+
         io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId, time });
         console.log('server에서 보내는 시간: ' + time);
     });
