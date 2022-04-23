@@ -524,7 +524,10 @@ const Room = (props) => {
   );
 };
 
-const MyVideo = styled.video``;
+const MyVideo = styled.video`
+  width: auto;
+  heigh:auto;
+`;
 
 const VideoBox = styled.div`
   position: relative;
@@ -534,8 +537,10 @@ const VideoBox = styled.div`
   > video {
     top: 0;
     left: 0;
-    width: 40vh;
-    height: 80%;
+    // width: 40vh;
+    // height: 80%;
+    width: 100%;
+    height: 100%;
   }
 
   :hover {
