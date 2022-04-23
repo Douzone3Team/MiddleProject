@@ -2,10 +2,16 @@
 
 // 접속한 사용자의 기존 정보를 수정할 페이지
 
+
 import React, { useEffect } from 'react' 
+
 import { Card, CardHeader, CardBody, Container, Row, Col, Form, FormGroup, Input, Button } from "reactstrap";
-import { BsPersonCircle, BsPencilSquare } from 'react-icons/bs' 
+import { BsPersonCircle, BsPencilSquare } from 'react-icons/bs'
 import Fade from 'react-reveal/Fade';
+import AuthNavbar from "components/Navbars/AuthNavbar";
+import AdminFooter from "components/Footers/AdminFooter.js";
+import Header from "components/Headers/Header.js";
+
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
@@ -69,9 +75,20 @@ function Profile(props) {
                 <p className="text-white mt-0 mb-5"> ID : { myId } </p> 
               </div>
             </Col>
-          </Row> 
-        </Container>
-      </div> 
+            <Row>
+              <Col md="12">
+                <div className="search_box" style={{ textAlign: 'center' }}>
+                  <BsPersonCircle size={120} color={'white'} />
+                  {/* 로그인한 유저명 보여주기 */}
+                  <h1 className="display-2 text-white">Hello, Douzone !</h1>
+                  {/* 마지막 접속일자 띄워주기 (현재는 오늘 날짜 가져오도록 임의로 넣어놓음) */}
+                  <p className="text-white mt-0 mb-5"> 마지막 접속일자 : {today.getFullYear() + "/" + today.getDay()} </p>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+
 
       {/* 로그인한 계정의 정보 변경 카드 */}
       {/* <Container className="mt--7" fluid>   */}
@@ -126,11 +143,16 @@ function Profile(props) {
                     </FormGroup>
                   </div>
               </CardBody>
+
                 </Form>
-            </Card>
-          </Col>
+              </Card>
+            </Col>
+          </Container>
+        </Fade>
+        <Container fluid>
+          <AdminFooter />
         </Container>
-      </Fade>
+      </div>
     </>
   );
 }

@@ -336,7 +336,6 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         socket.join(roomId);
         socketList[socket.id] = { userName, video: true, audio: true };
 
-
         // Set User List
         io.sockets.in(roomId).clients((err, clients) => {
             console.log("server : room안에 user추가");
@@ -398,16 +397,16 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
     //     io.sockets.sockets[socket.id].leave(roomId);
     // });
 
-    // socket.on('BE-toggle-camera-audio', ({ roomId, switchTarget }) => {
-    //     if (switchTarget === 'video') {
-    //         socketList[socket.id].video = !socketList[socket.id].video;
-    //     } else {
-    //         socketList[socket.id].audio = !socketList[socket.id].audio;
-    //     }
-    //     socket.broadcast
-    //         .to(roomId)
-    //         .emit('FE-toggle-camera', { userId: socket.id, switchTarget });
-    // });
+    socket.on('BE-toggle-camera-audio', ({ roomId, switchTarget }) => {
+        if (switchTarget === 'video') {
+            socketList[socket.id].video = !socketList[socket.id].video;
+        } else {
+            socketList[socket.id].audio = !socketList[socket.id].audio;
+        }
+        socket.broadcast
+            .to(roomId)
+            .emit('FE-toggle-camera', { userId: socket.id, switchTarget });
+    });
 
 });
 
