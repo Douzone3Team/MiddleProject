@@ -19,6 +19,7 @@ import {
 
 import Header from "components/Headers/Header.js";
 import Cookie from "universal-cookie";
+import { data } from "jquery";
 
 const Index = (props) => {
   const cookie = new Cookie();
@@ -26,7 +27,7 @@ const Index = (props) => {
 
   const roomRef = useRef();
   const userRef = useRef();
-
+  
   const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
   const [nameInput, setNameInput] = useState("");
@@ -34,9 +35,13 @@ const Index = (props) => {
   const userID = cookie.get('myname');
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  var [roomData, setRoomData] = useState("");
+  
+  const [roomCount, setRoomCount] = useState([{r_p_r_code:'',cnt:''}]);
 
   let roomName = "";
   let userName = "";
+
   //로그인 정보 확인
   const loginCheck = async () => {
     if (!cookie.get("user")) {
@@ -65,12 +70,39 @@ const Index = (props) => {
     }
   };
   //살아있는 방 로드
+<<<<<<< HEAD
+  /* const loadRoom = async() => {
+    try{
+      const [lastIdx, setLastIdx] = useState(0);
+      const url = "/api/loadRoom"
+      await axios.post(url).then((response) =>{
+        const getNew = response.data.roomDetail;
+        console.log(getNew);
+        const _inputData = getNew.data.map((rowData) =>(
+          setLastIdx(lastIdx+1),
+          {
+              r_code: rowData.r_code,
+              r_name: rowData.r_name, 
+              u_id: rowData.u_id,
+              r_state: r_state
+          })
+            
+          )
+          setRoomDB(roomDB.concat(_inputData))
+      }).catch((ex) => console.log(ex));
+      
+    }catch(e) {
+      
+    }
+  } */
+=======
   const loadRoom = async () => {
     const url = "/api/loadRoom"
     await axios.post(url).then((response) => {
       console.log(response.data);
     }).catch((ex) => console.log(ex));
   }
+>>>>>>> a2a9979ddd8a3727537bf86bd268d1bb48f3ab5d
   //방 입장
   const joinRoom = async (e) => {
 
@@ -115,7 +147,11 @@ const Index = (props) => {
   const onRoomList = (event) => {
     //새로고침 방지
     event.preventDefault();
+<<<<<<< HEAD
+    console.log(roomNames);
+=======
 
+>>>>>>> a2a9979ddd8a3727537bf86bd268d1bb48f3ab5d
     //방 제목을 입력하지 않을 경우 alert창
     if (roomInput.length <= 1) {
       alert("방 제목을 입력해주세요.")
@@ -133,7 +169,9 @@ const Index = (props) => {
 
 
   useEffect(() => {
-    loadRoom();
+    /* loadRoom(); */
+   
+       
     console.log("user-exist");
     socket.on("FE-error-user-exist", ({ error }) => {
       if (!error) {
@@ -211,7 +249,7 @@ const Index = (props) => {
                   <thead className="thead-light">
                     <tr>
                       <th>방 이름</th>
-                      <th scope="col"> </th>
+                      <th scope="col">방장</th>
                       <th scope="col">참여인원</th>
                       <th scope="col"> </th>
                     </tr>
