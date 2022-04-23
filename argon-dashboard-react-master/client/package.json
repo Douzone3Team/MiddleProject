@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "set PORT=9000 && react-scripts start",
-    "build": "node scripts/build.js",
+    "build": "node node_modules/react-scripts/scripts/build.js",
     "test": "node scripts/test.js",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
     "compile:scss": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css",
@@ -95,7 +95,7 @@
     "postcss-preset-env": "6.7.0",
     "postcss-safe-parser": "5.0.2",
     "prompts": "2.4.0",
-    "react": "17.0.2",
+    "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
     "react-bootstrap": "^2.2.3",
     "react-chartjs-2": "2.11.1",

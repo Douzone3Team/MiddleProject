@@ -35,11 +35,20 @@ const mysqlDB = mysql.createConnection({   //express mysql conect
 let socketList = {};
 //개발
 app.use(cors());
-app.use(express.static(path.join(__dirname, '../client/public')));
 app.use(cookieParser());
+// app.use(express.static(path.join(__dirname, '../client/public')));
+// app.get('/*', function (req, res) {
+//     res.sendFile(path.join(__dirname, '../client/public/index.html'));
+// });
+// //배포
+// // if (process.env.NODE_ENV === 'production') {
+app.use(express.static(path.join(__dirname, '../client/build')));
+
 app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, '../client/public/index.html'));
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
+// }
+// console.log(io._parser.);
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
@@ -301,18 +310,6 @@ app.post('/api/createRoom', (req, res) => {
     });
 })
 
-
-
-
-// //배포
-// // if (process.env.NODE_ENV === 'production') {
-// app.use(express.static(path.join(__dirname, '../client/build')));
-
-// app.get('/*', function (req, res) {
-//     res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
-// }
-// console.log(io._parser.);
 
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
