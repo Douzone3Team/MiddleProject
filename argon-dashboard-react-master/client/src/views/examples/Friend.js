@@ -8,9 +8,9 @@ import { BsPersonCircle } from 'react-icons/bs'
 import { Button, Card, CardHeader, CardBody, Container, Row, Col, } from "reactstrap";
 import { MdPersonOff, MdPersonAdd, MdPersonSearch } from 'react-icons/md' 
 import Fade from 'react-reveal/Fade';
+import Jump  from 'react-reveal/Jump';
 import Friend_data from '../examples/Friend_data.js'  
 import MyFriend from '../../components/MyFriend.js'   
-import Jump  from 'react-reveal/Jump';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 

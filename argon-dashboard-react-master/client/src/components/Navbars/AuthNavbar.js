@@ -1,25 +1,49 @@
 
 import { Link } from "react-router-dom";
 // reactstrap components
-import {
-  UncontrolledCollapse,
-  NavbarBrand,
-  Navbar,
-  NavItem,
-  NavLink,
-  Nav,
-  Container,
-  Row,
-  Col,
-  DropdownItem,
-  DropdownMenu,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
-} from "reactstrap";
+import React, { useEffect } from 'react'
+import { UncontrolledCollapse, NavbarBrand, Navbar, NavItem, NavLink, Nav, Container, Row, Col, DropdownItem, DropdownMenu, UncontrolledDropdown, DropdownToggle, Media, } from "reactstrap";
 import { FaUserFriends } from "react-icons/fa";
+import { BsPersonCircle } from 'react-icons/bs'
+import axios from 'axios';
+import Cookies from 'universal-cookie';
 
-const AdminNavbar = () => {
+const AdminNavbar = (props) => {
+  const cookie = new Cookies();
+  const myName = cookie.get("myname");
+  const myId = cookie.get("myId");
+
+  const loginCheck = async () => {
+    if (!cookie.get("user")) {
+      //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
+      alert("로그인을 해주세요");
+      props.history.push("/login");
+    } else {
+      //쿠키가 있으면 쿠키 정보 검증
+      const url = "/api/loginCheck";
+      const boolean = true;
+      await axios
+        .post(url)
+        .then((response) => {
+          //서버에 암호화된 쿠키 정보 전달
+          console.log(response.data); //서버의 검증에서 받아온 true false;
+          if (!response.data) {
+            //false 라면 잘못된 쿠키이므로 다시 로그인시킴
+            cookie.remove("user");
+            alert("다시 로그인 해주세요.");
+            props.history.push("/login");
+          }
+        })
+        .catch((ex) => {
+          console.log(ex);
+        }
+      );
+    }
+  };
+  useEffect(() => {
+    loginCheck();
+  })
+
   return (
     <>
       <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md">
@@ -58,12 +82,12 @@ const AdminNavbar = () => {
               </Row>
             </div>
             <Nav className="ml-auto" navbar>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/" tag={Link}>
                   <i className="ni ni-planet" />
                   <span className="nav-link-inner--text">Dashboard</span>
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
                 <NavLink className="nav-link-icon" to="/friend" tag={Link}>
                   <i className="ni ni-circle-08" />
@@ -96,7 +120,7 @@ const AdminNavbar = () => {
                 <UncontrolledDropdown nav>
                   <DropdownToggle className="pr-0" nav>
                     <Media className="align-items-center">
-                      <span className="avatar avatar-sm rounded-circle">
+                      {/* <span className="avatar avatar-sm rounded-circle">
                         <img
                           alt="..."
                           src={
@@ -104,10 +128,11 @@ const AdminNavbar = () => {
                               .default
                           }
                         />
-                      </span>
+                      </span> */}
+                        <BsPersonCircle size={25} color={'white'} />
                       <Media className="ml-2 d-none d-lg-block">
                         <span className="mb-0 text-sm font-weight-bold">
-                          Jessica Jones
+                          { myName }
                         </span>
                       </Media>
                     </Media>
