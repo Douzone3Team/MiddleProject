@@ -12,12 +12,16 @@ const io = require('socket.io')(http, {
         Credential: true
     }
 });
+var moment = require('moment');
 const PORT = 4000;
 const path = require('path');
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const { read } = require('fs');
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
+// require('date-utils');
+require('moment-timezone');
+
 
 const mysqlDB = mysql.createConnection({   //express mysql conect
     host: 'kosa2.iptime.org',
@@ -72,17 +76,23 @@ app.post('/api/login', (req, res, fields) => {
                     }
                 );
                 res.cookie("user", accessToken, { maxAge: 60 * 60 * 1000 });
-
+                
                 var dbId, dbPass, dbName;
 
                 for (var data of results) {
                     dbId = data.u_id;
                     dbPass = data.u_pass;
                     dbName = data.u_name;
+                    
                 }
+                console.log("@@@@@@@@@@@@@@@@@0000");
+                console.log("dbName = "+ dbName);
+                res.cookie("myname",dbName,{maxAge: 60 *60*1000});
+                console.log("@@@@@@@@@@@@@@@@@0000");
                 
                 if ((dbId === getId) && (dbPass === getPass)) {
                     res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
+                    
                     res.send(true);
                 }
                 else res.send(false);
@@ -182,32 +192,62 @@ app.post('/api/loginCheck', (req, res) => {
         }
         else {
             if (results.length > 0) {
-                console.log("good");
 
-                res.cookie("myId", getName, { maxAge: 60 * 60 * 1000 });
+                console.log("good");
+                res.cookie("myId", getName, { maxAge: 60 * 60 * 1000 });    //로그인 유지시간 1시간
+
                 res.send(true);
             }
             else { //값이 비었으면 없는 정보이므로 false 전달
                 console.log("nodata");
                 res.send(false);
-
             }
 
         }
+    });
+});
+//방 불러오는 기능
+app.post('/api/loadRoom',(req, res) =>{ 
+    const sql = `SELECT * FROM room WHERE r_state = 1;
+                SELECT r_p_r_code, count(*) FROM room_participants rp JOIN room r ON rp.r_p_r_code = r.r_code GROUP BY r_p_r_code;`;
+    mysqlDB.query(sql, function(err, results){
+        if(err) console.log(err);
+        else{
+            console.log("DFASDFASDFADSFASFDS");
+            console.log(results[0]);
+            console.log(results[1]);
+            
+        }
     })
-})
-
+});
 //방 참여 기능
 app.post('/api/joinRoom', (req,res) => {
-        
-    console.log("#########################")
-    console.log(req);
-    sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${getRoomMax}) `
-    console.log("sql = " +sql); 
+    
+    
+    const userId = req.cookies.myId;
+    const r_p_r_code = req.body.getRoomCode;
+    // console.log("user)id" + userId);
+    sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${r_p_r_code},'${userId}') `
+    console.log("sql = " +sql);
+    mysqlDB.query(sql, function(err, results){
+        if(err) console.log(err);
+        else{
+            console.log("성공");
+            res.send(results);
+        }
+    });
+    sql = `UPDATE user SET u_isJoin = '0' WHERE u_id = '${userId}'`;
+    mysqlDB.query(sql, function(err, results) {
+        if(err) console.log(err)
+        else{
+            console.log("update success");
+        };
+    })
 })
 
 //방 생성 기능
 app.post('/api/createRoom', (req, res) => {
+    
     const data = req.body.roomName; //clients에서 받아온 데이터
     const getCookie = req.cookies.user; //쿠키내 user 정보
 
@@ -233,7 +273,7 @@ app.post('/api/createRoom', (req, res) => {
     });
 
     sql = `SELECT r_code from room order by r_code desc limit 1;`;
-    /* mysqlDB.query(sql, function (err, results, next) {
+    mysqlDB.query(sql, function (err, results, next) {
         if (err) console.log(err);
         else {
 
@@ -247,7 +287,7 @@ app.post('/api/createRoom', (req, res) => {
         }
 
 
-    }); */
+    });
 })
 
 
@@ -332,11 +372,22 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     });
 
+    // console.log(date);
 
-
-    socket.on('BE-send-message', ({ roomId, msg, sender }) => {
-        io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId });
+    //채팅
+    socket.on('BE-send-message', ({ roomId, msg, sender, time}) => {
+        // var nowTime = new Date();
+        // var time = nowTime.toFormat('HH:MM:SS');
+        
+        moment.tz.setDefault("Asia/Seoul");
+        var time = moment().format('HH:MM:SS');
+        io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId, time });
+        console.log('server에서 보내는 시간: '+ time);
     });
+
+    // socket.on('BE-send-message', ({ roomId, msg, sender }) => {
+    //     io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId });
+    // });
 
     // socket.on('BE-leave-room', ({ roomId, leaver }) => {
     //     delete socketList[socket.id];

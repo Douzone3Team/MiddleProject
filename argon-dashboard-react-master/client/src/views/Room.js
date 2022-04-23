@@ -6,9 +6,18 @@ import styled from "styled-components";
 // node.js library that concatenates classes (strings)
 import Video from "./examples/Video";
 import socket from "client_socket";
-import { setCookie, getCookie } from '../cookie/cookie';
+import { setCookie, getCookie } from "../cookie/cookie";
 // reactstrap components
-import { Button, Card, CardHeader, CardBody, Container, Row, Col, CardTitle, } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  Container,
+  Row,
+  Col,
+  CardTitle,
+} from "reactstrap";
 
 //socket(server-client)연결
 
@@ -17,16 +26,24 @@ import TextField from "@material-ui/core/TextField";
 // reactstrap components
 import Header from "components/Headers/Header.js";
 
-
-import { BsCameraVideoFill, BsCameraVideoOffFill, BsFillMicFill, BsFillMicMuteFill, } from "react-icons/bs";
+import {
+  BsCameraVideoFill,
+  BsCameraVideoOffFill,
+  BsFillMicFill,
+  BsFillMicMuteFill,
+} from "react-icons/bs";
 import { Dropdown } from "react-bootstrap";
+import Cookies from "universal-cookie";
+import { ScriptElementKindModifier } from "typescript";
 
 // import Friends from '../variables/Friends'
 
 const Room = (props) => {
-
+  
+  const cookie = new Cookies();
+  const myName = cookie.get('myname');
   //영상
-  const currentUser = sessionStorage.getItem('user');
+  const currentUser = myName;
   const [peers, setPeers] = useState([]);
   const [userVideoAudio, setUserVideoAudio] = useState({
     localUser: { video: true, audio: true },
@@ -42,11 +59,15 @@ const Room = (props) => {
   const inputRef = useRef();
 
   //채팅 메세지에 표시할 시간
-  const [time, setTime] = useState('');
-
+  const [time, setTime] = useState("");
 
   //다른 참여자의 Cam (임의데이터)
-  const [participant, setParticipant] = useState(["참여자1", "참여자2", "참여자3", "참여자4",]);
+  const [participant, setParticipant] = useState([
+    "참여자1",
+    "참여자2",
+    "참여자3",
+    "참여자4",
+  ]);
   // 화상통화 시 카메라/마이크 끄고 켜기
   const [cam, changeCam] = useState(true);
   const [mic, changeMic] = useState(true);
@@ -54,21 +75,21 @@ const Room = (props) => {
   const [setCam, selectCam] = useState(["mode1_cam", "mode2_cam", "mode3_cam"]);
   const [setMic, selectMic] = useState(["mode1_mic", "mode2_mic", "mode3_mic"]);
 
-
-
   // 렌더링될 때 client(message) 받기 //영상 가져오기
   useEffect(() => {
-    if (!getCookie('user')) {
+    
+    if (!getCookie("user")) {
       alert("로그인을 해주세요");
       props.history.push("/login");
     }
+    
     //채팅
-    socket.on("FE-receive-message", ({ msg, sender, roomId }) => {
-      setMsg((msgs) => [...msgs, { sender, msg }]);
+    socket.on("FE-receive-message", ({ msg, sender, roomId, time }) => {
+      setMsg((msgs) => [...msgs, { sender, msg, time }]);
     });
 
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const camera = devices.filter((device) => device.kind === 'videoinput');
+      const camera = devices.filter((device) => device.kind === "videoinput");
       setVideoDevices(camera);
       console.log("client : 영상 준비");
     });
@@ -81,20 +102,24 @@ const Room = (props) => {
         userVideoRef.current.srcObject = stream;
         userStream.current = stream;
         console.log("client : 영상출력 ");
-        socket.emit('BE-join-room', { roomId, userName: currentUser });
+        socket.emit("BE-join-room", { roomId, userName: currentUser });
         console.log("client : server에 join message 전송 ");
 
-        socket.on('FE-user-join', (users) => {
+        socket.on("FE-user-join", (users) => {
           // all users
           console.log("client : server에서 join완료 message ");
           const peers = [];
           users.forEach(({ userId, info }) => {
             let { userName, video, audio } = info;
-            console.log("client : server에서 받아온 username과 현재 user을 비교 ");
+            console.log(
+              "client : server에서 받아온 username과 현재 user을 비교 "
+            );
             if (userName !== currentUser) {
-              console.log("client : server에서 받아온 username과 현재 user가 다름 ");
+              console.log(
+                "client : server에서 받아온 username과 현재 user가 다름 "
+              );
               console.log("client : 새로운 user 생성 ");
-              console.log("createPeer내 BE-call-user message를 server에 전송")
+              console.log("createPeer내 BE-call-user message를 server에 전송");
               const peer = createPeer(userId, socket.id, stream);
 
               peer.userName = userName;
@@ -120,9 +145,8 @@ const Room = (props) => {
           setPeers(peers);
         });
 
-
-        socket.on('FE-receive-call', async ({ signal, from, info }) => {
-          console.log("client : signal과 fe-receive-call message 전달받음  ")
+        socket.on("FE-receive-call", async ({ signal, from, info }) => {
+          console.log("client : signal과 fe-receive-call message 전달받음  ");
           let { userName, video, audio } = info;
           const peerIdx = await findPeer(from);
 
@@ -148,20 +172,22 @@ const Room = (props) => {
           }
         });
 
-        socket.on('FE-call-accepted', ({ signal, answerId }) => {
-          console.log("client : server에서 확인 message 받음, 방문 peer 추가")
+        socket.on("FE-call-accepted", ({ signal, answerId }) => {
+          console.log("client : server에서 확인 message 받음, 방문 peer 추가");
           const peerIdx = findPeer(answerId);
           peerIdx.peer.signal(signal);
         });
 
-        socket.on('FE-user-leave', ({ userId, userName }) => {
+        socket.on("FE-user-leave", ({ userId, userName }) => {
           const peerIdx = findPeer(userId);
           peerIdx.peer.destroy();
           setPeers((users) => {
             users = users.filter((user) => user.peerID !== peerIdx.peer.peerID);
             return [...users];
           });
-          peersRef.current = peersRef.current.filter(({ peerID }) => peerID !== userId);
+          peersRef.current = peersRef.current.filter(
+            ({ peerID }) => peerID !== userId
+          );
         });
       });
 
@@ -191,26 +217,24 @@ const Room = (props) => {
     scrollToBottom();
   }, [msg]);
 
-
-
   //영상
   function createPeer(userId, caller, stream) {
-    console.log("client : peer 생성")
+    console.log("client : peer 생성");
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream,
     });
 
-    peer.on('signal', (signal) => {
+    peer.on("signal", (signal) => {
       console.log("client : signal 전송 및 server에 be-call-user 전송");
-      socket.emit('BE-call-user', {
+      socket.emit("BE-call-user", {
         userToCall: userId,
         from: caller,
         signal,
       });
     });
-    peer.on('disconnect', () => {
+    peer.on("disconnect", () => {
       peer.destroy();
     });
     console.log("client : createPeer에 peer값 리턴");
@@ -218,19 +242,19 @@ const Room = (props) => {
   }
 
   function addPeer(incomingSignal, callerId, stream) {
-    console.log("client : peer 추가")
+    console.log("client : peer 추가");
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream,
     });
 
-    peer.on('signal', (signal) => {
-      console.log("client : server로 message와 signal,추가되는 user 전달")
-      socket.emit('BE-accept-call', { signal, to: callerId });
+    peer.on("signal", (signal) => {
+      console.log("client : server로 message와 signal,추가되는 user 전달");
+      socket.emit("BE-accept-call", { signal, to: callerId });
     });
 
-    peer.on('disconnect', () => {
+    peer.on("disconnect", () => {
       peer.destroy();
     });
 
@@ -249,10 +273,12 @@ const Room = (props) => {
         <Card className="card-stats mb-4 mb-xl-0">
           <CardBody>
             <Row>
-              <div className="col" >
-                <CardTitle tag="h5" className="text-uppercase mb-0" >
+              <div className="col">
+                <CardTitle tag="h5" className="text-uppercase mb-0">
                   <VideoBox
-                    className={`width-peer${peers.length > 8 ? '' : peers.length}`}
+                    className={`width-peer${
+                      peers.length > 8 ? "" : peers.length
+                    }`}
                     // onClick={expandScreen}
                     key={index}
                   >
@@ -323,16 +349,23 @@ const Room = (props) => {
   const sendMessage = (e) => {
     if (e.key === "Enter") {
       const msg = e.target.value;
-      console.log(msg);
+      // console.log(msg);
+      alert(myName);
 
       if (msg) {
-        socket.emit("BE-send-message", { roomId, msg, sender: currentUser });
+        socket.emit("BE-send-message", { roomId, msg, sender: currentUser,time });
+        console.log('client에서 받아온 시간: ' +time );
+        // 현재시간
+        // let nowTime = new Date();
+        // let sendTime = [...time];
+        // sendTime.push(nowTime.getHours() + ":" + nowTime.getMinutes());
+        // // renderChat();
+        // setTime(sendTime);
 
         inputRef.current.value = "";
       }
     }
   };
-
 
   return (
     <>
@@ -341,16 +374,16 @@ const Room = (props) => {
         <Header />
         <Container className="mt--7" fluid>
           <Row>
-            {peers && peers.map((peer, index, arr) =>
-              createUserVideo(peer, index, arr)
-            )}
+            {peers &&
+              peers.map((peer, index, arr) =>
+                createUserVideo(peer, index, arr)
+              )}
           </Row>
           <Row className="mt-5">
-            <Col className="mb-5 mb-xl-0" xl="9" >
+            <Col className="mb-5 mb-xl-0" xl="9">
               <Card className="shadow">
                 <div>
                   <div className="col text-right">
-
                     <Col className="col-auto">
                       <div
                         className="icon icon-shape bg-danger text-white rounded-circle shadow"
@@ -380,11 +413,11 @@ const Room = (props) => {
                         )}
                       </div>
                     </Col>
-
                   </div>
                   <VideoBox
-                    className={`width-peer${peers.length > 8 ? "" : peers.length
-                      }`}
+                    className={`width-peer${
+                      peers.length > 8 ? "" : peers.length
+                    }`}
                   >
                     {userVideoAudio["localUser"].video ? null : (
                       <div>{currentUser}</div>
@@ -396,44 +429,60 @@ const Room = (props) => {
                       playsInline
                     ></MyVideo>
                   </VideoBox>
-
                 </div>
               </Card>
               <br />
               <div>
                 <Dropdown>
-                  <Dropdown.Toggle className="mr-4" size="sm"> 카메라 선택 </Dropdown.Toggle>
+                  <Dropdown.Toggle className="mr-4" size="sm">
+                    {" "}
+                    카메라 선택{" "}
+                  </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {setCam.map((data, i) => { return <Dropdown.Item>{data}</Dropdown.Item>; })}
+                    {setCam.map((data, i) => {
+                      return <Dropdown.Item>{data}</Dropdown.Item>;
+                    })}
                   </Dropdown.Menu>
                 </Dropdown>
                 <Dropdown>
                   <Dropdown.Toggle size="sm">마이크 선택</Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {setMic.map((data, i) => { return <Dropdown.Item>{data}</Dropdown.Item>; })}
+                    {setMic.map((data, i) => {
+                      return <Dropdown.Item>{data}</Dropdown.Item>;
+                    })}
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
             </Col>
             <Col className="mb-5 mb-xl-0" xl="3">
               <Card className="shadow">
-                <CardHeader className="border-0" style={{ height: "46vh", overflow: "auto" }}>
+                <CardHeader
+                  className="border-0"
+                  style={{ height: "46vh", overflow: "auto" }}
+                >
                   <div>
                     {msg &&
-                      msg.map(({ sender, msg }, idx) => {
-                        if (sender !== currentUser) {
+                      msg.map(({ sender, msg, time }, idx) => {
+                        if ( sender !== currentUser) {
                           return (
-                            <ChattingOther>
-                              <div key={idx}>
-                                <strong> {sender} &nbsp;{msg}</strong>
-                              </div>
-                            </ChattingOther>
+                            <div key={idx}>
+                              <ChattingOther>
+                                <strong>
+                                  {/* {sender} : &nbsp;{msg} {time[idx]} */}
+                                  {sender} : &nbsp;{msg} {time}
+
+                                </strong>
+                              </ChattingOther>
+                            </div>
                           );
                         } else {
                           return (
                             <ChattingMe>
-                              <div className="col text-right" key={idx}>
-                                <strong>{msg} {sender}</strong>
+                              <div className="text-right" key={idx}>
+                                <strong>
+                                  {/* {time[idx]} {msg} : {sender} */}
+                                  {time} {msg} : {sender}
+                                </strong>
                               </div>
                             </ChattingMe>
                           );
@@ -443,7 +492,6 @@ const Room = (props) => {
                       style={{ float: "left", clear: "both" }}
                       ref={messagesEndRef}
                     />
-
                   </div>
                 </CardHeader>
                 <CardHeader className="border-0">
@@ -456,7 +504,9 @@ const Room = (props) => {
                         placeholder="Enter your message"
                         style={{ width: "80%", border: "none" }}
                       />
-                      <Button color="primary" size="sm">SEND</Button>
+                      <Button color="primary" size="sm">
+                        SEND
+                      </Button>
                     </div>
                   </Row>
                 </CardHeader>
@@ -472,26 +522,25 @@ const Room = (props) => {
   );
 };
 
-
 const MyVideo = styled.video``;
 
 const VideoBox = styled.div`
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    > video {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  > video {
     top: 0;
     left: 0;
     width: 40vh;
     height: 80%;
-    }
+  }
 
-    :hover {
+  :hover {
     > i {
-        display: block;
-        }
+      display: block;
     }
+  }
 `;
 
 const ChattingOther = styled.div`
@@ -507,6 +556,7 @@ const ChattingOther = styled.div`
   float: left;
 `;
 const ChattingMe = styled.div`
+  display: block;
   position: relative;
   margin-bottom: 10px;
   padding: 6px;
