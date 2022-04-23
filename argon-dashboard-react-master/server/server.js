@@ -3,22 +3,22 @@ const mysql = require('mysql');
 const app = express();
 const read = require('fs');
 //open ssl
-const options = {
+/* const options = {
     key: read.readFileSync('./keys/key.pem', 'utf-8'),
     cert: read.readFileSync('./keys/cert.pem', 'utf-8'),
     passphrase: 'bong'
-};
+}; */
 
 
 
-const https = require('https').createServer(options, app);
+const http = require('http').createServer(/* options, */ app);
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const cookies = require('cookie');
-const io = require('socket.io')(https, {
+const io = require('socket.io')(http, {
     cors: {
-        origin: "https://bong8230.iptime.org:4000",
+        origin: "*",
         Credential: true
     }
 }, app);
@@ -434,6 +434,6 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
 });
 
 
-https.listen(PORT, () => {
+http.listen(PORT, () => {
     console.log(`Connected : ${PORT}`);
 });
