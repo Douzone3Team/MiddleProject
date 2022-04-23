@@ -1,17 +1,12 @@
 /* eslint-disable */
-
-// 접속한 사용자의 기존 정보를 수정할 페이지
-
+// 사용자의 기존 정보를 변경할 페이지
 
 import React, { useEffect } from 'react'
-
-import { Card, CardHeader, CardBody, Container, Row, Col, Form, FormGroup, Input, Button } from "reactstrap";
+import { Card, CardHeader, CardBody, Container, Row, Col, Form, FormGroup, Input, Button, NavbarBrand } from "reactstrap";
 import { BsPersonCircle, BsPencilSquare } from 'react-icons/bs'
 import Fade from 'react-reveal/Fade';
-import AuthNavbar from "components/Navbars/AuthNavbar";
+// import AuthNavbar from "components/Navbars/AuthNavbar";
 import AdminFooter from "components/Footers/AdminFooter.js";
-
-
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
@@ -43,7 +38,8 @@ function Profile(props) {
         })
         .catch((ex) => {
           console.log(ex);
-        });
+        }
+      );
     }
   };
   useEffect(() => {
@@ -52,19 +48,28 @@ function Profile(props) {
 
   return (
     <>
-      <AuthNavbar className=" " style={{ color: '#525f7f' }} />
+      {/* <AuthNavbar className=" " style={{ color: '#525f7f' }} /> */}
+      
       <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{ minHeight: "100px", backgroundSize: "cover", backgroundPosition: "center top" }}
       >
+        {/* <NavbarBrand to="/" tag={Link}>
+          <img
+            alt="home"
+            src={
+              require("../../assets/img/brand/argon-react-white.png").default
+            }
+          /> 3Team
+        </NavbarBrand> */}
+        
         <span className="mask bg-gradient-default opacity-8" />
+        
         <Container>
           <Col lg="12">
             <div className="card-profile-image">
-              <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                {/* 이미지가 없을 경우 보여줄 아이콘 -> 반응형으로 작업(가운데로) 필요 */}
-                {/* 추가 작업 : 이미지 onClick 시 프로필 사진 변경 */}
+              {/* <a href="#pablo" onClick={(e) => e.preventDefault()}>  
                 <img alt="..." className="rounded-circle" rc={require("../../assets/img/theme/team-4-800x800.jpg").default} />
-              </a>
+              </a> */}
             </div>
           </Col>
           <Row>
@@ -80,9 +85,7 @@ function Profile(props) {
         </Container>
       </div>
 
-
-      {/* 로그인한 계정의 정보 변경 카드 */}
-      {/* <Container className="mt--7" fluid>   */}
+      {/* 로그인한 계정의 정보 변경 카드 */} 
       <Fade bottom duration={1500}>
         <Container className="mt--7" style={{ width: '60%' }}>
           <Col className="order-xl-2 mb-5 mb-xl-0" xl="12">
@@ -102,23 +105,25 @@ function Profile(props) {
                 <CardBody>
                   <h6 className="heading-small text-muted mb-4"> User information </h6>
                   <div className="pl-lg-4">
-                    <Row>
-                      <Col lg="10">
+                    <Row> 
+                      <Col lg="6">
                         <FormGroup>
                           <label className="form-control-label"> 유저명 </label>
                           <Input className="form-control-alternative" id="input-username" type="text" />
                         </FormGroup>
-                      </Col>
+                      </Col> 
+                    </Row>  
+                    <Row>
                       <Col lg="6">
                         <FormGroup>
-                          <label className="form-control-label"> 암호 변경 </label>
+                          <label className="form-control-label"> 비밀번호 </label>
                           <Input className="form-control-alternative" id="input-pwd1" type="password1" />
                         </FormGroup>
                       </Col>
-                      {/* 위에서 입력한 암호와 값이 같은지 확인 */}
+                      {/* 위에서 입력한 비밀번호 값이 같은지 확인 */}
                       <Col lg="6">
                         <FormGroup>
-                          <label className="form-control-label"> 암호 확인 </label>
+                          <label className="form-control-label"> 비밀번호 확인 </label>
                           <Input className="form-control-alternative" id="input-pwd2" type="password2" />
                         </FormGroup>
                       </Col>
