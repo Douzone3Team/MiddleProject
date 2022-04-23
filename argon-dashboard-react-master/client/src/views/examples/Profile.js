@@ -1,7 +1,7 @@
 /* eslint-disable */
 // 사용자의 기존 정보를 변경할 페이지
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardHeader, CardBody, Container, Row, Col, Form, FormGroup, Input, Button, NavbarBrand } from "reactstrap";
 import { BsPersonCircle, BsPencilSquare } from 'react-icons/bs'
 import Fade from 'react-reveal/Fade';
@@ -14,7 +14,20 @@ function Profile(props) {
   const cookie = new Cookies();
   const myName = cookie.get("myname");
   const myId = cookie.get("myId");
+  const [myPass, setPass] = useState("");
+  const [myInfo, setMyInfo] = useState("");
 
+  const loadProfile = async () => {
+    const url = '/api/loadProfile'
+    await axios.post(url).then((response) =>{
+      console.log(response.data);
+      const {u_pass, u_info} = response.data[0];
+      console.log(u_pass + " " + u_info);
+      setPass(u_pass);
+      setMyInfo(u_info);
+    }      
+    ).catch((ex) => console.log(ex));
+  }
   const loginCheck = async () => {
     if (!cookie.get("user")) {
       //쿠키가 없을때 로그인 페이지로 강제로 이동시킴
@@ -44,6 +57,7 @@ function Profile(props) {
   };
   useEffect(() => {
     loginCheck();
+    loadProfile();
   })
 
   return (
@@ -109,7 +123,8 @@ function Profile(props) {
                       <Col lg="6">
                         <FormGroup>
                           <label className="form-control-label"> 유저명 </label>
-                          <Input className="form-control-alternative" id="input-username" type="text" />
+                          <Input className="form-control-alternative" id="input-username" type="text"
+                          value = {myName} />
                         </FormGroup>
                       </Col> 
                     </Row>  
@@ -117,7 +132,8 @@ function Profile(props) {
                       <Col lg="6">
                         <FormGroup>
                           <label className="form-control-label"> 비밀번호 </label>
-                          <Input className="form-control-alternative" id="input-pwd1" type="password1" />
+                          <Input className="form-control-alternative" id="input-pwd1" type="password1"
+                          value = {myPass} />
                         </FormGroup>
                       </Col>
                       {/* 위에서 입력한 비밀번호 값이 같은지 확인 */}
@@ -135,7 +151,8 @@ function Profile(props) {
                   <div className="pl-lg-4">
                     <FormGroup>
                       <label className="form-control-label">인사말</label>
-                      <Input className="form-control-alternative" placeholder="안녕하세요" rows="3" type="textarea" />
+                      <Input className="form-control-alternative" placeholder="안녕하세요" rows="3" type="textarea" 
+                      value = {myInfo}/>
                     </FormGroup>
                   </div>
                 </CardBody>
