@@ -165,6 +165,23 @@ const Room = (props) => {
         });
       });
 
+    socket.on('FE-toggle-camera', ({ userId, switchTarget }) => {
+      const peerIdx = findPeer(userId);
+
+      setUserVideoAudio((preList) => {
+        let video = preList[peerIdx.userName].video;
+        let audio = preList[peerIdx.userName].audio;
+
+        if (switchTarget === 'video') video = !video;
+        else audio = !audio;
+
+        return {
+          ...preList,
+          [peerIdx.userName]: { video, audio },
+        };
+      });
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -261,6 +278,43 @@ const Room = (props) => {
     }
   }
 
+  const muteAudio = (e) => {
+    setUserVideoAudio((preList) => {
+      let audioValue = preList['localUser'].audio;
+
+      const userAudioTrack = userVideoRef.current.srcObject.getAudioTracks()[0];
+      audioValue = !audioValue;
+
+      if (userAudioTrack) {
+        userAudioTrack.enabled = audioValue;
+      } else {
+        userStream.current.getAudioTracks()[0].enabled = audioValue;
+      }
+
+      return {
+        ...preList,
+        localUser: { video: preList['localUser'].video, audio: audioValue },
+      };
+    });
+    socket.emit('BE-toggle-camera-audio', { roomId, switchTarget: 'audio' });
+  }
+
+  const muteCamera = (e) => {
+    setUserVideoAudio((preList) => {
+      let cameraValue = preList['localUser'].video;
+
+      const userVideoTrack = userVideoRef.current.srcObject.getVideoTracks()[0];
+      cameraValue = !cameraValue;
+      userVideoTrack.enabled = cameraValue;
+
+      return {
+        ...preList,
+        localUser: { video: cameraValue, audio: preList['localUser'].audio },
+      };
+    });
+    socket.emit('BE-toggle-camera-audio', { roomId, switchTarget: 'video' });
+  }
+
   //채팅
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -298,31 +352,33 @@ const Room = (props) => {
                   <div className="col text-right">
 
                     <Col className="col-auto">
-                      {/* <div
-                          className="icon icon-shape bg-danger text-white rounded-circle shadow"
-                          onClick={() => {
-                            changeCam(!cam);
-                          }}
-                        >
-                          {cam === true ? (
-                            <BsCameraVideoFill />
-                          ) : (
-                            <BsCameraVideoOffFill />
-                          )}
-                        </div>
-                        &nbsp;
-                        <div
-                          className="icon icon-shape bg-danger text-white rounded-circle shadow"
-                          onClick={() => {
-                            changeMic(!mic);
-                          }}
-                        >
-                          {mic === true ? (
-                            <BsFillMicFill />
-                          ) : (
-                            <BsFillMicMuteFill />
-                          )}
-                        </div> */}
+                      <div
+                        className="icon icon-shape bg-danger text-white rounded-circle shadow"
+                        onClick={() => {
+                          muteCamera();
+                        }}
+                      >
+                        {userVideoAudio['localUser'].video ? (
+                          <BsCameraVideoFill />
+                        ) : (
+                          <BsCameraVideoOffFill />
+                        )}
+                      </div>&nbsp;
+                      {/* </Col>
+                    &nbsp;
+                    <Col> */}
+                      <div
+                        className="icon icon-shape bg-danger text-white rounded-circle shadow"
+                        onClick={() => {
+                          muteAudio();
+                        }}
+                      >
+                        {userVideoAudio['localUser'].audio ? (
+                          <BsFillMicFill />
+                        ) : (
+                          <BsFillMicMuteFill />
+                        )}
+                      </div>
                     </Col>
 
                   </div>
