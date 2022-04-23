@@ -26,7 +26,6 @@
     "start": "set PORT=9000 && react-scripts start",
     "build": "node node_modules/react-scripts/scripts/build.js",
     "test": "node scripts/test.js",
-    "install": "npm install --force",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
     "compile:scss": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.css",
     "minify:scss": "node-sass --importer node_modules/node-sass-package-importer/dist/cli.js src/assets/scss/argon-dashboard-react.scss src/assets/css/argon-dashboard-react.min.css --output-style compressed",
