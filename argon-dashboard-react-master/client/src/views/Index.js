@@ -28,8 +28,7 @@ const Index = (props) => {
 
 
   const [roomInput, setRoomInput] = useState("");
-  const [roomInfo, setRoomInfo] = useState([{
-    r_name:'',r_code:'', r_id:''
+  const [roomInfo, setRoomInfo] = useState([{r_name:'',r_code:'', r_id:''
   }]);
 
   const [roomID, setRoomID] = useState("");
@@ -79,11 +78,11 @@ const Index = (props) => {
         for(var i = 0; i < getRoomDetail.length; i++){
           setGetRoomCreater((currentArray) => [...currentArray , getRoomDetail[i].u_id]);
           setGetRoomName((currentArray) => [...currentArray ,getRoomDetail[i].r_name]);
-          // setRoomInfo((currentArray) => [...currentArray,{r_name:getRoomDetail[i].r_name,r_code:getRoomDetail[i].r_co, r_id:''}])
+          setRoomInfo((currentArray) => [...currentArray,{r_name:getRoomDetail[i].r_name, r_code:getRoomDetail[i].r_code, r_id:getRoomDetail[i].u_id}])
         }
         
       }).catch((ex) => console.log(ex));
-      
+      console.log(roomInfo);
     }catch(e) {
       
     }
@@ -154,7 +153,7 @@ const Index = (props) => {
 
 
   useEffect(() => {
-    loginCheck(); //로그인 정보 쿠키 체크
+    // loginCheck(); //로그인 정보 쿠키 체크
     loadRoom();
 
     console.log("user-exist");
@@ -242,12 +241,14 @@ const Index = (props) => {
                   <tbody>
                     {getRoomName.map(
                       (
+                        
                         item,
                         index //map함수 이용, 저장된 roomName으로 테이블 row 생성
+                        
                       ) => (
                         <tr key={index}>
                           <th>{item}</th>
-                          <td> </td>
+                          <td></td>
                           <td> </td>
                           <td>
                             <Button
