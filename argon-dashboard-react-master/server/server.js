@@ -1,26 +1,37 @@
 const express = require('express');
 const mysql = require('mysql');
 const app = express();
-const http = require('http').createServer(app);
+const read = require('fs');
+//open ssl
+const options = {
+    key: read.readFileSync('./keys/key.pem', 'utf-8'),
+    cert: read.readFileSync('./keys/cert.pem', 'utf-8'),
+    passphrase: 'bong'
+};
+
+
+
+const https = require('https').createServer(options, app);
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const cookies = require('cookie');
-const io = require('socket.io')(http, {
+const io = require('socket.io')(https, {
     cors: {
-        origin: "*",
+        origin: "https://bong8230.iptime.org:4001",
         Credential: true
     }
-});
+}, app);
 var moment = require('moment');
 const PORT = 4000;
 const path = require('path');
 require("dotenv").config();
 const bodyParser = require("body-parser");
-const { read } = require('fs');
+
 // require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
 // require('date-utils');
 require('moment-timezone');
+
 
 
 const mysqlDB = mysql.createConnection({   //express mysql conect
@@ -40,8 +51,8 @@ app.use(cookieParser());
 // app.get('/*', function (req, res) {
 //     res.sendFile(path.join(__dirname, '../client/public/index.html'));
 // });
-// //배포
-// // if (process.env.NODE_ENV === 'production') {
+//배포
+// if (process.env.NODE_ENV === 'production') {
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('/*', function (req, res) {
@@ -423,6 +434,6 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
 });
 
 
-http.listen(PORT, () => {
-    console.log('Connected : 4000');
+https.listen(PORT, () => {
+    console.log(`Connected : ${PORT}`);
 });

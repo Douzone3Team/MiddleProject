@@ -7,7 +7,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'http://localhost:4000',
+            target: 'https://bong8230.iptime.org:4000',
             changeOrigin: true,
         })
     );

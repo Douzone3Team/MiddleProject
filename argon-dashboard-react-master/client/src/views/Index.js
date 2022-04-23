@@ -24,23 +24,20 @@ import { data } from "jquery";
 const Index = (props) => {
   const cookie = new Cookie();
 
-
   const roomRef = useRef();
-  const userRef = useRef();
-  
+
+
   const [roomInput, setRoomInput] = useState("");
   const [roomNames, setRoomNames] = useState([]);
-  const [nameInput, setNameInput] = useState("");
+
   const [roomID, setRoomID] = useState("");
   const userID = cookie.get('myname');
   const [err, setErr] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  var [roomData, setRoomData] = useState("");
-  
-  const [roomCount, setRoomCount] = useState([{r_p_r_code:'',cnt:''}]);
 
-  let roomName = "";
-  let userName = "";
+
+
+
 
   //로그인 정보 확인
   const loginCheck = async () => {
@@ -96,12 +93,7 @@ const Index = (props) => {
     }
   } */
 
-  const loadRoom = async () => {
-    const url = "/api/loadRoom"
-    await axios.post(url).then((response) => {
-      console.log(response.data);
-    }).catch((ex) => console.log(ex));
-  }
+
 
   //방 입장
   const joinRoom = async (e) => {
@@ -166,8 +158,8 @@ const Index = (props) => {
 
   useEffect(() => {
     /* loadRoom(); */
-   
-       
+
+
     console.log("user-exist");
     socket.on("FE-error-user-exist", ({ error }) => {
       if (!error) {
