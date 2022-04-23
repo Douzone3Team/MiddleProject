@@ -13,7 +13,7 @@ const AdminNavbar = (props) => {
   const myName = cookie.get("myname");
   const myId = cookie.get("myId");
 
-
+  
 
   return (
     <>
@@ -60,7 +60,7 @@ const AdminNavbar = (props) => {
                 </NavLink>
               </NavItem> */}
               <NavItem>
-                <NavLink className="nav-link-icon" to="/friend" tag={Link}>
+                <NavLink className="nav-link-icon" to= "/friend" tag={Link} >
                   <i className="ni ni-circle-08" />
                   <span className="nav-link-inner--text">Friend</span>
                 </NavLink>

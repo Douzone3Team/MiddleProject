@@ -55,6 +55,10 @@ function Profile(props) {
       );
     }
   };
+
+  const profileUpdate = async () => {
+   
+  }
   useEffect(() => {
     loginCheck();
     loadProfile();
@@ -110,7 +114,8 @@ function Profile(props) {
                     <Col xs="12">
                       <h3 className="mb-0">My account &nbsp; <BsPencilSquare />
                         <Button className="float-right" color="primary"
-                          onClick={(e) => e.preventDefault()} size="sm"
+                          onClick={(e) => {e.preventDefault()
+                                          profileUpdate()}} size="sm"
                         >저장</Button>
                       </h3>
                     </Col>
@@ -124,7 +129,7 @@ function Profile(props) {
                         <FormGroup>
                           <label className="form-control-label"> 유저명 </label>
                           <Input className="form-control-alternative" id="input-username" type="text"
-                          value = {myName} />
+                          placeholder = {myName}  />
                         </FormGroup>
                       </Col> 
                     </Row>  
@@ -133,7 +138,7 @@ function Profile(props) {
                         <FormGroup>
                           <label className="form-control-label"> 비밀번호 </label>
                           <Input className="form-control-alternative" id="input-pwd1" type="password1"
-                          value = {myPass} />
+                          placeholder = {myPass} />
                         </FormGroup>
                       </Col>
                       {/* 위에서 입력한 비밀번호 값이 같은지 확인 */}
@@ -152,7 +157,7 @@ function Profile(props) {
                     <FormGroup>
                       <label className="form-control-label">인사말</label>
                       <Input className="form-control-alternative" placeholder="안녕하세요" rows="3" type="textarea" 
-                      value = {myInfo}/>
+                      placeholder = {myInfo}/>
                     </FormGroup>
                   </div>
                 </CardBody>
