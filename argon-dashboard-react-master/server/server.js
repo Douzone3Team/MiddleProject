@@ -380,15 +380,19 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     });
 
-    // console.log(date);
+    // let time = new Date();
+    // console.log(time.getHours());
+    // console.log(time.getMinutes());
 
     //채팅
     socket.on('BE-send-message', ({ roomId, msg, sender, time }) => {
         // var nowTime = new Date();
         // var time = nowTime.toFormat('HH:MM:SS');
 
-        moment.tz.setDefault("Asia/Seoul");
-        var time = moment().format('HH:MM:SS');
+        // moment.tz.setDefault("Asia/Seoul");
+        // var time = moment().format('HH:MM');
+        var time = new Date().toTimeString().split(" ")[0];
+        
         io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId, time });
         console.log('server에서 보내는 시간: ' + time);
     });
