@@ -215,7 +215,7 @@ const Index = (props) => {
                       {/* roomName Input */}
                       <Form id="form1" onSubmit={onRoomList}>
                         <Input
-                          className="text-right"
+                          className="text-center"
                           value={roomInput}
                           type="text"
                           required
@@ -236,8 +236,8 @@ const Index = (props) => {
                   <thead className="thead-light">
                     <tr>
                       <th>방 이름</th>
-                      <th scope="col">방장</th>
-                      <th scope="col">참여인원</th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
                       <th scope="col"> </th>
                     </tr>
                   </thead>

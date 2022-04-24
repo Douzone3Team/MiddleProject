@@ -283,7 +283,7 @@ function Profile(props) {
                 <CardBody>
                   <h6 className="heading-small text-muted mb-4"> User information </h6>
                   <div className="pl-lg-4">
-                    <Row> 
+                    {/* <Row> 
                       <Col lg="6">
                         <FormGroup>
                           <label className="form-control-label"> 유저명 </label>
@@ -291,7 +291,7 @@ function Profile(props) {
                           placeholder = {myName} value={inputName} onChange={handleName}  />
                         </FormGroup>
                       </Col> 
-                    </Row>  
+                    </Row>   */}
                     <Row>
                       <Col lg="6">
                         <FormGroup>
