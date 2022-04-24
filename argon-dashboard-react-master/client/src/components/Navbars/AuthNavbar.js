@@ -16,11 +16,11 @@ const AdminNavbar = (props) => {
   const cookieRemove = () => {
     alert("로그아웃 되었습니다.");
     cookie.remove('user');
-  } 
+  }
 
   return (
     <>
-      <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md">
+      <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md" >
         <Container className="px-4">
           <NavbarBrand to="/" tag={Link}>
             <img
