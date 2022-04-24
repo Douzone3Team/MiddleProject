@@ -18,7 +18,6 @@ import "assets/scss/argon-dashboard-react.scss";
 function App(props) {
 
   return (
-
     <BrowserRouter>
       <Route exact path="/" component={Index} />
       <Route exact path="/register" component={Register} />
@@ -27,7 +26,6 @@ function App(props) {
       <PrivateRoute exact path="/profile" component={Profile} />
       <PrivateRoute exact path="/friend" component={Friend} />
     </BrowserRouter>
-
   )
 }
 

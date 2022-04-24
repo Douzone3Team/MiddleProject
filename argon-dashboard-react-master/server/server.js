@@ -9,8 +9,6 @@ const options = {
     passphrase: 'bong'
 };
 
-
-
 const https = require('https').createServer(options, app);
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
@@ -52,7 +50,6 @@ app.use(cookieParser());
 //배포
 // if (process.env.NODE_ENV === 'production') {
 app.use(express.static(path.join(__dirname, '../client/build')));
-
 app.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
@@ -97,7 +94,6 @@ app.post('/api/login', (req, res, fields) => {
                     dbId = data.u_id;
                     dbPass = data.u_pass;
                     dbName = data.u_name;
-
                 }
 
                 console.log("dbName = " + dbName);
