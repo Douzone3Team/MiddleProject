@@ -28,8 +28,6 @@ const path = require('path');
 require("dotenv").config();
 const bodyParser = require("body-parser");
 
-// require('dotenv').config({path:path.join(__dirname, './db/db.env')});   //환경변수 세팅
-// require('date-utils');
 require('moment-timezone');
 
 
@@ -59,14 +57,10 @@ app.get('/*', function (req, res) {
 //     res.sendFile(path.join(__dirname, '../client/build/index.html'));
 // });
 // }
-// console.log(io._parser.);
+
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
-
-
-
-
 
 //로그인 기능
 app.post('/api/login', (req, res, fields) => {
@@ -105,10 +99,10 @@ app.post('/api/login', (req, res, fields) => {
                     dbName = data.u_name;
 
                 }
-                console.log("@@@@@@@@@@@@@@@@@0000");
+
                 console.log("dbName = " + dbName);
                 res.cookie("myname", dbName, { maxAge: 60 * 60 * 1000 });
-                console.log("@@@@@@@@@@@@@@@@@0000");
+
 
                 if ((dbId === getId) && (dbPass === getPass)) {
                     res.cookie("myId", dbId, { maxAge: 60 * 60 * 1000 });
@@ -148,45 +142,6 @@ app.post('/api/register', (req, res) => {
     })
 });
 
-
-/* app.post('/api/getUserId', (req, res) => {
-    console.log(req); //클라이언트 전송정보  
-    const getCookie = req.cookies.user; //쿠키내 user 정보
-    
-    var getName; //암호화된 쿠키내 user 정보
-    var dbId,dbPass;
-    //암호화 해제
-    jwt.verify(getCookie, process.env.SECRET_KEY, function(err, decoded) {
-        console.log(decoded);
-        if(decoded === undefined){  //cookie가 없을때 error라고 임의로 값전달
-            getName = "error";
-        }
-        else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
-    });
-    console.log("getName:" + getName);  
-    
-    //로그인 하는 유저 정보 확인
-    const sql = `SELECT * FROM user WHERE u_id = '${getName}'`;
-    mysqlDB.query(sql,function(err,results){
-        if (err) {  //에러가 나면 false 전달
-            console.log("인증실패");
-            res.send(false);
-        }
-        else {
-            console.log(results);
-            if(results.length > 0){
-                console.log("good");
-                res.send(true);
-            }
-            else{ //값이 비었으면 없는 정보이므로 false 전달
-                console.log("nodata");
-                res.send(false);
-                
-            }
-            
-        }
-    })
-}) */
 
 
 //로그인 체크
@@ -230,19 +185,14 @@ app.post('/api/loginCheck', (req, res) => {
 app.post('/api/loadRoom', (req, res) => {
     const sql = `SELECT * FROM room WHERE r_state = 1;
                 SELECT r_p_r_code, count(*) as cnt FROM room_participants rp JOIN room r ON rp.r_p_r_code = r.r_code GROUP BY r_p_r_code;`;
-    mysqlDB.query(sql, function(err, results){
-        if(err) console.log(err);
-        else{
-            
-            console.log("DFASDFASDFADSFASFDS");
-            console.log(results[0]);
-            console.log(results[1]);
-
-            res.json({roomDetail: results[0],roomCount : results[1]});         
+    mysqlDB.query(sql, function (err, results) {
+        if (err) console.log(err);
+        else {
+            res.json({ roomDetail: results[0], roomCount: results[1] });
         }
-    })    
+    })
 });
-app.post('/api/loadRoomCount', (req,res) =>{
+app.post('/api/loadRoomCount', (req, res) => {
     const sql = `SELECT `
 })
 //방 참여 기능
@@ -251,7 +201,7 @@ app.post('/api/joinRoom', (req, res) => {
     const r_p_r_code = req.body.getRoomCode;
     // console.log("user)id" + userId);
     sql = `INSERT INTO room_participants(r_p_r_code, r_p_u_id) VALUES(${r_p_r_code},'${userId}') `
-    console.log("sql = " + sql);
+
     mysqlDB.query(sql, function (err, results) {
         if (err) console.log(err);
         else {
@@ -286,7 +236,7 @@ app.post('/api/createRoom', (req, res) => {
         else getName = decoded.getId;   //client에서 받아온 user데이터 복호화
     });
 
-    console.log("getName:" + getName);
+
 
 
     let sql = `INSERT INTO room(r_name,u_id) VALUES('${data}' ,'${getName}' );` //방생성 쿼리
@@ -316,10 +266,9 @@ app.post('/api/createRoom', (req, res) => {
 app.post('/api/loadProfile', (req, res) => {
     const myName = req.cookies.myId;
     const sql = `SELECT * FROM user WHERE u_id = '${myName}';`
-    mysqlDB.query(sql, function(err, results) {
+    mysqlDB.query(sql, function (err, results) {
         if (err) console.log(err);
-        else { 
-            console.log(results);
+        else {
             res.send(results);
         };
     })
@@ -332,15 +281,15 @@ app.post('/api/updateProfile', (req, res) => {
     const getPass = req.body.u_pass.inputPass;
     const getInfo = req.body.u_info.inputInfo;
 
-    console.log(getId + "  " + getName + "  " + getPass + "  " + getInfo );
-    const sql =`Update user SET u_name ='${getName}', u_info ='${getInfo}', u_pass='${getPass}' WHERE u_id ='${getId}'`;
+    console.log(getId + "  " + getName + "  " + getPass + "  " + getInfo);
+    const sql = `Update user SET u_name ='${getName}', u_info ='${getInfo}', u_pass='${getPass}' WHERE u_id ='${getId}'`;
     console.log(sql);
-    mysqlDB.query(sql, function(err, results) {
-        if(err) err
-        else{
+    mysqlDB.query(sql, function (err, results) {
+        if (err) err
+        else {
             console.log("수정되었습니다.");
         }
-    })    
+    })
 });
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
@@ -411,34 +360,16 @@ io.on('connection', (socket) => { //소켓이 연결됐을때
         });
     });
 
-    // let time = new Date();
-    // console.log(time.getHours());
-    // console.log(time.getMinutes());
 
     //채팅
     socket.on('BE-send-message', ({ roomId, msg, sender, time }) => {
-        // var nowTime = new Date();
-        // var time = nowTime.toFormat('HH:MM:SS');
 
-        // moment.tz.setDefault("Asia/Seoul");
-        // var time = moment().format('HH:MM');
         var time = new Date().toTimeString().split(" ")[0];
 
         io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId, time });
         console.log('server에서 보내는 시간: ' + time);
     });
 
-    // socket.on('BE-send-message', ({ roomId, msg, sender }) => {
-    //     io.sockets.in(roomId).emit('FE-receive-message', { msg, sender, roomId });
-    // });
-
-    // socket.on('BE-leave-room', ({ roomId, leaver }) => {
-    //     delete socketList[socket.id];
-    //     socket.broadcast
-    //         .to(roomId)
-    //         .emit('FE-user-leave', { userId: socket.id, userName: [socket.id] });
-    //     io.sockets.sockets[socket.id].leave(roomId);
-    // });
 
     socket.on('BE-toggle-camera-audio', ({ roomId, switchTarget }) => {
         if (switchTarget === 'video') {

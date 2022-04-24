@@ -19,25 +19,15 @@ import {
 
 import Header from "components/Headers/Header.js";
 import Cookie from "universal-cookie";
-import { data } from "jquery";
+
 
 const Index = (props) => {
   const cookie = new Cookie();
-
   const roomRef = useRef();
-
-
   const [roomInput, setRoomInput] = useState("");
-  const [roomInfo, setRoomInfo] = useState([{r_name:'',r_code:'', r_id:''
-  }]);
-
   const [roomID, setRoomID] = useState("");
   const userID = cookie.get('myname');
-  const [err, setErr] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   const [getRoomName, setGetRoomName] = useState([]);
-  const [getRoomCreater, setGetRoomCreater] = useState([]);
-
 
   //로그인 정보 확인
   const loginCheck = async () => {
@@ -66,31 +56,24 @@ const Index = (props) => {
         });
     }
   };
+
   //살아있는 방 로드
-
-  const loadRoom = async() => {
-    try{      
+  const loadRoom = async () => {
+    try {
       const url = "/api/loadRoom"
-      await axios.post(url).then((response) =>{
-        
-        const getRoomDetail =(response.data.roomDetail);
-        console.log(getRoomDetail);
+      await axios.post(url).then((response) => {
+
+        const getRoomDetail = (response.data.roomDetail);
+
         setGetRoomName([""]);
-        for(var i = 0; i < getRoomDetail.length; i++){
-          setGetRoomCreater((currentArray) => [...currentArray , getRoomDetail[i].u_id]);
-          setGetRoomName((currentArray) => [...currentArray ,getRoomDetail[i].r_name]);
-          setRoomInfo((currentArray) => [...currentArray,{r_name:getRoomDetail[i].r_name, r_code:getRoomDetail[i].r_code, r_id:getRoomDetail[i].u_id}])
+        for (let i = 0; i < getRoomDetail.length; i++) {
+          setGetRoomName((currentArray) => [...currentArray, getRoomDetail[i].r_name]);
         }
-        
       }).catch((ex) => console.log(ex));
-      console.log(roomInfo);
-    }catch(e) {
-      
+    } catch (e) {
+      console.log(e);
     }
-    
   }
-
-
 
   //방 입장
   const joinRoom = async (e) => {
@@ -107,7 +90,7 @@ const Index = (props) => {
   const onCreateRoom = (event) => {
     event.preventDefault();
     setRoomInput(event.target.value);
-    
+
   };
   const createRoom = async () => {
     try {
@@ -122,7 +105,7 @@ const Index = (props) => {
         console.log("sssssss");
         getRoomCode = Response.data.getRoomMax;
         joinRoom({ getRoomCode: getRoomCode });
-        
+
       }).catch((ex) => {
         console.log(ex);
       });
@@ -150,11 +133,6 @@ const Index = (props) => {
     }
 
   };
-
-  
-  
-
-
   useEffect(() => {
     // loginCheck(); //로그인 정보 쿠키 체크
     loadRoom();
@@ -166,13 +144,8 @@ const Index = (props) => {
         const roomName = roomID;
         const userName = userID;
 
-
-
         sessionStorage.setItem("user", userName);
         props.history.push(`/room/${roomName}`); // roomName으로 push
-      } else {
-        setErr(error);
-        setErrMsg("User name already exist");
       }
     });
   }, [props.history, roomID, userID]);
@@ -183,13 +156,12 @@ const Index = (props) => {
     const roomName = roomID;
     const userName = userID;
     console.log("clickJoin");
+    console.log(userName);
     if (!roomName || !userName) {
-      setErr(true);
-      setErrMsg("Not found roomName");
+
     } else {
-      console.log("check-user1");
       socket.emit("BE-check-user", { roomId: roomName, userName });
-      console.log("check-user2");
+      console.log("check-user1");
     }
   }
 
@@ -244,10 +216,10 @@ const Index = (props) => {
                   <tbody>
                     {getRoomName.map(
                       (
-                        
+
                         item,
                         index //map함수 이용, 저장된 roomName으로 테이블 row 생성
-                        
+
                       ) => (
                         <tr key={index}>
                           <th>{item}</th>
@@ -261,6 +233,7 @@ const Index = (props) => {
                             >
                               참여
                             </Button>
+
                           </td>
                         </tr>
                       )
@@ -278,6 +251,8 @@ const Index = (props) => {
     </>
   );
 };
+
+
 
 
 export default Index;

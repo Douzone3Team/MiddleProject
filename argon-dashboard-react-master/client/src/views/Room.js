@@ -6,7 +6,7 @@ import styled from "styled-components";
 // node.js library that concatenates classes (strings)
 import Video from "./examples/Video";
 import socket from "client_socket";
-import { setCookie, getCookie } from "../cookie/cookie";
+import { getCookie } from "../cookie/cookie";
 // reactstrap components
 import {
   Button,
@@ -21,7 +21,7 @@ import {
 
 //socket(server-client)연결
 
-import TextField from "@material-ui/core/TextField";
+
 
 // reactstrap components
 import Header from "components/Headers/Header.js";
@@ -32,14 +32,14 @@ import {
   BsFillMicFill,
   BsFillMicMuteFill,
 } from "react-icons/bs";
-import { Dropdown } from "react-bootstrap";
+
 import Cookies from "universal-cookie";
-import { ScriptElementKindModifier } from "typescript";
+
 
 // import Friends from '../variables/Friends'
 
 const Room = (props) => {
-  
+
   const cookie = new Cookies();
   const myName = cookie.get('myname');
   //영상
@@ -61,30 +61,17 @@ const Room = (props) => {
   //채팅 메세지에 표시할 시간
   const [time, setTime] = useState("");
 
-  //다른 참여자의 Cam (임의데이터)
-  const [participant, setParticipant] = useState([
-    "참여자1",
-    "참여자2",
-    "참여자3",
-    "참여자4",
-  ]);
-  // 화상통화 시 카메라/마이크 끄고 켜기
-  const [cam, changeCam] = useState(true);
-  const [mic, changeMic] = useState(true);
-  // 화상통화 할 카메라/마이크 설정바꾸기
-  const [setCam, selectCam] = useState(["mode1_cam", "mode2_cam", "mode3_cam"]);
-  const [setMic, selectMic] = useState(["mode1_mic", "mode2_mic", "mode3_mic"]);
 
   // 렌더링될 때 client(message) 받기 //영상 가져오기
   useEffect(() => {
 
-    
+
     if (!getCookie("user")) {
 
       alert("로그인을 해주세요");
       props.history.push("/login");
     }
-    
+
     //채팅
     socket.on("FE-receive-message", ({ msg, sender, roomId, time }) => {
       setMsg((msgs) => [...msgs, { sender, msg, time }]);
@@ -278,9 +265,8 @@ const Room = (props) => {
               <div className="col">
                 <CardTitle tag="h5" className="text-uppercase mb-0">
                   <VideoBox
-                    className={`width-peer${
-                      peers.length > 8 ? "" : peers.length
-                    }`}
+                    className={`width-peer${peers.length > 8 ? "" : peers.length
+                      }`}
                     // onClick={expandScreen}
                     key={index}
                   >
@@ -351,18 +337,10 @@ const Room = (props) => {
   const sendMessage = (e) => {
     if (e.key === "Enter") {
       const msg = e.target.value;
-      // console.log(msg);
-      alert(myName);
 
       if (msg) {
-        socket.emit("BE-send-message", { roomId, msg, sender: currentUser,time });
-        console.log('client에서 받아온 시간: ' +time );
-        // 현재시간
-        // let nowTime = new Date();
-        // let sendTime = [...time];
-        // sendTime.push(nowTime.getHours() + ":" + nowTime.getMinutes());
-        // // renderChat();
-        // setTime(sendTime);
+        socket.emit("BE-send-message", { roomId, msg, sender: currentUser, time });
+        console.log('client에서 받아온 시간: ' + time);
 
         inputRef.current.value = "";
       }
@@ -417,9 +395,8 @@ const Room = (props) => {
                     </Col>
                   </div>
                   <VideoBox
-                    className={`width-peer${
-                      peers.length > 8 ? "" : peers.length
-                    }`}
+                    className={`width-peer${peers.length > 8 ? "" : peers.length
+                      }`}
                   >
                     {userVideoAudio["localUser"].video ? null : (
                       <div>{currentUser}</div>
@@ -434,27 +411,7 @@ const Room = (props) => {
                 </div>
               </Card>
               <br />
-              <div>
-                <Dropdown>
-                  <Dropdown.Toggle className="mr-4" size="sm">
-                    {" "}
-                    카메라 선택{" "}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {setCam.map((data, i) => {
-                      return <Dropdown.Item>{data}</Dropdown.Item>;
-                    })}
-                  </Dropdown.Menu>
-                </Dropdown>
-                <Dropdown>
-                  <Dropdown.Toggle size="sm">마이크 선택</Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {setMic.map((data, i) => {
-                      return <Dropdown.Item>{data}</Dropdown.Item>;
-                    })}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
+
             </Col>
             <Col className="mb-5 mb-xl-0" xl="3">
               <Card className="shadow">
@@ -465,7 +422,7 @@ const Room = (props) => {
                   <div>
                     {msg &&
                       msg.map(({ sender, msg, time }, idx) => {
-                        if ( sender !== currentUser) {
+                        if (sender !== currentUser) {
                           return (
                             <div key={idx}>
                               <ChattingOther>

@@ -1,17 +1,17 @@
 
 import { Link } from "react-router-dom";
 // reactstrap components
-import React, { useEffect } from 'react'
+import React from 'react'
 import { UncontrolledCollapse, NavbarBrand, Navbar, NavItem, NavLink, Nav, Container, Row, Col, DropdownItem, DropdownMenu, UncontrolledDropdown, DropdownToggle, Media, } from "reactstrap";
 import { FaUserFriends } from "react-icons/fa";
 import { BsPersonCircle } from 'react-icons/bs'
-import axios from 'axios';
+
 import Cookies from 'universal-cookie';
 
 const AdminNavbar = (props) => {
   const cookie = new Cookies();
   const myName = cookie.get("myname");
-  const myId = cookie.get("myId");
+
 
   const cookieRemove = () => {
     alert("로그아웃 되었습니다.");
@@ -63,7 +63,7 @@ const AdminNavbar = (props) => {
                 </NavLink>
               </NavItem> */}
               <NavItem>
-                <NavLink className="nav-link-icon" to= "/friend" tag={Link} >
+                <NavLink className="nav-link-icon" to="/friend" tag={Link} >
                   <i className="ni ni-circle-08" />
                   <span className="nav-link-inner--text">Friend</span>
                 </NavLink>
@@ -134,8 +134,10 @@ const AdminNavbar = (props) => {
                       <span>Support</span>
                     </DropdownItem> */}
                     <DropdownItem divider />
-                    <DropdownItem href="#pablo" onClick={(e) => {e.preventDefault()
-                    cookieRemove()}}>
+                    <DropdownItem href="#pablo" onClick={(e) => {
+                      e.preventDefault()
+                      cookieRemove()
+                    }}>
                       <i className="ni ni-user-run" />
                       <span>Logout</span>
                     </DropdownItem>
