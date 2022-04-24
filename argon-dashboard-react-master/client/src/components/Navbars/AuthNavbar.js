@@ -13,7 +13,10 @@ const AdminNavbar = (props) => {
   const myName = cookie.get("myname");
   const myId = cookie.get("myId");
 
-  
+  const cookieRemove = () => {
+    alert("로그아웃 되었습니다.");
+    cookie.remove('user');
+  } 
 
   return (
     <>
@@ -131,7 +134,8 @@ const AdminNavbar = (props) => {
                       <span>Support</span>
                     </DropdownItem> */}
                     <DropdownItem divider />
-                    <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                    <DropdownItem href="#pablo" onClick={(e) => {e.preventDefault()
+                    cookieRemove()}}>
                       <i className="ni ni-user-run" />
                       <span>Logout</span>
                     </DropdownItem>

@@ -106,6 +106,7 @@ const Index = (props) => {
   const onCreateRoom = (event) => {
     event.preventDefault();
     setRoomInput(event.target.value);
+    loadRoom();
   };
   const createRoom = async () => {
     try {
