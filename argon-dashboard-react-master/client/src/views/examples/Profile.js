@@ -22,6 +22,10 @@ function Profile(props) {
   const [myPass, setPass] = useState("");
   const [myInfo, setMyInfo] = useState("");
 
+  const [inputPass,setInputPass] = useState("");
+  const [inputPass2,setInputPass2] = useState("");
+  const [inputName,setInputName] = useState("");
+  const [inputInfo,setInputInfo] = useState("");
   const loadProfile = async () => {
     const url = '/api/loadProfile'
     await axios.post(url).then((response) =>{
@@ -60,8 +64,34 @@ function Profile(props) {
       );
     }
   };
-
+  const handleName = (e) => {    
+    console.log(e.target.value);
+    setInputName(e.target.value);
+  }
+  const handlePass = (e) => { 
+    console.log(e.target.value);   
+    setInputPass(e.target.value);
+  }
+  const handlePass2 = (e) => {  
+    console.log(e.target.value);  
+    setInputPass2(e.target.value);
+  }
+  const handleInfo = (e) => {    
+    setInputInfo(e.target.value);
+  }
   const profileUpdate = async () => {
+   const url ='/api/updateProfile'
+
+   const data = { u_name:{inputName}, u_pass:{inputPass}, u_info:{inputInfo}}
+   if(inputPass === inputPass2){
+     console.log("같음");
+    await axios.post(url,data).then((response) =>{
+      alert("변경되었습니다.");      
+      
+    }).catch((ex) => {})
+   }else{
+    alert("비밀번호를 확인해주세요");
+   }
    
   }
   useEffect(() => {
@@ -258,7 +288,7 @@ function Profile(props) {
                         <FormGroup>
                           <label className="form-control-label"> 유저명 </label>
                           <Input className="form-control-alternative" id="input-username" type="text"
-                          placeholder = {myName}  />
+                          placeholder = {myName} value={inputName} onChange={handleName}  />
                         </FormGroup>
                       </Col> 
                     </Row>  
@@ -267,14 +297,15 @@ function Profile(props) {
                         <FormGroup>
                           <label className="form-control-label"> 비밀번호 </label>
                           <Input className="form-control-alternative" id="input-pwd1" type="password1"
-                          placeholder = {myPass} />
+                          placeholder = {myPass} value={inputPass} onChange={handlePass} />
                         </FormGroup>
                       </Col>
                       {/* 위에서 입력한 비밀번호 값이 같은지 확인 */}
                       <Col lg="6">
                         <FormGroup>
                           <label className="form-control-label"> 비밀번호 확인 </label>
-                          <Input className="form-control-alternative" id="input-pwd2" type="password2" />
+                          <Input className="form-control-alternative" value={inputPass2} id="input-pwd2" type="password2"
+                           onChange={handlePass2} />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -285,7 +316,8 @@ function Profile(props) {
                   <div className="pl-lg-4">
                     <FormGroup>
                       <label className="form-control-label">인사말</label>
-                      <Input className="form-control-alternative" rows="3" type="textarea" placeholder = {myInfo}/>
+                      <Input className="form-control-alternative"rows="3" type="textarea" value = {inputInfo} 
+                      placeholder = {myInfo} onChange={handleInfo}/>
                     </FormGroup>
                   </div>
                 </CardBody>

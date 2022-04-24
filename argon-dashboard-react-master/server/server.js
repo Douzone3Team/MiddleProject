@@ -325,7 +325,23 @@ app.post('/api/loadProfile', (req, res) => {
     })
 })
 
+app.post('/api/updateProfile', (req, res) => {
+    console.log(req.body);
+    const getId = req.cookies.myId;
+    const getName = req.body.u_name.inputName;
+    const getPass = req.body.u_pass.inputPass;
+    const getInfo = req.body.u_info.inputInfo;
 
+    console.log(getId + "  " + getName + "  " + getPass + "  " + getInfo );
+    const sql =`Update user SET u_name ='${getName}', u_info ='${getInfo}', u_pass='${getPass}' WHERE u_id ='${getId}'`;
+    console.log(sql);
+    mysqlDB.query(sql, function(err, results) {
+        if(err) err
+        else{
+            console.log("수정되었습니다.");
+        }
+    })    
+});
 
 io.on('connection', (socket) => { //소켓이 연결됐을때
     console.log(`New User connected: ${socket.id}`);
