@@ -75,6 +75,7 @@ const Index = (props) => {
         
         const getRoomDetail =(response.data.roomDetail);
         console.log(getRoomDetail);
+        setGetRoomName([""]);
         for(var i = 0; i < getRoomDetail.length; i++){
           setGetRoomCreater((currentArray) => [...currentArray , getRoomDetail[i].u_id]);
           setGetRoomName((currentArray) => [...currentArray ,getRoomDetail[i].r_name]);
@@ -106,7 +107,7 @@ const Index = (props) => {
   const onCreateRoom = (event) => {
     event.preventDefault();
     setRoomInput(event.target.value);
-    loadRoom();
+    
   };
   const createRoom = async () => {
     try {
@@ -121,13 +122,14 @@ const Index = (props) => {
         console.log("sssssss");
         getRoomCode = Response.data.getRoomMax;
         joinRoom({ getRoomCode: getRoomCode });
-
+        
       }).catch((ex) => {
         console.log(ex);
       });
     } catch (error) {
       console.log(error);
     }
+    loadRoom();
     console.log("end");
     ///////////////
 
