@@ -2,10 +2,9 @@
 import { Link } from "react-router-dom";
 // reactstrap components
 import React from 'react'
-import { UncontrolledCollapse, NavbarBrand, Navbar, NavItem, NavLink, Nav, Container, Row, Col, DropdownItem, DropdownMenu, UncontrolledDropdown, DropdownToggle, Media, } from "reactstrap";
-import { FaUserFriends } from "react-icons/fa";
+import { UncontrolledCollapse, NavbarBrand, Navbar, NavItem, NavLink, Nav, Container, Row, Col, Media, } from "reactstrap";
 import { BsPersonCircle } from 'react-icons/bs'
-
+import logo from '../../assets/img/real/cnn.png'
 import Cookies from 'universal-cookie';
 
 const AdminNavbar = (props) => {
@@ -22,13 +21,11 @@ const AdminNavbar = (props) => {
     <>
       <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md" >
         <Container className="px-4">
-          <NavbarBrand to="/" tag={Link}>
+          <NavbarBrand href="/">
             <img
               alt="home"
-              src={
-                require("../../assets/img/brand/argon-react-white.png").default
-              }
-            /> 3Team
+              src={logo}
+            />
           </NavbarBrand>
           <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
@@ -63,18 +60,18 @@ const AdminNavbar = (props) => {
                 </NavLink>
               </NavItem> */}
               <NavItem>
-                <NavLink className="nav-link-icon" to="/friend" tag={Link} >
+                <NavLink className="nav-link-icon" href="/friend"  >
                   <i className="ni ni-circle-08" />
                   <span className="nav-link-inner--text">Friend</span>
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className="nav-link-icon" to="/register" tag={Link} >
+                <NavLink className="nav-link-icon" href="/register" >
                   <i className="ni ni-badge" />
                   <span className="nav-link-inner--text">Register</span>
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/login" tag={Link}>
                   <i className="ni ni-key-25" />
                   <span className="nav-link-inner--text">Login</span>
@@ -89,61 +86,18 @@ const AdminNavbar = (props) => {
                   <i className="ni ni-single-02" />
                   <span className="nav-link-inner--text">Profile</span>
                 </NavLink>
+              </NavItem> */}
+              <NavItem>
+                <NavLink className="nav-link-icon" href="/profile" >                  <Media className="align-items-center">
+                  <BsPersonCircle size={25} color={'white'} />
+                  <Media className="ml-2 d-none d-lg-block">
+                    <span className="mb-0 text-sm font-weight-bold">
+                      {myName}
+                    </span>
+                  </Media>
+                </Media>
+                </NavLink>
               </NavItem>
-              <Nav className="align-items-center d-none d-md-flex" navbar>
-                <UncontrolledDropdown nav>
-                  <DropdownToggle className="pr-0" nav>
-                    <Media className="align-items-center">
-                      {/* <span className="avatar avatar-sm rounded-circle">
-                        <img
-                          alt="..."
-                          src={
-                            require("../../assets/img/theme/team-4-800x800.jpg")
-                              .default
-                          }
-                        />
-                      </span> */}
-                      <BsPersonCircle size={25} color={'white'} />
-                      <Media className="ml-2 d-none d-lg-block">
-                        <span className="mb-0 text-sm font-weight-bold">
-                          {myName}
-                        </span>
-                      </Media>
-                    </Media>
-                  </DropdownToggle>
-                  <DropdownMenu className="dropdown-menu-arrow" right>
-                    <DropdownItem className="noti-title" header tag="div">
-                      <h6 className="text-overflow m-0">Welcome!</h6>
-                    </DropdownItem>
-                    <DropdownItem to="/profile" tag={Link}>
-                      <i className="ni ni-single-02" />
-                      <span>My profile</span>
-                    </DropdownItem>
-                    <DropdownItem to="/profile" tag={Link}>
-                      {/* <i className="ni ni-calendar-grid-58" />
-                      <i className="ni ni-calendar-grid-58" /> */}
-                      <FaUserFriends />
-                      <span>Friends</span>
-                    </DropdownItem>
-                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                      <i className="ni ni-settings-gear-65" />
-                      <span>Settings</span>
-                    </DropdownItem>
-                    {/* <DropdownItem to="/admin/user-profile" tag={Link}>
-                      <i className="ni ni-support-16" />
-                      <span>Support</span>
-                    </DropdownItem> */}
-                    <DropdownItem divider />
-                    <DropdownItem href="#pablo" onClick={(e) => {
-                      e.preventDefault()
-                      cookieRemove()
-                    }}>
-                      <i className="ni ni-user-run" />
-                      <span>Logout</span>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </Nav>
             </Nav>
           </UncontrolledCollapse>
         </Container>

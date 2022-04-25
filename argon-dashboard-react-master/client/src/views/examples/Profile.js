@@ -3,8 +3,10 @@
 
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react'
-import { UncontrolledCollapse, Navbar, NavItem, NavLink, Nav, Container, Row, Col, DropdownItem, DropdownMenu, UncontrolledDropdown, DropdownToggle, Media,
-  Card, CardHeader, CardBody, Form, FormGroup, Input, Button, NavbarBrand } from "reactstrap";
+import {
+  UncontrolledCollapse, Navbar, NavItem, NavLink, Nav, Container, Row, Col, DropdownItem, DropdownMenu, UncontrolledDropdown, DropdownToggle, Media,
+  Card, CardHeader, CardBody, Form, FormGroup, Input, Button, NavbarBrand
+} from "reactstrap";
 // import { Card, CardHeader, CardBody, Container, Row, Col, Form, FormGroup, Input, Button, NavbarBrand } from "reactstrap";
 import { BsPersonCircle, BsPencilSquare } from 'react-icons/bs'
 import Fade from 'react-reveal/Fade';
@@ -13,6 +15,7 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { FaUserFriends } from "react-icons/fa";
+import logo from '../../assets/img/real/cnn.png'
 // import { BsPersonCircle } from 'react-icons/bs'
 
 function Profile(props) {
@@ -22,19 +25,19 @@ function Profile(props) {
   const [myPass, setPass] = useState("");
   const [myInfo, setMyInfo] = useState("");
 
-  const [inputPass,setInputPass] = useState("");
-  const [inputPass2,setInputPass2] = useState("");
-  const [inputName,setInputName] = useState("");
-  const [inputInfo,setInputInfo] = useState("");
+  const [inputPass, setInputPass] = useState("");
+  const [inputPass2, setInputPass2] = useState("");
+  const [inputName, setInputName] = useState("");
+  const [inputInfo, setInputInfo] = useState("");
   const loadProfile = async () => {
     const url = '/api/loadProfile'
-    await axios.post(url).then((response) =>{
+    await axios.post(url).then((response) => {
       console.log(response.data);
-      const {u_pass, u_info} = response.data[0];
+      const { u_pass, u_info } = response.data[0];
       console.log(u_pass + " " + u_info);
       setPass(u_pass);
       setMyInfo(u_info);
-    }      
+    }
     ).catch((ex) => console.log(ex));
   }
   const loginCheck = async () => {
@@ -61,38 +64,38 @@ function Profile(props) {
         .catch((ex) => {
           console.log(ex);
         }
-      );
+        );
     }
   };
-  const handleName = (e) => {    
+  const handleName = (e) => {
     console.log(e.target.value);
     setInputName(e.target.value);
   }
-  const handlePass = (e) => { 
-    console.log(e.target.value);   
+  const handlePass = (e) => {
+    console.log(e.target.value);
     setInputPass(e.target.value);
   }
-  const handlePass2 = (e) => {  
-    console.log(e.target.value);  
+  const handlePass2 = (e) => {
+    console.log(e.target.value);
     setInputPass2(e.target.value);
   }
-  const handleInfo = (e) => {    
+  const handleInfo = (e) => {
     setInputInfo(e.target.value);
   }
   const profileUpdate = async () => {
-   const url ='/api/updateProfile'
+    const url = '/api/updateProfile'
 
-   const data = { u_name:{inputName}, u_pass:{inputPass}, u_info:{inputInfo}}
-   if(inputPass === inputPass2){
-     console.log("같음");
-    await axios.post(url,data).then((response) =>{
-      alert("변경되었습니다.");      
-      
-    }).catch((ex) => {})
-   }else{
-    alert("비밀번호를 확인해주세요");
-   }
-   
+    const data = { u_name: { inputName }, u_pass: { inputPass }, u_info: { inputInfo } }
+    if (inputPass === inputPass2) {
+      console.log("같음");
+      await axios.post(url, data).then((response) => {
+        alert("변경되었습니다.");
+
+      }).catch((ex) => { })
+    } else {
+      alert("비밀번호를 확인해주세요");
+    }
+
   }
   useEffect(() => {
     loginCheck();
@@ -101,15 +104,13 @@ function Profile(props) {
 
   return (
     <>
-      <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md" style={{background: '#2E3A5F'}} >
+      <Navbar className="navbar-top navbar-horizontal navbar-dark" expand="md" style={{ background: '#2E3A5F' }} >
         <Container className="px-4">
-          <NavbarBrand to="/" tag={Link}>
+          <NavbarBrand href="/">
             <img
               alt="home"
-              src={
-                require("../../assets/img/brand/argon-react-white.png").default
-              }
-            /> 3Team
+              src={logo}
+            />
           </NavbarBrand>
           <button className="navbar-toggler" id="navbar-collapse-main">
             <span className="navbar-toggler-icon" />
@@ -144,18 +145,18 @@ function Profile(props) {
                 </NavLink>
               </NavItem> */}
               <NavItem>
-                <NavLink className="nav-link-icon" to= "/friend" tag={Link} >
+                <NavLink className="nav-link-icon" href="/friend" >
                   <i className="ni ni-circle-08" />
                   <span className="nav-link-inner--text">Friend</span>
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className="nav-link-icon" to="/register" tag={Link} >
+                <NavLink className="nav-link-icon" href="/register" >
                   <i className="ni ni-badge" />
                   <span className="nav-link-inner--text">Register</span>
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink className="nav-link-icon" to="/login" tag={Link}>
                   <i className="ni ni-key-25" />
                   <span className="nav-link-inner--text">Login</span>
@@ -170,63 +171,24 @@ function Profile(props) {
                   <i className="ni ni-single-02" />
                   <span className="nav-link-inner--text">Profile</span>
                 </NavLink>
-              </NavItem>
-              <Nav className="align-items-center d-none d-md-flex" navbar>
-                <UncontrolledDropdown nav>
-                  <DropdownToggle className="pr-0" nav>
-                    <Media className="align-items-center">
-                      {/* <span className="avatar avatar-sm rounded-circle">
-                        <img
-                          alt="..."
-                          src={
-                            require("../../assets/img/theme/team-4-800x800.jpg")
-                              .default
-                          }
-                        />
-                      </span> */}
-                      <BsPersonCircle size={25} color={'white'} />
-                      <Media className="ml-2 d-none d-lg-block">
-                        <span className="mb-0 text-sm font-weight-bold">
-                          {myName}
-                        </span>
-                      </Media>
+              </NavItem> */}
+              <NavItem>
+                <NavLink className="nav-link-icon" href="/profile" >
+                  <Media className="align-items-center">
+                    <BsPersonCircle size={25} color={'white'} />
+                    <Media className="ml-2 d-none d-lg-block">
+                      <span className="mb-0 text-sm font-weight-bold">
+                        {myName}
+                      </span>
                     </Media>
-                  </DropdownToggle>
-                  <DropdownMenu className="dropdown-menu-arrow" right>
-                    <DropdownItem className="noti-title" header tag="div">
-                      <h6 className="text-overflow m-0">Welcome!</h6>
-                    </DropdownItem>
-                    <DropdownItem to="/profile" tag={Link}>
-                      <i className="ni ni-single-02" />
-                      <span>My profile</span>
-                    </DropdownItem>
-                    <DropdownItem to="/profile" tag={Link}>
-                      {/* <i className="ni ni-calendar-grid-58" />
-                      <i className="ni ni-calendar-grid-58" /> */}
-                      <FaUserFriends />
-                      <span>Friends</span>
-                    </DropdownItem>
-                    <DropdownItem to="/admin/user-profile" tag={Link}>
-                      <i className="ni ni-settings-gear-65" />
-                      <span>Settings</span>
-                    </DropdownItem>
-                    {/* <DropdownItem to="/admin/user-profile" tag={Link}>
-                      <i className="ni ni-support-16" />
-                      <span>Support</span>
-                    </DropdownItem> */}
-                    <DropdownItem divider />
-                    <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-                      <i className="ni ni-user-run" />
-                      <span>Logout</span>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </Nav>
+                  </Media>
+                </NavLink>
+              </NavItem>
             </Nav>
           </UncontrolledCollapse>
         </Container>
       </Navbar>
-      
+
       <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
         style={{ minHeight: "100px", backgroundSize: "cover", backgroundPosition: "center top" }}
       >
@@ -238,9 +200,9 @@ function Profile(props) {
             }
           /> 3Team
         </NavbarBrand> */}
-        
+
         <span className="mask bg-gradient-default opacity-8" />
-        
+
         <Container>
           <Col lg="12">
             <div className="card-profile-image">
@@ -262,7 +224,7 @@ function Profile(props) {
         </Container>
       </div>
 
-      {/* 로그인한 계정의 정보 변경 카드 */} 
+      {/* 로그인한 계정의 정보 변경 카드 */}
       <Fade bottom duration={1500}>
         <Container className="mt--7" style={{ width: '60%' }}>
           <Col className="order-xl-2 mb-5 mb-xl-0" xl="12">
@@ -273,8 +235,10 @@ function Profile(props) {
                     <Col xs="12">
                       <h3 className="mb-0">My account &nbsp; <BsPencilSquare />
                         <Button className="float-right" color="primary"
-                          onClick={(e) => {e.preventDefault()
-                                          profileUpdate()}} size="sm"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            profileUpdate()
+                          }} size="sm"
                         >저장</Button>
                       </h3>
                     </Col>
@@ -297,7 +261,7 @@ function Profile(props) {
                         <FormGroup>
                           <label className="form-control-label"> 비밀번호 </label>
                           <Input className="form-control-alternative" id="input-pwd1" type="password1"
-                          placeholder = {myPass} value={inputPass} onChange={handlePass} />
+                            placeholder={myPass} value={inputPass} onChange={handlePass} />
                         </FormGroup>
                       </Col>
                       {/* 위에서 입력한 비밀번호 값이 같은지 확인 */}
@@ -305,7 +269,7 @@ function Profile(props) {
                         <FormGroup>
                           <label className="form-control-label"> 비밀번호 확인 </label>
                           <Input className="form-control-alternative" value={inputPass2} id="input-pwd2" type="password2"
-                           onChange={handlePass2} />
+                            onChange={handlePass2} />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -316,8 +280,8 @@ function Profile(props) {
                   <div className="pl-lg-4">
                     <FormGroup>
                       <label className="form-control-label">인사말</label>
-                      <Input className="form-control-alternative"rows="3" type="textarea" value = {inputInfo} 
-                      placeholder = {myInfo} onChange={handleInfo}/>
+                      <Input className="form-control-alternative" rows="3" type="textarea" value={inputInfo}
+                        placeholder={myInfo} onChange={handleInfo} />
                     </FormGroup>
                   </div>
                 </CardBody>

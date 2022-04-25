@@ -59,13 +59,13 @@ const Index = (props) => {
 
   //살아있는 방 로드
   const loadRoom = async () => {
+
     try {
       const url = "/api/loadRoom"
       await axios.post(url).then((response) => {
 
         const getRoomDetail = (response.data.roomDetail);
 
-        setGetRoomName([""]);
         for (let i = 0; i < getRoomDetail.length; i++) {
           setGetRoomName((currentArray) => [...currentArray, getRoomDetail[i].r_name]);
         }
@@ -112,7 +112,7 @@ const Index = (props) => {
     } catch (error) {
       console.log(error);
     }
-    loadRoom();
+
     console.log("end");
     ///////////////
 
@@ -138,13 +138,15 @@ const Index = (props) => {
     loadRoom();
 
     console.log("user-exist");
-    socket.on("FE-error-user-exist", ({ error }) => {
+    socket.on('FE-error-user-exist', ({ error }) => {
       if (!error) {
         //에러가 없으면
         const roomName = roomID;
         const userName = userID;
 
         sessionStorage.setItem("user", userName);
+        // // eslint-disable-next-line no-restricted-globals
+        // location.replace(`/room/${roomName}`);
         props.history.push(`/room/${roomName}`); // roomName으로 push
       }
     });
@@ -157,12 +159,10 @@ const Index = (props) => {
     const userName = userID;
     console.log("clickJoin");
     console.log(userName);
-    if (!roomName || !userName) {
 
-    } else {
-      socket.emit("BE-check-user", { roomId: roomName, userName });
-      console.log("check-user1");
-    }
+    socket.emit("BE-check-user", { roomId: roomName, userName });
+    console.log("check-user1");
+
   }
 
   return (
