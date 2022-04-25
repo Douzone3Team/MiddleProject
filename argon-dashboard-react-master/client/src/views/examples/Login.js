@@ -79,7 +79,6 @@ const Login = (props) => {
         <Header />
         <Container className="mt--7" fluid>
           <div>
-            <Card style={{ width: "30%", height: "80%", margin: "0 auto" }} className="bg-secondary shadow border-0">
             <Card style={{ width: "50%", height: "80%", margin: "0 auto" }} className="bg-secondary shadow border-0">
               <br />
               <br />
