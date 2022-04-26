@@ -18,7 +18,6 @@ import Cookies from 'universal-cookie';
 import logo from '../../assets/img/real/cnn.png'
 
 function Friend(props) {
-  // 친구 목록 (Friend_data.js에서 임의 데이터 받아옴)
   const [friend, myFriend] = useState('')
 
   const cookie = new Cookies();
@@ -124,7 +123,6 @@ function Friend(props) {
                 </div>
               </Jump>
               <div style={{ textAlign: 'center' }}>
-                {/* 로그인한 유저명 보여주기 */}
                 <h1 className="display-2 text-white">Hello, {myName} !</h1>
                 <p className="text-white mt-0 mb-5"> 당신의 친구를 찾아보세요 </p>
                 {/* 검색 */}
@@ -179,7 +177,6 @@ function Friend(props) {
                         <Col className="order-lg-2" lg="3">
                           <div className="card-profile-image" xl="12">
                             <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                              {/* 이미지가 없을 경우 보여줄 아이콘 -> 반응형으로 작업(가운데로) 필요 */}
                               <BsPersonCircle size={70} />
                             </a>
                           </div>
